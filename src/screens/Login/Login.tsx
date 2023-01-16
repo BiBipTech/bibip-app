@@ -3,6 +3,7 @@ import { Pressable, Text, View, Keyboard, Image } from "react-native";
 import UserPhoneInput from "../../components/inputs/UserPhoneInput/UserPhoneInput";
 import ConfirmButton from "../../components/buttons/ConfirmButton/ConfirmButton";
 import styles from "./Login.style";
+import BiBipButton from "../../components/buttons/BiBipButton/BiBipButton";
 
 const Login = ({ navigation }) => {
   const [phoneNumber, setphoneNumber] = useState("");
@@ -31,7 +32,7 @@ const Login = ({ navigation }) => {
   };
   return (
     <Pressable onPress={pressableHandler} style={styles.container}>
-      <View style={styles.textContainer}>
+      <View className="items-center justify-center">
         <Image
           source={require("../../assets/bibip-logo.jpg")}
           style={{ height: 150, width: 150 }}
@@ -41,16 +42,19 @@ const Login = ({ navigation }) => {
           Telefonunu doğrulamak için sana bir SMS göndereceğiz.
         </Text>
       </View>
-      <UserPhoneInput
-        value={phoneNumber}
-        placeholder="Mobil Telefon Numarası"
-        onChange={setphoneNumber}
-      />
-      <ConfirmButton
-        onPress={onPressHandler}
-        isDisabled={isDisabled}
-        title="DEVAM"
-      />
+      <View className="px-4 items-center justify-center flex flex-col">
+        <UserPhoneInput
+          value={phoneNumber}
+          placeholder="Mobil Telefon Numarası"
+          onChange={setphoneNumber}
+        />
+        <BiBipButton
+          onPress={onPressHandler}
+          disabled={isDisabled}
+          fullWidth={true}
+          title="DEVAM"
+        />
+      </View>
     </Pressable>
   );
 };

@@ -13,7 +13,7 @@ export default StyleSheet.create({
   },
   input: {
     marginLeft: 20,
-    width: "100%",
+    width: "94%",
     fontSize: 15,
   },
   codeContainer: {
