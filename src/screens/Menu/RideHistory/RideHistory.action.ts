@@ -8,7 +8,11 @@ export const getTripsOfUser = async (username: string) => {
     await gql<GetTripsOfUserResult>({
       query: queries.listTrips,
       variables: {
-        user: username,
+        filter: {
+          user: {
+            eq: username,
+          },
+        },
       },
     })
   ).data?.listTrips.items;
