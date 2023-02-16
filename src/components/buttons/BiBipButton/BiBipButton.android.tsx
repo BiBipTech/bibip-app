@@ -1,31 +1,38 @@
-import { styled } from "nativewind";
+import { VariantProps } from "class-variance-authority";
+import { styled, useTailwind } from "nativewind";
 import { FunctionComponent } from "react";
 import {
   Pressable,
+  StyleProp,
   Text,
   TextProps,
-  TouchableOpacity,
+  TextStyle,
   TouchableOpacityProps,
+  ViewStyle,
 } from "react-native";
+import { buttonStyles, textStyles } from "./common";
 
-interface BiBipButtonProps extends TouchableOpacityProps {
+interface BiBipButtonProps
+  extends TouchableOpacityProps,
+    VariantProps<typeof buttonStyles> {
   title: string;
-  textStyle: TextProps["style"];
-  containerStyle: TouchableOpacityProps["style"];
 }
 
 const BiBipButton: FunctionComponent<BiBipButtonProps> = ({
   title,
-  containerStyle,
-  textStyle,
   children,
+  intent,
+  fullWidth,
+  isDisabled,
   style,
   ...props
 }) => {
   return (
     <Pressable
       style={[
-        containerStyle,
+        useTailwind({
+          className: buttonStyles({ intent, fullWidth, isDisabled }),
+        }) as StyleProp<ViewStyle>,
         {
           shadowColor: "#000",
         },
@@ -34,15 +41,21 @@ const BiBipButton: FunctionComponent<BiBipButtonProps> = ({
       android_ripple={{
         color: "white",
       }}
+      disabled={isDisabled}
     >
-      <Text style={textStyle}>{title}</Text>
+      <Text
+        style={
+          useTailwind({
+            className: textStyles({ intent, isDisabled }),
+          }) as StyleProp<TextStyle>
+        }
+      >
+        {title}
+      </Text>
     </Pressable>
   );
 };
 
 export default styled(BiBipButton, {
-  props: {
-    containerStyle: true,
-    textStyle: true,
-  },
+  props: {},
 });

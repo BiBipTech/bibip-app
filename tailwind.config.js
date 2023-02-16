@@ -3,6 +3,9 @@ module.exports = {
   content: ["./App.{js,jsx,ts,tsx}", "./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      width: {
+        "9/20": "45%",
+      },
       colors: {
         "bibip-green": {
           50: "#eefbf2",

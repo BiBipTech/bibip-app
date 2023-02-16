@@ -1,11 +1,13 @@
 {
   "expo": {
     "name": "bibip",
-    "slug": "bibip",
-    "version": "1.0.0",
+    "owner": "bibiptech",
+    "slug": "bibip-app",
+    "version": "0.1.5",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
+    "scheme": "bibipapp",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -14,20 +16,34 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "tech.bibip.bibipapp",
+      "config": {
+        "googleMapsApiKey": "AIzaSyCyGqcr0T81VBZTHZTg_avetsazCCGDnRU"
+      },
+      "buildNumber": "1"
     },
     "android": {
+      "package": "tech.bibip.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
+      },
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyCyGqcr0T81VBZTHZTg_avetsazCCGDnRU"
+        }
       }
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "5d2cbc42-3483-4217-989f-51b42643482e"
+      }
     }
   }
 }

@@ -1,0 +1,12 @@
+{
+  "resourceName": "s3bibipappstorage8f58d563",
+  "bucketName": "bibip-app-storage-8f58d563",
+  "policyUUID": "978d8955",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ]
+}
