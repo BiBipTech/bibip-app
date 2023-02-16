@@ -1,0 +1,31 @@
+type Time {
+  start: AWSTimestamp
+  end: AWSTimestamp
+}
+
+type Trip @model @auth(rules: [{ allow: public }, { allow: private }]) {
+  id: ID!
+  roadTraveled: Float
+  time: Time
+  user: String
+  carID: ID! @index(name: "byCar")
+  duration: AWSTimestamp
+  fee: Float
+  paidViaCreditCard: Float
+  paidViaWallet: Float
+  rating: Int
+}
+
+type Location {
+  lat: Float!
+  lng: Float!
+}
+
+type Car @model @auth(rules: [{ allow: public }, { allow: private }]) {
+  id: ID!
+  name: String
+  location: Location
+  inUse: Boolean
+  battery: Float
+  Trips: [Trip] @hasMany(indexName: "byCar", fields: ["id"])
+}

@@ -20,7 +20,7 @@ export default StyleSheet.create({
   primaryText: {
     textAlign: "center",
     fontWeight: "bold",
-    fontSize: 26,
+    fontSize: 24,
     marginBottom: 10,
     lineHeight: 40,
     color: COLORS.highEmphasis,

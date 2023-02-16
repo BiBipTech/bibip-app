@@ -1,0 +1,34 @@
+{
+  "cli": {
+    "version": ">= 2.6.0"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "production": {
+      "env": {
+        "TRIP_API": "https://gz064xqpkg.execute-api.eu-central-1.amazonaws.com/dev",
+        "WALLET_API": "https://qaajcebtpb.execute-api.eu-central-1.amazonaws.com/prod",
+        "PBM_API": "https://umo2d7aie0.execute-api.eu-central-1.amazonaws.com/dev"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "../path/to/api-xxx-yyy-zzz.json",
+        "track": "internal"
+      },
+      "ios": {
+        "appleId": "bibiptech@hotmail.com",
+        "ascAppId": "1625584031",
+        "appleTeamId": "VP2RY283FB"
+      }
+    }
+  }
+}

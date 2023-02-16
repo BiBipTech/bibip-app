@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "paths": {
+    "/mqtt/publish": {
+      "name": "/mqtt/publish",
+      "lambdaFunction": "testPublish",
+      "permissions": {
+        "setting": "private",
+        "auth": [
+          "create",
+          "read",
+          "update",
+          "delete"
+        ]
+      }
+    }
+  }
+}

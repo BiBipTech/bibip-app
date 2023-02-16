@@ -1,14 +1,22 @@
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   Platform,
+  TextInputProps,
 } from "react-native";
 import styles from "./UserPhoneInput.style";
 import MaskInput from "react-native-mask-input";
-const UserPhoneInput = ({ value, placeholder, onChange }) => {
+
+interface UserPhoneInputProps extends TextInputProps {}
+
+const UserPhoneInput: FC<UserPhoneInputProps> = ({
+  value,
+  placeholder,
+  onChangeText,
+}) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.codeContainer}>
@@ -21,7 +29,7 @@ const UserPhoneInput = ({ value, placeholder, onChange }) => {
         placeholder={placeholder}
         maxLength={14}
         keyboardType="numeric"
-        onChangeText={onChange}
+        onChangeText={onChangeText}
         mask={[
           /\d/,
           /\d/,

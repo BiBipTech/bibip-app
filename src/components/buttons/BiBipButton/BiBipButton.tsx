@@ -14,10 +14,9 @@ import { buttonStyles, textStyles } from "./common";
 
 interface BiBipButtonProps
   extends TouchableOpacityProps,
-    VariantProps<typeof buttonStyles> {
+    VariantProps<typeof buttonStyles>,
+    VariantProps<typeof textStyles> {
   title: string;
-  containerStyle?: TouchableOpacityProps["style"];
-  textStyle?: TextProps["style"];
 }
 
 const BiBipButton: FunctionComponent<BiBipButtonProps> = ({
@@ -25,24 +24,41 @@ const BiBipButton: FunctionComponent<BiBipButtonProps> = ({
   children,
   intent,
   fullWidth,
-  disabled,
+  fullHeight,
+  alignment,
+  buttonCount,
+  rounding,
+  isDisabled,
+  fontSize,
+  fontWeight,
+  mini,
   style,
   ...props
 }) => {
   return (
     <TouchableOpacity
-      style={
+      style={[
         useTailwind({
-          className: buttonStyles({ intent, fullWidth, disabled }),
-        }) as StyleProp<ViewStyle>
-      }
-      disabled={disabled}
+          className: buttonStyles({
+            intent,
+            fullWidth,
+            fullHeight,
+            alignment,
+            buttonCount,
+            rounding,
+            isDisabled,
+            mini,
+          }),
+        }) as StyleProp<ViewStyle>,
+      ]}
+      disabled={isDisabled === null ? undefined : isDisabled}
       {...props}
     >
+      {children}
       <Text
         style={
           useTailwind({
-            className: textStyles({ intent }),
+            className: textStyles({ intent, isDisabled, fontSize, fontWeight }),
           }) as StyleProp<TextStyle>
         }
       >
@@ -53,8 +69,5 @@ const BiBipButton: FunctionComponent<BiBipButtonProps> = ({
 };
 
 export default styled(BiBipButton, {
-  props: {
-    containerStyle: true,
-    textStyle: true,
-  },
+  props: {},
 });
