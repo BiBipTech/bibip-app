@@ -33,15 +33,21 @@ const Trip: FunctionComponent<TripProps> = memo(({ navigation }) => {
 
   const userContext = useContext(UserContext);
 
+  const [status, requestPermission] = Location.useForegroundPermissions();
+
   const { data } = useQuery({
     queryKey: "carId",
     queryFn: () =>
-      getCarId(userContext.user?.getUsername()!, userContext.token!).then(
-        (val) => {
+      getCarId(userContext.user?.getUsername()!, userContext.token!)
+        .then((val) => {
           setCarId(val.data.carId);
           return val.data;
-        }
-      ),
+        })
+        .catch(() => {
+          userContext.updateToken();
+
+          return "";
+        }),
     enabled: !!userContext.token,
   });
 
@@ -61,6 +67,12 @@ const Trip: FunctionComponent<TripProps> = memo(({ navigation }) => {
   };
 
   useEffect(() => {
+    if (status) {
+      if (status.status !== "granted") {
+        requestPermission();
+      }
+    }
+
     if (interval === undefined) {
       interval = setInterval(async () => {
         const location = await Location.getCurrentPositionAsync();

@@ -28,12 +28,6 @@ const RideHistory: FunctionComponent<RideHistoryProps> = ({
       }),
   });
 
-  useEffect(() => {
-    trips?.forEach((trip) => {
-      console.log(trip.user);
-    });
-  }, [trips]);
-
   return (
     <View>
       <Spinner visible={tripsLoading} />

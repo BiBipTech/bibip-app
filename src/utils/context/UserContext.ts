@@ -10,6 +10,7 @@ export type UserContextType = {
   isInTrip: boolean | undefined;
   setIsInTrip: (isInTrip: boolean) => void;
   updateToken: () => void;
+  isInTripLoading: boolean;
 };
 
 const UserContext = createContext<UserContextType>({
@@ -21,6 +22,7 @@ const UserContext = createContext<UserContextType>({
   isInTrip: false,
   setIsInTrip: (isInTrip: boolean) => {},
   updateToken: () => {},
+  isInTripLoading: true,
 });
 
 export default UserContext;

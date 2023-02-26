@@ -60,7 +60,6 @@ export const onEndTrip = async (
           text: "Tamam",
         },
       ]);
-      console.log("log");
       isValid = false;
       break;
     }
@@ -72,9 +71,7 @@ export const onEndTrip = async (
       p,
       userContext.user?.getUsername()!,
       date.toISOString()
-    ).then((val) => {
-      console.log(val);
-    });
+    ).then((val) => {});
   });
 
   const lastLocation = await Location.getCurrentPositionAsync();
@@ -106,8 +103,6 @@ export const updateCarLocation = async (
   carId: string,
   location: Location.LocationObject
 ) => {
-  console.log(carId);
-
   const currentCar = await gql<GetCarResult>({
     query: queries.getCar,
     variables: {
@@ -128,4 +123,19 @@ export const updateCarLocation = async (
       },
     },
   });
+};
+
+export const photoTypeString = (type: "BACK" | "FRONT" | "RIGHT" | "LEFT") => {
+  switch (type) {
+    case "BACK":
+      return "Arka";
+    case "FRONT":
+      return "Ön";
+    case "LEFT":
+      return "Sol";
+    case "RIGHT":
+      return "Sağ";
+    default:
+      break;
+  }
 };
