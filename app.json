@@ -23,7 +23,8 @@
       "config": {
         "googleMapsApiKey": "AIzaSyCyGqcr0T81VBZTHZTg_avetsazCCGDnRU"
       },
-      "buildNumber": "3"
+      "buildNumber": "4"
+
     },
     "android": {
       "package": "tech.bibip.app",

@@ -102,51 +102,51 @@ const Home: FC<HomeProps> = ({ route, navigation }) => {
             intent="primary"
             disabled={location === undefined}
             onPress={async () => {
-              promiseWithLoader(
-                setIsLoading,
-                startTrip(
-                  "+905379440278",
-                  "4876ccd3-d404-4cfb-a1c9-c7d69fd23a11",
-                  {
-                    latitude: location?.latitude!,
-                    longitude: location?.longitude!,
-                  },
-                  userContext.token!
-                ).then((val) => {
-                  userContext.setIsInTrip(true);
-                })
-              );
-              // if (
-              //   documents.id === "" ||
-              //   documents.license === "" ||
-              //   documents.photo === ""
-              // ) {
-              //   warn(
-              //     "Hay aksi!",
-              //     "Bir şeyler yanlış gitti! Lütfen tekrar dene!",
-              //     () => {},
-              //     "Tamam"
-              //   );
-              //   return;
-              // }
+              // promiseWithLoader(
+              //   setIsLoading,
+              //   startTrip(
+              //     "+905379440278",
+              //     "4876ccd3-d404-4cfb-a1c9-c7d69fd23a11",
+              //     {
+              //       latitude: location?.latitude!,
+              //       longitude: location?.longitude!,
+              //     },
+              //     userContext.token!
+              //   ).then((val) => {
+              //     userContext.setIsInTrip(true);
+              //   })
+              // );
+              if (
+                documents.id === "" ||
+                documents.license === "" ||
+                documents.photo === ""
+              ) {
+                warn(
+                  "Hay aksi!",
+                  "Bir şeyler yanlış gitti! Lütfen tekrar dene!",
+                  () => {},
+                  "Tamam"
+                );
+                return;
+              }
 
-              // if (
-              //   documents.id !== "true" ||
-              //   documents.license !== "true" ||
-              //   documents.photo !== "true"
-              // ) {
-              //   warn(
-              //     "Eksik belgeler!",
-              //     "Eksik veya onaylanmamış belgen var. Eğer hepsini yüklediysen daha sonra tekrar dene!",
-              //     () => {},
-              //     "Tamam"
-              //   );
-              //   return;
-              // }
+              if (
+                documents.id !== "true" ||
+                documents.license !== "true" ||
+                documents.photo !== "true"
+              ) {
+                warn(
+                  "Eksik belgeler!",
+                  "Eksik veya onaylanmamış belgen var. Eğer hepsini yüklediysen daha sonra tekrar dene!",
+                  () => {},
+                  "Tamam"
+                );
+                return;
+              }
 
-              // navigation.navigate("QRModal", {
-              //   location: location!,
-              // });
+              navigation.navigate("QRModal", {
+                location: location!,
+              });
             }}
           >
             <Ionicons name="qr-code-outline" color="white" size={48} />
