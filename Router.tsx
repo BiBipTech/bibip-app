@@ -86,7 +86,6 @@ const TripNavigator = createStackNavigator<TripStackParamList>();
 
 const Router = () => {
   const userContext = useContext(UserContext);
-  const username = userContext.user?.getUsername();
 
   const netInfo = useNetInfo();
 
@@ -194,7 +193,7 @@ const Router = () => {
 
   return (
     <NavigationContainer>
-      {userContext.isLoading ? (
+      {userContext.isLoading || userContext.isInTripLoading ? (
         <Loading />
       ) : userContext.user ? (
         !userContext.isInTrip ? (

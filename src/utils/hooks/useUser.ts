@@ -10,6 +10,7 @@ const useUser = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [token, setToken] = useState("");
   const [isInTrip, setIsInTrip] = useState(false);
+  const [isInTripLoading, setIsInTripLoading] = useState(true);
 
   const signOut = async () => {
     if (user) {
@@ -70,6 +71,7 @@ const useUser = () => {
         token!
       ).then((val) => {
         setIsInTrip(val.data.inTrip);
+        setIsInTripLoading(false);
       });
   }, [token]);
 
@@ -85,6 +87,7 @@ const useUser = () => {
     isInTrip,
     setIsInTrip,
     updateToken,
+    isInTripLoading,
   };
 };
 

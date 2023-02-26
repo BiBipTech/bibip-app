@@ -1,6 +1,6 @@
 import { DrawerScreenProps } from "@react-navigation/drawer";
 import { StackScreenProps } from "@react-navigation/stack";
-import { FunctionComponent, useContext } from "react";
+import { FunctionComponent, useContext, useEffect } from "react";
 import { FlatList, View } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import { useQuery } from "react-query";

@@ -27,13 +27,14 @@ import { AxiosError } from "axios";
 import { Auth, Storage } from "aws-amplify";
 import * as ImageManipulator from "expo-image-manipulator";
 import { SaveFormat } from "expo-image-manipulator";
-import { onEndTrip, uploadPhoto } from "./TripEnd.action";
+import { onEndTrip, photoTypeString, uploadPhoto } from "./TripEnd.action";
 import { TripStackParamList } from "../../../../Router";
 import UserContext from "../../../utils/context/UserContext";
 import { promiseWithLoader } from "../../../utils/aws/api";
 import BiBipIconButton from "../../../components/buttons/BiBipIconButton/BiBipIconButton";
 import { cloneWithNewReference } from "../../../utils/util/array";
 import BiBipButton from "../../../components/buttons/BiBipButton/BiBipButton";
+import useCustomTailwind from "../../../utils/hooks/useCustomTailwind";
 
 type NavigatorProps = StackScreenProps<TripStackParamList, "TripEnd">;
 
@@ -46,7 +47,6 @@ interface TripEndProps extends NavigatorProps {}
 const TripEnd: FunctionComponent<TripEndProps> = ({ navigation, route }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [additionalComment, setAdditionalComment] = useState("");
-  console.log(route.params);
 
   const userContext = useContext(UserContext);
 
@@ -134,7 +134,16 @@ const TripEnd: FunctionComponent<TripEndProps> = ({ navigation, route }) => {
                             }}
                             intent="danger"
                           >
-                            <Ionicons name="trash" size={24} color="white" />
+                            <Ionicons
+                              name="trash"
+                              size={24}
+                              color="white"
+                              style={{
+                                borderWidth: 1,
+                                borderColor: "white",
+                                borderRadius: 5,
+                              }}
+                            />
                           </BiBipIconButton>
                         </View>
                       </View>
@@ -148,7 +157,9 @@ const TripEnd: FunctionComponent<TripEndProps> = ({ navigation, route }) => {
                       }}
                     >
                       <View className="w-32 h-32 mx-2 bg-gray-300 justify-center items-center rounded-lg">
-                        <Text className="text-gray-900">{item.item.type}</Text>
+                        <Text className="text-gray-900">
+                          {photoTypeString(item.item.type)}
+                        </Text>
                       </View>
                     </TouchableOpacity>
                   );

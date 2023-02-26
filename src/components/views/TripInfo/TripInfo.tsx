@@ -19,6 +19,7 @@ const TripInfo: FunctionComponent<TripInfoProps> = ({
   const userContext = useContext(UserContext);
 
   const [duration, setDuration] = useState("");
+  const [price, setPrice] = useState("0.0₺");
 
   const { isLoading, data } = useQuery({
     queryKey: "startTime",
@@ -47,6 +48,7 @@ const TripInfo: FunctionComponent<TripInfoProps> = ({
     });
 
     setDuration(`${formattedMin}:${formattedSec}`);
+    setPrice(`${(min * 2.99).toFixed(2)}₺`);
   };
 
   useEffect(() => {
@@ -62,17 +64,24 @@ const TripInfo: FunctionComponent<TripInfoProps> = ({
         <Ionicons name="car-outline" size={64} />
         <View className="flex flex-col ml-2">
           <Text className="mb-2 font-bold text-lg text-gray-800">
-            Xiaomi One-S Scooter
+            BiBip E-Araba
           </Text>
           <View className="flex flex-row">
-            <Text className=" text-gray-500">#3451A</Text>
-            <Text className="text-gray-900 text-center"> • </Text>
             {isLoading ? (
               <ActivityIndicator color={"#23a65e"} className="ml-1" />
             ) : (
               <Text className="text-bibip-green-600 font-bold">
                 {" "}
                 {duration}
+              </Text>
+            )}
+            <Text className="text-gray-900 text-center"> • </Text>
+            {isLoading ? (
+              <ActivityIndicator color={"#23a65e"} className="ml-1" />
+            ) : (
+              <Text className="text-bibip-green-600 font-regular">
+                {" "}
+                {price}
               </Text>
             )}
           </View>

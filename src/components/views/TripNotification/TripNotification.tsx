@@ -19,10 +19,11 @@ const TripNotification: FunctionComponent<TripNotificationProps> = () => {
       </View>
       <View className="flex-1 flex-col">
         <Text className="mb-1 font-bold text-gray-900 text-lg">
-          Lorem ipsum dolor sit amet
+          Sürüş başladı!
         </Text>
         <Text className="mt-1 text-gray-600">
-          consectetur adipisicing elit.
+          Dilediğin zaman sonlandır butonuna basıp, aracın park halindeki
+          fotoğraflarını yükleyerek sürüşü sonlandırabilirsin!
         </Text>
       </View>
     </View>

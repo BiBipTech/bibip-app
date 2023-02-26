@@ -31,6 +31,7 @@ export default function App() {
           isInTrip: user.isInTrip,
           setIsInTrip: user.setIsInTrip,
           updateToken: user.updateToken,
+          isInTripLoading: user.isInTripLoading,
         }}
       >
         <Router />

@@ -60,12 +60,12 @@ export const listCars = async (
   if (allCars.data) setCars(allCars.data.listCars.items);
 };
 
-export const publishMqtt = async (token: string) => {
+export const unlockCar = async (token: string, topic: string) => {
   return axios({
     method: "post",
     url: "https://yrck9a42ef.execute-api.eu-central-1.amazonaws.com/dev/publish",
     data: {
-      topic: "test",
+      topic: topic,
       message: {
         locked: false,
       },

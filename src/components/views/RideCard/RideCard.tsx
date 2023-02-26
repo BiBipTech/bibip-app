@@ -51,14 +51,12 @@ const RideCard: FunctionComponent<RideCardProps> = ({ trip }) => {
                   {Math.ceil(trip.duration! / 60000)} Dk
                 </Text>
               </View>
-              {/* <View className="flex flex-row mt-2 items-center ml-2">
-              <MaterialCommunityIcons name="map-marker-distance" />
-              <Text className="text-gray-500 font-light"> 6 KM</Text>
-            </View> */}
             </View>
           </View>
           <View className="w-2/6 h-full items-center justify-center flex flex-col">
-            <Text className="text-bibip-green-500">{trip.fee}₺</Text>
+            <Text className="text-bibip-green-500">
+              {trip.fee?.toFixed(2)}₺
+            </Text>
           </View>
         </View>
       </View>

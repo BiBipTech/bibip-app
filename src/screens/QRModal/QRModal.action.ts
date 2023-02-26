@@ -1,13 +1,15 @@
 import { LatLng } from "react-native-maps";
 import { awsPost } from "../../utils/aws/api";
 import { TRIP_API } from "@env";
+import { unlockCar } from "../Home/Home.action";
 
-export const startTrip = (
+export const startTrip = async (
   username: string,
   carId: string,
   location: LatLng,
   token: string
 ) => {
+  await mqttStart(carId, token);
   return awsPost(
     `${TRIP_API}/startTripForUser`,
     {
@@ -20,4 +22,8 @@ export const startTrip = (
     },
     token
   );
+};
+
+export const mqttStart = (carId: string, token: string) => {
+  return unlockCar(token, `bibip/${carId}/locked`);
 };
