@@ -191,6 +191,14 @@ const Router = () => {
     return <Loading />;
   }
 
+  if (!userContext.isLoading && !userContext.user) {
+    return (
+      <NavigationContainer>
+        <RootStack />
+      </NavigationContainer>
+    );
+  }
+
   return (
     <NavigationContainer>
       {userContext.isLoading || userContext.isInTripLoading ? (

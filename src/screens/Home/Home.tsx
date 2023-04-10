@@ -67,8 +67,6 @@ const Home: FC<HomeProps> = ({ route, navigation }) => {
         }
       }),
     enabled: !!userContext.user,
-    retry: false,
-    refetchOnMount: false,
   });
 
   useEffect(() => {
@@ -116,6 +114,7 @@ const Home: FC<HomeProps> = ({ route, navigation }) => {
               //     userContext.setIsInTrip(true);
               //   })
               // );
+
               if (
                 documents.id === "" ||
                 documents.license === "" ||

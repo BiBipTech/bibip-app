@@ -34,7 +34,6 @@ export const promiseWithLoader = async <T>(
 ) => {
   setIsLoading(true);
   const response = await promise.catch((err) => {
-    console.log(err);
     setIsLoading(false);
     return undefined as T;
   });

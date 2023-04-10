@@ -23,7 +23,6 @@ export const addCard = async (
     cardHolder,
     Linking.createURL("/")
   );
-  console.log(saveCardUrl.data.RedirectUrl);
 
   const res = (await WebBrowser.openAuthSessionAsync(
     // We add `?` at the end of the URL since the test backend that is used

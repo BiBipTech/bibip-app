@@ -40,7 +40,6 @@ const PaymentMethods: FunctionComponent<PaymentMethodsProps> = ({
   });
 
   useEffect(() => {
-    console.log("refetch");
     refetch();
   }, []);
 

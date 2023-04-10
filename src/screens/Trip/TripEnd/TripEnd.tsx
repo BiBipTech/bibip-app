@@ -156,8 +156,8 @@ const TripEnd: FunctionComponent<TripEndProps> = ({ navigation, route }) => {
                         onPhotoSelect(item.item.type);
                       }}
                     >
-                      <View className="w-32 h-32 mx-2 bg-gray-300 justify-center items-center rounded-lg">
-                        <Text className="text-gray-900">
+                      <View className="w-32 h-32 mx-2 bg-gray-400 justify-center items-center rounded-lg">
+                        <Text className="text-gray-100">
                           {photoTypeString(item.item.type)}
                         </Text>
                       </View>
@@ -169,7 +169,7 @@ const TripEnd: FunctionComponent<TripEndProps> = ({ navigation, route }) => {
           </View>
           <View className="flex flex-1 w-full p-4 h-32">
             <TextInput
-              className="h-full border rounded-lg border-gray-500 p-4"
+              className="h-full border rounded-lg border-gray-400 p-4"
               numberOfLines={4}
               multiline
               placeholder="Eklemek istediğin ek yorumlar..."
