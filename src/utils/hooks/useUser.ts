@@ -53,9 +53,7 @@ const useUser = () => {
         .catch((err) => {
           setIsLoading(false);
         });
-    } catch (e) {
-      console.log(e);
-    }
+    } catch (e) {}
   }, []);
 
   useEffect(() => {
@@ -66,13 +64,12 @@ const useUser = () => {
 
   useEffect(() => {
     if (token)
-      awsGet(
-        `${TRIP_API}/fetch-trip-status/${user?.getUsername()!}`,
-        token!
-      ).then((val) => {
-        setIsInTrip(val.data.inTrip);
-        setIsInTripLoading(false);
-      });
+      awsGet(`${TRIP_API}/fetch-trip-status/${user?.getUsername()!}`, token!)
+        .then((val) => {
+          setIsInTrip(val.data.inTrip);
+          setIsInTripLoading(false);
+        })
+        .catch((err) => {});
   }, [token]);
 
   return {

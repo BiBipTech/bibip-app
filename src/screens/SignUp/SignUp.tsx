@@ -74,7 +74,6 @@ const SignUp: FunctionComponent<SignUpProps> = ({
       }}
       onSubmit={async (values) => {
         const res = await signUp(values);
-        console.log(res);
 
         if (res) {
           navigation.navigate("OTP", {

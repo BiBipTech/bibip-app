@@ -35,12 +35,13 @@ const Trip: FunctionComponent<TripProps> = memo(({ navigation }) => {
 
   const [status, requestPermission] = Location.useForegroundPermissions();
 
-  const { data } = useQuery({
+  const { data, isLoading: isCarLoading } = useQuery({
     queryKey: "carId",
     queryFn: () =>
       getCarId(userContext.user?.getUsername()!, userContext.token!)
         .then((val) => {
           setCarId(val.data.carId);
+
           return val.data;
         })
         .catch(() => {
@@ -51,20 +52,19 @@ const Trip: FunctionComponent<TripProps> = memo(({ navigation }) => {
     enabled: !!userContext.token,
   });
 
-  useEffect(() => {
-    console.log(carId);
-  }, [carId]);
-
   const onEndTrip = async () => {
-    navigation.navigate("TripEnd", {
-      carId: carId,
-      waypoints: waypoints,
-    });
+    while (isCarLoading) setIsLoading(true);
+
+    setTimeout(() => {
+      setIsLoading(false);
+      navigation.navigate("TripEnd", {
+        carId: carId,
+        waypoints: waypoints,
+      });
+    }, 1000);
   };
 
-  const onPauseTrip = () => {
-    console.log("pause");
-  };
+  const onPauseTrip = () => {};
 
   useEffect(() => {
     if (status) {

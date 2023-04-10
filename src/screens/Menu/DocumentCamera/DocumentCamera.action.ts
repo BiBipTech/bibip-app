@@ -16,9 +16,8 @@ export const uploadPhoto = async (
     compressedPhoto
   );
 
-  console.log(uploadResponse);
   if (uploadResponse.key) {
-    console.log(await updateDocumentStatus(user, photo.type));
+    await updateDocumentStatus(user, photo.type);
   }
   return uploadResponse;
 };

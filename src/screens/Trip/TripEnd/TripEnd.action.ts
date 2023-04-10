@@ -85,8 +85,6 @@ export const onEndTrip = async (
   );
 
   if (res.status === 200) {
-    console.log(res.data);
-
     navigation.navigate("TripSummary", { tripId: res.data.tripId });
   } else {
     userContext.updateToken();
