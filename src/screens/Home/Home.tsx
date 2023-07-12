@@ -1,12 +1,12 @@
-import { View, Platform, DevSettings } from "react-native";
-import React, { FC, useContext, useEffect, useRef, useState } from "react";
+import { Dimensions, Text, View } from "react-native";
+import React, { FC, useContext, useEffect, useState } from "react";
 import BiBipIconButton from "../../components/buttons/BiBipIconButton/BiBipIconButton";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { DrawerScreenProps } from "@react-navigation/drawer";
-import { HomeStackParamList, RootDrawerParamList } from "../../../Router";
+import { BiBipHomeStackParamList } from "../../../Router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Spinner from "react-native-loading-spinner-overlay";
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery } from "react-query";
 import gql from "../../utils/gql/gql";
 import { ListCarsResult } from "./Home.type";
 import * as queries from "../../graphql/queries";
@@ -15,10 +15,16 @@ import { LatLng } from "react-native-maps";
 import UserContext from "../../utils/context/UserContext";
 import { fetchDocumentStatuses } from "../Menu/Profile/Profile.action";
 import { warn } from "../../utils/api/alert";
-import { startTrip } from "../QRModal/QRModal.action";
-import { promiseWithLoader } from "../../utils/aws/api";
+import { Motion } from "@legendapp/motion";
+import { findCarFromLocation } from "./Home.action";
+import AppCarousel from "../../components/inputs/AppCarousel/AppCarousel";
+import Landing from "../Landing/Landing";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+} from "react-native-reanimated";
 
-type NavigatorProps = DrawerScreenProps<HomeStackParamList, "Map">;
+type NavigatorProps = DrawerScreenProps<BiBipHomeStackParamList, "Map">;
 
 interface HomeProps extends NavigatorProps {}
 
@@ -30,10 +36,9 @@ const Home: FC<HomeProps> = ({ route, navigation }) => {
     photo: "",
     license: "",
   });
+  const [value, setValue] = useState(0);
 
   const userContext = useContext(UserContext);
-
-  const queryClient = useQueryClient();
 
   const {
     isLoading: isCarsLoading,
@@ -74,13 +79,40 @@ const Home: FC<HomeProps> = ({ route, navigation }) => {
     else setIsLoading(false);
   }, [isCarsLoading]);
 
+  const modalPosition = useSharedValue(0);
+  const windowHeight = Dimensions.get("window").height;
+
+  const modalLowerBound = windowHeight * 0.96;
+  const modalUpperBound = windowHeight * 0.6;
+
+  const animated = useAnimatedStyle(() => {
+    const value =
+      (modalPosition.value - modalUpperBound) /
+      (modalLowerBound - modalUpperBound);
+
+    return {
+      transform: [
+        {
+          translateX: (1 - value) * 200,
+        },
+      ],
+      zIndex: -1,
+    };
+  }, [modalPosition]);
+
   return (
     <SafeAreaProvider>
       <View className="items-center justify-center h-full w-full flex-1">
         <Spinner visible={isLoading} />
+        <Landing handle={(i) => {}} modalPosition={modalPosition} />
         <CustomMapView
           onLocationSet={(loc) => {
             setLocation(loc);
+          }}
+          onPress={() => setValue(0)}
+          onMarkerPress={({ nativeEvent: { coordinate } }) => {
+            setValue(1);
+            console.log(findCarFromLocation(cars, coordinate as LatLng));
           }}
           markers={cars}
         />
@@ -94,7 +126,8 @@ const Home: FC<HomeProps> = ({ route, navigation }) => {
             <Ionicons name="menu" color="white" size={32} />
           </BiBipIconButton>
         </View>
-        <View className="absolute bottom-10 right-8">
+
+        <Animated.View className="absolute right-8 bottom-24" style={animated}>
           <BiBipIconButton
             buttonSize="large"
             intent="primary"
@@ -114,43 +147,43 @@ const Home: FC<HomeProps> = ({ route, navigation }) => {
               //     userContext.setIsInTrip(true);
               //   })
               // );
-
-              if (
-                documents.id === "" ||
-                documents.license === "" ||
-                documents.photo === ""
-              ) {
-                warn(
-                  "Hay aksi!",
-                  "Bir şeyler yanlış gitti! Lütfen tekrar dene!",
-                  () => {},
-                  "Tamam"
-                );
-                return;
-              }
-
-              if (
-                documents.id !== "true" ||
-                documents.license !== "true" ||
-                documents.photo !== "true"
-              ) {
-                warn(
-                  "Eksik belgeler!",
-                  "Eksik veya onaylanmamış belgen var. Eğer hepsini yüklediysen daha sonra tekrar dene!",
-                  () => {},
-                  "Tamam"
-                );
-                return;
-              }
-
-              navigation.navigate("QRModal", {
-                location: location!,
-              });
+              // if (
+              //   documents.id === "" ||
+              //   documents.license === "" ||
+              //   documents.photo === ""
+              // ) {
+              //   warn(
+              //     "Hay aksi!",
+              //     "Bir şeyler yanlış gitti! Lütfen tekrar dene!",
+              //     () => {},
+              //     "Tamam"
+              //   );
+              //   return;
+              // }
+              // if (
+              //   documents.id !== "true" ||
+              //   documents.license !== "true" ||
+              //   documents.photo !== "true"
+              // ) {
+              //   warn(
+              //     "Eksik belgeler!",
+              //     "Eksik veya onaylanmamış belgen var. Eğer hepsini yüklediysen daha sonra tekrar dene!",
+              //     () => {},
+              //     "Tamam"
+              //   );
+              //   return;
+              // }
+              // navigation.navigate("QRModal", {
+              //   location: location!,
+              // });
+              setValue(1);
+              await new Promise((resolve) => setTimeout(resolve, 1000));
+              setValue(0);
             }}
           >
             <Ionicons name="qr-code-outline" color="white" size={48} />
           </BiBipIconButton>
-        </View>
+        </Animated.View>
       </View>
     </SafeAreaProvider>
   );

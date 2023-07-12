@@ -2,7 +2,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { FunctionComponent, useState } from "react";
 import { Image, View } from "react-native";
 import { LogBox } from "react-native";
-import { TripStackParamList } from "../../../../Router";
+import { BiBipTripStackParamList } from "../../../../Router";
 import BiBipButton from "../../../components/buttons/BiBipButton/BiBipButton";
 import CameraView from "../../../components/inputs/CameraView/CameraView";
 import { cloneWithNewReference } from "../../../utils/util/array";
@@ -11,7 +11,7 @@ LogBox.ignoreLogs([
   "Non-serializable values were found in the navigation state",
 ]);
 
-type NavigatorProps = StackScreenProps<TripStackParamList, "Camera">;
+type NavigatorProps = StackScreenProps<BiBipTripStackParamList, "Camera">;
 
 interface TripCameraProps extends NavigatorProps {}
 

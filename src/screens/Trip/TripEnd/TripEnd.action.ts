@@ -8,7 +8,7 @@ import { endTrip } from "../Trip/Trip.action";
 import { AxiosError } from "axios";
 import { UserContextType } from "../../../utils/context/UserContext";
 import { getTripStatus } from "../../../utils/aws/api";
-import { TripStackParamList } from "../../../../Router";
+import { BiBipTripStackParamList } from "../../../../Router";
 import { StackNavigationProp } from "@react-navigation/stack";
 import * as mutations from "../../../graphql/mutations";
 import * as queries from "../../../graphql/queries";
@@ -48,7 +48,7 @@ export const onEndTrip = async (
   userContext: UserContextType,
   carId: string,
   waypoints: { lat: number; lng: number }[],
-  navigation: StackNavigationProp<TripStackParamList, "TripEnd", undefined>
+  navigation: StackNavigationProp<BiBipTripStackParamList, "TripEnd", undefined>
 ) => {
   let isValid = true;
 

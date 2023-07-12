@@ -7,8 +7,12 @@ import UserContext from "./src/utils/context/UserContext";
 import { QueryClientProvider, QueryClient } from "react-query";
 import FlashMessage from "react-native-flash-message";
 import { StatusBar } from "expo-status-bar";
+import { configureMotion } from "@legendapp/motion";
 
 Amplify.configure(awsconfig);
+configureMotion({
+  timing: "ms",
+});
 
 export default function App() {
   const user = useUser();

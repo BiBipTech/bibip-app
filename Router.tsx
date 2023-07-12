@@ -4,13 +4,7 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import Login from "./src/screens/Login/Login";
 import Home from "./src/screens/Home/Home";
 import OTP from "./src/screens/OTP/OTP";
-import {
-  Dispatch,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { Dispatch, SetStateAction, useContext } from "react";
 import UserContext from "./src/utils/context/UserContext";
 import QRModal from "./src/screens/QRModal/QRModal";
 import Loading from "./src/screens/Loading/Loading";
@@ -30,14 +24,25 @@ import Success from "./src/screens/Menu/Success/Success";
 import Profile from "./src/screens/Menu/Profile/Profile";
 import DocumentCamera from "./src/screens/Menu/DocumentCamera/DocumentCamera";
 import SignUp from "./src/screens/SignUp/SignUp";
+import Landing from "./src/screens/Landing/Landing";
 
-export type RootStackParamList = {
+export type AppRootStackParamList = {
   Login: undefined;
   OTP: { phoneNumber: string; attempt: any };
   SignUp: { phoneNumber: string };
 };
 
-export type TripStackParamList = {
+export type AppStackParamList = {
+  BiBipDrawer: undefined;
+  CargoStack: undefined;
+  Landing: undefined;
+};
+
+export type CargoRootStackParamList = {
+  CargoHome: undefined;
+};
+
+export type BiBipTripStackParamList = {
   Trip: {
     carId: string;
   };
@@ -59,7 +64,7 @@ export type TripStackParamList = {
   };
 };
 
-export type HomeStackParamList = {
+export type BiBipHomeStackParamList = {
   Map: undefined;
   QRModal: {
     location: LatLng;
@@ -79,26 +84,31 @@ export type RootDrawerParamList = {
   MapStack: undefined;
 };
 
-const Stack = createStackNavigator<RootStackParamList>();
-const Drawer = createDrawerNavigator<RootDrawerParamList>();
-const HomeNavigator = createStackNavigator<HomeStackParamList>();
-const TripNavigator = createStackNavigator<TripStackParamList>();
+const AppRootStack = createStackNavigator<AppRootStackParamList>();
+
+const AppStack = createStackNavigator<AppStackParamList>();
+
+const CargoRootStackNavigator = createStackNavigator<CargoRootStackParamList>();
+
+const BiBipRootDrawerNavigator = createDrawerNavigator<RootDrawerParamList>();
+const BiBipHomeStackNavigator = createStackNavigator<BiBipHomeStackParamList>();
+const BiBipTripStackNavigator = createStackNavigator<BiBipTripStackParamList>();
 
 const Router = () => {
   const userContext = useContext(UserContext);
 
   const netInfo = useNetInfo();
 
-  const RootStack = () => {
+  const AppRoot = () => {
     return (
-      <Stack.Navigator
+      <AppRootStack.Navigator
         screenOptions={{
           headerShown: false,
         }}
       >
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="OTP" component={OTP} />
-        <Stack.Screen
+        <AppRootStack.Screen name="Login" component={Login} />
+        <AppRootStack.Screen name="OTP" component={OTP} />
+        <AppRootStack.Screen
           name="SignUp"
           component={SignUp}
           options={{
@@ -107,24 +117,24 @@ const Router = () => {
             headerBackTitle: "Geri",
           }}
         />
-      </Stack.Navigator>
+      </AppRootStack.Navigator>
     );
   };
 
-  const HomeStack = () => {
+  const BiBipHomeStack = () => {
     return (
-      <HomeNavigator.Navigator
+      <BiBipHomeStackNavigator.Navigator
         screenOptions={{
           headerShown: true,
         }}
         initialRouteName="Map"
       >
-        <HomeNavigator.Screen
+        <BiBipHomeStackNavigator.Screen
           options={{ headerShown: false, title: "Harita" }}
           name="Map"
           component={Home}
         />
-        <HomeNavigator.Screen
+        <BiBipHomeStackNavigator.Screen
           name="QRModal"
           options={{
             presentation: "modal",
@@ -133,53 +143,100 @@ const Router = () => {
           }}
           component={QRModal}
         />
-        <HomeNavigator.Screen
+        <BiBipHomeStackNavigator.Screen
           options={{ title: "Profil" }}
           name="Profile"
           component={Profile}
         />
-        <HomeNavigator.Screen
+        <BiBipHomeStackNavigator.Screen
           options={{ headerShown: false, presentation: "modal" }}
           name="DocumentCamera"
           component={DocumentCamera}
         />
 
-        <HomeNavigator.Screen
+        <BiBipHomeStackNavigator.Screen
           options={{ title: "Sürüş Geçmişi" }}
           name="RideHistory"
           component={RideHistory}
         />
-        <HomeNavigator.Screen
+        <BiBipHomeStackNavigator.Screen
           options={{ title: "Ödeme Yöntemleri" }}
           name="PaymentMethods"
           component={PaymentMethods}
         />
-        <HomeNavigator.Screen
+        <BiBipHomeStackNavigator.Screen
           options={{ title: "Yeni Kart Ekle", headerBackTitle: "Geri" }}
           name="AddNewCard"
           component={AddNewCard}
         />
-        <HomeNavigator.Screen
+        <BiBipHomeStackNavigator.Screen
           options={{ headerShown: false }}
           name="Success"
           component={Success}
         />
-      </HomeNavigator.Navigator>
+      </BiBipHomeStackNavigator.Navigator>
     );
   };
 
-  const TripStack = () => {
+  const BiBipTripStack = () => {
     return (
-      <TripNavigator.Navigator
+      <BiBipTripStackNavigator.Navigator
         screenOptions={{
           headerShown: false,
         }}
       >
-        <TripNavigator.Screen name="Trip" component={Trip} />
-        <TripNavigator.Screen name="TripEnd" component={TripEnd} />
-        <TripNavigator.Screen name="Camera" component={TripCamera} />
-        <TripNavigator.Screen name="TripSummary" component={TripSummary} />
-      </TripNavigator.Navigator>
+        <BiBipTripStackNavigator.Screen name="Trip" component={Trip} />
+        <BiBipTripStackNavigator.Screen name="TripEnd" component={TripEnd} />
+        <BiBipTripStackNavigator.Screen name="Camera" component={TripCamera} />
+        <BiBipTripStackNavigator.Screen
+          name="TripSummary"
+          component={TripSummary}
+        />
+      </BiBipTripStackNavigator.Navigator>
+    );
+  };
+
+  const BiBipDrawer = () => {
+    return (
+      <BiBipRootDrawerNavigator.Navigator
+        screenOptions={{
+          headerShown: true,
+        }}
+        initialRouteName="MapStack"
+        backBehavior="initialRoute"
+        drawerContent={(props) => <CustomDrawer {...props} />}
+      >
+        <BiBipRootDrawerNavigator.Screen
+          name="MapStack"
+          component={BiBipHomeStack}
+          options={{
+            headerShown: false,
+            title: "Harita",
+          }}
+        />
+      </BiBipRootDrawerNavigator.Navigator>
+    );
+  };
+
+  const CargoStack = () => {
+    return (
+      <CargoRootStackNavigator.Navigator>
+        <CargoRootStackNavigator.Screen name="CargoHome" component={Loading} />
+      </CargoRootStackNavigator.Navigator>
+    );
+  };
+
+  const App = () => {
+    return (
+      <AppStack.Navigator
+        initialRouteName="BiBipDrawer"
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <AppStack.Screen name="BiBipDrawer" component={BiBipDrawer} />
+        <AppStack.Screen name="CargoStack" component={CargoStack} />
+      </AppStack.Navigator>
     );
   };
 
@@ -194,7 +251,7 @@ const Router = () => {
   if (!userContext.isLoading && !userContext.user) {
     return (
       <NavigationContainer>
-        <RootStack />
+        <AppRoot />
       </NavigationContainer>
     );
   }
@@ -205,28 +262,12 @@ const Router = () => {
         <Loading />
       ) : userContext.user ? (
         !userContext.isInTrip ? (
-          <Drawer.Navigator
-            screenOptions={{
-              headerShown: true,
-            }}
-            initialRouteName="MapStack"
-            backBehavior="initialRoute"
-            drawerContent={(props) => <CustomDrawer {...props} />}
-          >
-            <Drawer.Screen
-              name="MapStack"
-              component={HomeStack}
-              options={{
-                headerShown: false,
-                title: "Harita",
-              }}
-            />
-          </Drawer.Navigator>
+          <App />
         ) : (
-          <TripStack />
+          <BiBipTripStack />
         )
       ) : (
-        <RootStack />
+        <AppRoot />
       )}
     </NavigationContainer>
   );

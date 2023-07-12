@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="katman_2" data-name="katman 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  viewBox="0 0 460 150.31">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-2 {
+        font-family: Poppins-ExtraBold, Poppins;
+        font-size: 48px;
+        font-weight: 700;
+      }
+
+      .cls-2,
+      .cls-3 {
+        fill: #fff;
+      }
+
+      .cls-4 {
+        clip-path: url(#clippath);
+      }
+
+      .cls-5 {
+        fill: #00b6d4;
+      }
+
+      .cls-3 {
+        font-family: Poppins-Regular, Poppins;
+        font-size: 17px;
+      }
+    </style>
+    <clipPath id="clippath">
+      <rect class="cls-1" width="460" height="150" rx="35.37" ry="35.37" />
+    </clipPath>
+  </defs>
+  <g id="katman_1" data-name="katman 1">
+    <g>
+      <g class="cls-4">
+        <rect class="cls-5" x="0" y="0" width="460" height="150" rx="35.37" ry="35.37" />
+        <image width="800" height="501" transform="translate(199.57 -21.15) scale(.44)" xlink:href="./xev.png" />
+      </g>
+      <text class="cls-2" transform="translate(17.22 72.08)">
+        <tspan x="0" y="0">Ana Sayfa</tspan>
+      </text>
+      <text class="cls-3" transform="translate(20.69 105.29)">
+        <tspan x="0" y="0">Aracını hemen kirala</tspan>
+      </text>
+    </g>
+  </g>
+</svg>

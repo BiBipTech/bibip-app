@@ -27,3 +27,6 @@ jobs:
 
       - name: 🚀 Build app
         run: eas build -p ios --non-interactive
+
+      - name: 🚀 Submit app
+        run: eas submit -p ios --latest
