@@ -23,6 +23,13 @@
       "config": {
         "googleMapsApiKey": "AIzaSyCyGqcr0T81VBZTHZTg_avetsazCCGDnRU"
       },
+      "infoPlist": {
+        "UIBackgroundModes": ["location", "fetch"],
+        "NSLocationWhenInUseUsageDescription": "Size daha kaliteli hizmet sunabilmemiz için konumunuza erişmeye ihtiyacımız var!",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Size daha kaliteli hizmet sunabilmemiz için konumunuza erişmeye ihtiyacımız var!",
+        "NSLocationAlwaysUsageDescription": "Size daha kaliteli hizmet sunabilmemiz için konumunuza erişmeye ihtiyacımız var!",
+        "ITSAppUsesNonExemptEncryption": false
+      },
       "buildNumber": "5"
     },
     "android": {
