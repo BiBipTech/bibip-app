@@ -28,7 +28,7 @@ import { Auth, Storage } from "aws-amplify";
 import * as ImageManipulator from "expo-image-manipulator";
 import { SaveFormat } from "expo-image-manipulator";
 import { onEndTrip, photoTypeString, uploadPhoto } from "./TripEnd.action";
-import { TripStackParamList } from "../../../../Router";
+import { BiBipTripStackParamList } from "../../../../Router";
 import UserContext from "../../../utils/context/UserContext";
 import { promiseWithLoader } from "../../../utils/aws/api";
 import BiBipIconButton from "../../../components/buttons/BiBipIconButton/BiBipIconButton";
@@ -36,7 +36,7 @@ import { cloneWithNewReference } from "../../../utils/util/array";
 import BiBipButton from "../../../components/buttons/BiBipButton/BiBipButton";
 import useCustomTailwind from "../../../utils/hooks/useCustomTailwind";
 
-type NavigatorProps = StackScreenProps<TripStackParamList, "TripEnd">;
+type NavigatorProps = StackScreenProps<BiBipTripStackParamList, "TripEnd">;
 
 type Sides = {
   [K in PhotoType]: string;

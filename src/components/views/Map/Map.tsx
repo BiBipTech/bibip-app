@@ -1,7 +1,7 @@
 import { useForegroundPermissions } from "expo-location";
 import { FunctionComponent, useEffect, useRef, useState } from "react";
 import { Platform, View } from "react-native";
-import MapView, { LatLng, Marker } from "react-native-maps";
+import MapView, { LatLng, MapViewProps, Marker } from "react-native-maps";
 import { Car } from "../../../models";
 import useCustomTailwind from "../../../utils/hooks/useCustomTailwind";
 import BiBipIconButton from "../../buttons/BiBipIconButton/BiBipIconButton";
@@ -11,17 +11,19 @@ import {
   onMarkerSelect,
 } from "./Map.action";
 import Ionicons from "@expo/vector-icons/Ionicons";
-
-interface MapProps {
+import MarkerIcon from "../../../../assets/marker-icon.svg";
+interface MapProps extends MapViewProps {
   markers?: Car[];
   onLocationSet?: (location: LatLng) => void;
   locationInterval?: number;
+  onMarker?: (car: Car) => void;
 }
 
 const CustomMapView: FunctionComponent<MapProps> = ({
   markers,
   onLocationSet,
-  locationInterval,
+  onMarker,
+  ...props
 }) => {
   const mapRef = useRef<MapView>(null);
 
@@ -50,17 +52,22 @@ const CustomMapView: FunctionComponent<MapProps> = ({
   }, [userLocation]);
 
   return (
-    <View className="absolute items-center justify-center h-full w-full flex-1">
+    <View
+      className="absolute items-center justify-center h-full w-full flex-1"
+      style={{
+        zIndex: -1,
+      }}
+    >
       <MapView
         provider="google"
-        style={useCustomTailwind("w-full h-full")}
+        style={useCustomTailwind("w-full h-full z-3")}
         onUserLocationChange={(e) => getCurrentLocation(e, setUserLocation)}
-        onMarkerPress={(e) => onMarkerSelect(e, mapRef)}
         userLocationAnnotationTitle="Hello"
         userLocationUpdateInterval={Platform.OS === "ios" ? undefined : 1000000}
         ref={mapRef}
         showsMyLocationButton={false}
         showsUserLocation
+        {...props}
       >
         {markers &&
           markers.map((car) => (
@@ -69,8 +76,13 @@ const CustomMapView: FunctionComponent<MapProps> = ({
                 latitude: car.location!.lat,
                 longitude: car.location!.lng,
               }}
+              onPress={onMarker ? () => onMarker(car) : undefined}
               key={car.id}
-            />
+            >
+              <View className="shadow-md">
+                <MarkerIcon height={75} width={75} />
+              </View>
+            </Marker>
           ))}
       </MapView>
       <View className="absolute bottom-12 left-12">

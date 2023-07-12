@@ -12,12 +12,12 @@ import UserPhoneInput from "../../components/inputs/UserPhoneInput/UserPhoneInpu
 import styles from "./Login.style";
 import BiBipButton from "../../components/buttons/BiBipButton/BiBipButton";
 import { StackScreenProps } from "@react-navigation/stack";
-import { RootStackParamList } from "../../../Router";
+import { AppRootStackParamList } from "../../../Router";
 import UserContext from "../../utils/context/UserContext";
 import useUser from "../../utils/hooks/useUser";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 
-type NavigatorProps = StackScreenProps<RootStackParamList, "Login">;
+type NavigatorProps = StackScreenProps<AppRootStackParamList, "Login">;
 
 interface LoginProps extends NavigatorProps {}
 

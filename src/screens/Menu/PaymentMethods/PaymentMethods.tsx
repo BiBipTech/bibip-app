@@ -3,13 +3,16 @@ import { FunctionComponent, useContext, useEffect } from "react";
 import { FlatList, Text, View } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import { useQuery } from "react-query";
-import { HomeStackParamList } from "../../../../Router";
+import { BiBipHomeStackParamList } from "../../../../Router";
 import BiBipButton from "../../../components/buttons/BiBipButton/BiBipButton";
 import WalletCard from "../../../components/views/WalletCard/WalletCard";
 import { getDefaultCard, listCards } from "../../../utils/api/pbm";
 import UserContext from "../../../utils/context/UserContext";
 
-type NavigatorProps = StackScreenProps<HomeStackParamList, "PaymentMethods">;
+type NavigatorProps = StackScreenProps<
+  BiBipHomeStackParamList,
+  "PaymentMethods"
+>;
 
 interface PaymentMethodsProps extends NavigatorProps {}
 

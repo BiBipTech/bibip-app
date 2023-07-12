@@ -8,7 +8,7 @@ import {
 } from "react";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { TripStackParamList } from "../../../../Router";
+import { BiBipTripStackParamList } from "../../../../Router";
 import CustomMapView from "../../../components/views/Map/Map";
 import TripInfo from "../../../components/views/TripInfo/TripInfo";
 import TripNotification from "../../../components/views/TripNotification/TripNotification";
@@ -18,7 +18,7 @@ import { getCarId } from "./Trip.action";
 import UserContext from "../../../utils/context/UserContext";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 
-type NavigatorProps = StackScreenProps<TripStackParamList, "Trip">;
+type NavigatorProps = StackScreenProps<BiBipTripStackParamList, "Trip">;
 
 interface TripProps extends NavigatorProps {}
 

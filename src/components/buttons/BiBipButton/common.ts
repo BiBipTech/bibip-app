@@ -1,7 +1,7 @@
 import { cva } from "class-variance-authority";
 
 export const buttonStyles = cva(
-  "px-6 py-3 h-min mt-2 items-center justify-center rounded-md flex-row border-bibip-green-500 border",
+  "px-6 py-3 h-min mt-1 items-center justify-center rounded-md flex-row border-bibip-green-500 border",
   {
     variants: {
       intent: {

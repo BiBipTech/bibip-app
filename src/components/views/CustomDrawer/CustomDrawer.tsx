@@ -3,8 +3,8 @@ import {
   DrawerContentScrollView,
   DrawerItem,
 } from "@react-navigation/drawer";
-import { FunctionComponent, useContext, useEffect, useState } from "react";
-import { ActivityIndicator, ImageBackground, Text, View } from "react-native";
+import { FunctionComponent, useContext, useState } from "react";
+import { ActivityIndicator, Text, View } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import useCustomTailwind from "../../../utils/hooks/useCustomTailwind";
 import UserContext from "../../../utils/context/UserContext";
@@ -18,15 +18,12 @@ import {
   AntDesign,
   Ionicons,
 } from "@expo/vector-icons";
-import { promiseWithLoader } from "../../../utils/aws/api";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 
 interface CustomDrawerProps extends DrawerContentComponentProps {}
 
 const CustomDrawer: FunctionComponent<CustomDrawerProps> = ({ ...props }) => {
   const userContext = useContext(UserContext);
-
-  const [isLoading, setIsLoading] = useState(false);
 
   const [name, setName] = useState("");
   const [balance, setBalance] = useState(0);
@@ -57,11 +54,8 @@ const CustomDrawer: FunctionComponent<CustomDrawerProps> = ({ ...props }) => {
 
   return (
     <View className="flex h-full w-full">
-      <Spinner visible={false} />
-      <DrawerContentScrollView
-        contentContainerStyle={useCustomTailwind("bg-bibip-green-500")}
-      >
-        <View className="p-6 justify-start items-start">
+      <View className="bg-bibip-green-500 pt-10 rounded-b-2xl">
+        <View className="p-6 justify-start items-start rounded-md">
           {!nameLoading ? (
             <Text className="text-xl text-white">
               Merhaba, {name.split(" ")[0]}
@@ -86,7 +80,11 @@ const CustomDrawer: FunctionComponent<CustomDrawerProps> = ({ ...props }) => {
             </View>
           </View>
         </View>
-        <View className="flex flex-1 bg-white pt-2">
+      </View>
+      <DrawerContentScrollView
+        contentContainerStyle={useCustomTailwind("-mt-10")}
+      >
+        <View className="flex flex-1 bg-white">
           <DrawerItem
             label={"Profil"}
             onPress={() => {

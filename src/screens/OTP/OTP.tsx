@@ -15,13 +15,13 @@ import BiBipButton from "../../components/buttons/BiBipButton/BiBipButton";
 import OTPInputView from "../../components/inputs/OTPInputView";
 import { useTailwind } from "nativewind";
 import { StackScreenProps } from "@react-navigation/stack";
-import { RootStackParamList } from "../../../Router";
+import { AppRootStackParamList } from "../../../Router";
 import useUser from "../../utils/hooks/useUser";
 import UserContext from "../../utils/context/UserContext";
 import { Auth } from "aws-amplify";
 import { warn } from "../../utils/api/alert";
 
-type NavigatorProps = StackScreenProps<RootStackParamList, "OTP">;
+type NavigatorProps = StackScreenProps<AppRootStackParamList, "OTP">;
 
 interface OTPProps extends NavigatorProps {}
 

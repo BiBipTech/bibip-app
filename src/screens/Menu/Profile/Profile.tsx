@@ -15,7 +15,7 @@ import {
   View,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
-import { HomeStackParamList } from "../../../../Router";
+import { BiBipHomeStackParamList } from "../../../../Router";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment from "moment";
 import { useQuery } from "react-query";
@@ -31,7 +31,7 @@ import BiBipButton from "../../../components/buttons/BiBipButton/BiBipButton";
 import { promiseWithLoader } from "../../../utils/aws/api";
 import { showMessage, hideMessage } from "react-native-flash-message";
 
-type NavigatorProps = StackScreenProps<HomeStackParamList, "Profile">;
+type NavigatorProps = StackScreenProps<BiBipHomeStackParamList, "Profile">;
 
 interface ProfileProps extends NavigatorProps {}
 
@@ -97,7 +97,7 @@ const Profile: FunctionComponent<ProfileProps> = ({ navigation }) => {
 
     const show = Keyboard.addListener("keyboardWillShow", (e) => {
       Animated.timing(keyboardAnimation, {
-        toValue: e.endCoordinates.height,
+        toValue: e.endCoordinates.height - 40,
         duration: 215,
         useNativeDriver: false,
       }).start();

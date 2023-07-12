@@ -6,6 +6,9 @@ module.exports = {
       width: {
         "9/20": "45%",
       },
+      transition: {
+        height: "height",
+      },
       colors: {
         "bibip-green": {
           50: "#eefbf2",

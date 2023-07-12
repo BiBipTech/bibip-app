@@ -3,14 +3,17 @@ import { Camera, CameraType } from "expo-camera";
 import { FunctionComponent, useContext, useRef, useState } from "react";
 import { Image, View } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay/lib";
-import { HomeStackParamList } from "../../../../Router";
+import { BiBipHomeStackParamList } from "../../../../Router";
 import BiBipButton from "../../../components/buttons/BiBipButton/BiBipButton";
 import CameraView from "../../../components/inputs/CameraView/CameraView";
 import { promiseWithLoader } from "../../../utils/aws/api";
 import UserContext from "../../../utils/context/UserContext";
 import { uploadPhoto } from "./DocumentCamera.action";
 
-type NavigatorProps = StackScreenProps<HomeStackParamList, "DocumentCamera">;
+type NavigatorProps = StackScreenProps<
+  BiBipHomeStackParamList,
+  "DocumentCamera"
+>;
 
 interface DocumentCameraProps extends NavigatorProps {}
 

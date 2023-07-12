@@ -75,3 +75,15 @@ export const unlockCar = async (token: string, topic: string) => {
     },
   });
 };
+
+export const findCarFromLocation = (
+  cars: Car[] | undefined,
+  location: LatLng
+) => {
+  return cars?.find((car) => {
+    return (
+      car.location?.lat === location.latitude &&
+      car.location?.lng === location.longitude
+    );
+  });
+};

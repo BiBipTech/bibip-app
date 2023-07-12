@@ -4,7 +4,7 @@ import { Text, View } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "react-query";
-import { TripStackParamList } from "../../../../Router";
+import { BiBipTripStackParamList } from "../../../../Router";
 import BiBipButton from "../../../components/buttons/BiBipButton/BiBipButton";
 import LabelValue from "../../../components/views/LabelValue/LabelValue";
 import { exitTripStack, getTrip, updateRating } from "./TripSummary.action";
@@ -13,7 +13,7 @@ import Rating from "../../../components/inputs/Rating/Rating";
 import UserContext from "../../../utils/context/UserContext";
 import { getTripStatus, promiseWithLoader } from "../../../utils/aws/api";
 
-type NavigationProps = StackScreenProps<TripStackParamList, "TripSummary">;
+type NavigationProps = StackScreenProps<BiBipTripStackParamList, "TripSummary">;
 
 interface TripSummaryProps extends NavigationProps {}
 
