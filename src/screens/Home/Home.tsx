@@ -3,7 +3,10 @@ import React, { FC, useContext, useEffect, useState } from "react";
 import BiBipIconButton from "../../components/buttons/BiBipIconButton/BiBipIconButton";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { DrawerScreenProps } from "@react-navigation/drawer";
-import { BiBipHomeStackParamList } from "../../../Router";
+import {
+  AppDrawerBiBipHomeStackCompositeProps,
+  BiBipHomeStackParamList,
+} from "../../../Router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Spinner from "react-native-loading-spinner-overlay";
 import { useQuery } from "react-query";
@@ -15,20 +18,17 @@ import { LatLng } from "react-native-maps";
 import UserContext from "../../utils/context/UserContext";
 import { fetchDocumentStatuses } from "../Menu/Profile/Profile.action";
 import { warn } from "../../utils/api/alert";
-import { Motion } from "@legendapp/motion";
 import { findCarFromLocation } from "./Home.action";
-import AppCarousel from "../../components/inputs/AppCarousel/AppCarousel";
 import Landing from "../Landing/Landing";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
 
-type NavigatorProps = DrawerScreenProps<BiBipHomeStackParamList, "Map">;
-
-interface HomeProps extends NavigatorProps {}
-
-const Home: FC<HomeProps> = ({ route, navigation }) => {
+const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
+  route,
+  navigation,
+}) => {
   const [location, setLocation] = useState<LatLng>();
   const [isLoading, setIsLoading] = useState(true);
   const [documents, setDocuments] = useState({
@@ -104,7 +104,11 @@ const Home: FC<HomeProps> = ({ route, navigation }) => {
     <SafeAreaProvider>
       <View className="items-center justify-center h-full w-full flex-1">
         <Spinner visible={isLoading} />
-        <Landing handle={(i) => {}} modalPosition={modalPosition} />
+        <Landing
+          handle={(i) => {}}
+          navigate={navigation.navigate}
+          modalPosition={modalPosition}
+        />
         <CustomMapView
           onLocationSet={(loc) => {
             setLocation(loc);

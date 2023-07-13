@@ -3,7 +3,10 @@ import { FunctionComponent, useContext, useEffect } from "react";
 import { FlatList, Text, View } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import { useQuery } from "react-query";
-import { BiBipHomeStackParamList } from "../../../../Router";
+import {
+  AppSignedInDrawerParamList,
+  BiBipHomeStackParamList,
+} from "../../../../Router";
 import BiBipButton from "../../../components/buttons/BiBipButton/BiBipButton";
 import WalletCard from "../../../components/views/WalletCard/WalletCard";
 import { getDefaultCard, listCards } from "../../../utils/api/pbm";

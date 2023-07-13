@@ -1,10 +1,19 @@
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-import { createDrawerNavigator } from "@react-navigation/drawer";
+import {
+  CompositeScreenProps,
+  NavigationContainer,
+} from "@react-navigation/native";
+import {
+  StackScreenProps,
+  createStackNavigator,
+} from "@react-navigation/stack";
+import {
+  DrawerScreenProps,
+  createDrawerNavigator,
+} from "@react-navigation/drawer";
 import Login from "./src/screens/Login/Login";
 import Home from "./src/screens/Home/Home";
 import OTP from "./src/screens/OTP/OTP";
-import { Dispatch, SetStateAction, useContext } from "react";
+import React, { Dispatch, SetStateAction, useContext } from "react";
 import UserContext from "./src/utils/context/UserContext";
 import QRModal from "./src/screens/QRModal/QRModal";
 import Loading from "./src/screens/Loading/Loading";
@@ -25,21 +34,46 @@ import Profile from "./src/screens/Menu/Profile/Profile";
 import DocumentCamera from "./src/screens/Menu/DocumentCamera/DocumentCamera";
 import SignUp from "./src/screens/SignUp/SignUp";
 import Landing from "./src/screens/Landing/Landing";
+import CargoHome from "./src/screens/Cargo/Home/CargoHome";
+import CustomCargoDrawer from "./src/components/views/CargoDrawer/CargoDrawer";
+import { Text, TouchableOpacity, View } from "react-native";
+import useCustomTailwind from "./src/utils/hooks/useCustomTailwind";
 
-export type AppRootStackParamList = {
+export type AppSignedOutStackParamList = {
   Login: undefined;
   OTP: { phoneNumber: string; attempt: any };
   SignUp: { phoneNumber: string };
 };
 
-export type AppStackParamList = {
-  BiBipDrawer: undefined;
+export type AppSignedInDrawerStackParamList = {};
+
+export type AppSignedInDrawerParamList = {
+  BiBipStack: undefined;
   CargoStack: undefined;
-  Landing: undefined;
 };
 
-export type CargoRootStackParamList = {
-  CargoHome: undefined;
+export type BiBipRootDrawerParamList = {
+  BiBipHomeStack: undefined;
+};
+
+export type CargoRootDrawerParamList = {
+  CargoHomeStack: undefined;
+};
+
+export type BiBipHomeStackParamList = {
+  BiBipHome: undefined;
+  QRModal: {
+    location: LatLng;
+  };
+  Profile: undefined;
+  DocumentCamera: {
+    document: "id" | "license" | "photo";
+  };
+  RideHistory: undefined;
+  PaymentMethods: undefined;
+  AddNewCard: undefined;
+  Success: undefined;
+  Error: undefined;
 };
 
 export type BiBipTripStackParamList = {
@@ -64,51 +98,54 @@ export type BiBipTripStackParamList = {
   };
 };
 
-export type BiBipHomeStackParamList = {
-  Map: undefined;
-  QRModal: {
-    location: LatLng;
-  };
-  Profile: undefined;
-  DocumentCamera: {
-    document: "id" | "license" | "photo";
-  };
-  RideHistory: undefined;
-  PaymentMethods: undefined;
-  AddNewCard: undefined;
-  Success: undefined;
-  Error: undefined;
+export type CargoHomeStackParamList = {
+  CargoHome: undefined;
 };
 
-export type RootDrawerParamList = {
-  MapStack: undefined;
-};
+const AppSignedOutStack = createStackNavigator<AppSignedOutStackParamList>();
+const AppSignedInDrawerStack =
+  createStackNavigator<AppSignedInDrawerStackParamList>();
+const AppSignedInDrawer = createDrawerNavigator<AppSignedInDrawerParamList>();
 
-const AppRootStack = createStackNavigator<AppRootStackParamList>();
+const BiBipRootDrawerNavigator =
+  createDrawerNavigator<BiBipRootDrawerParamList>();
+const CargoRootDrawerNavigator =
+  createDrawerNavigator<CargoRootDrawerParamList>();
 
-const AppStack = createStackNavigator<AppStackParamList>();
-
-const CargoRootStackNavigator = createStackNavigator<CargoRootStackParamList>();
-
-const BiBipRootDrawerNavigator = createDrawerNavigator<RootDrawerParamList>();
 const BiBipHomeStackNavigator = createStackNavigator<BiBipHomeStackParamList>();
 const BiBipTripStackNavigator = createStackNavigator<BiBipTripStackParamList>();
+
+const CargoHomeStackNavigator = createStackNavigator<CargoHomeStackParamList>();
+
+export type AppDrawerBiBipHomeStackCompositeProps<
+  T extends keyof BiBipHomeStackParamList
+> = CompositeScreenProps<
+  StackScreenProps<BiBipHomeStackParamList, T>,
+  DrawerScreenProps<AppSignedInDrawerParamList>
+>;
+
+export type AppDrawerCargoHomeStackCompositeProps<
+  T extends keyof CargoHomeStackParamList
+> = CompositeScreenProps<
+  StackScreenProps<CargoHomeStackParamList, T>,
+  DrawerScreenProps<AppSignedInDrawerParamList>
+>;
 
 const Router = () => {
   const userContext = useContext(UserContext);
 
   const netInfo = useNetInfo();
 
-  const AppRoot = () => {
+  const AppSignedOut = () => {
     return (
-      <AppRootStack.Navigator
+      <AppSignedOutStack.Navigator
         screenOptions={{
           headerShown: false,
         }}
       >
-        <AppRootStack.Screen name="Login" component={Login} />
-        <AppRootStack.Screen name="OTP" component={OTP} />
-        <AppRootStack.Screen
+        <AppSignedOutStack.Screen name="Login" component={Login} />
+        <AppSignedOutStack.Screen name="OTP" component={OTP} />
+        <AppSignedOutStack.Screen
           name="SignUp"
           component={SignUp}
           options={{
@@ -117,7 +154,7 @@ const Router = () => {
             headerBackTitle: "Geri",
           }}
         />
-      </AppRootStack.Navigator>
+      </AppSignedOutStack.Navigator>
     );
   };
 
@@ -127,11 +164,11 @@ const Router = () => {
         screenOptions={{
           headerShown: true,
         }}
-        initialRouteName="Map"
+        initialRouteName="BiBipHome"
       >
         <BiBipHomeStackNavigator.Screen
           options={{ headerShown: false, title: "Harita" }}
-          name="Map"
+          name="BiBipHome"
           component={Home}
         />
         <BiBipHomeStackNavigator.Screen
@@ -143,13 +180,16 @@ const Router = () => {
           }}
           component={QRModal}
         />
+
         <BiBipHomeStackNavigator.Screen
-          options={{ title: "Profil" }}
+          options={{
+            title: "Profil",
+          }}
           name="Profile"
           component={Profile}
         />
         <BiBipHomeStackNavigator.Screen
-          options={{ headerShown: false, presentation: "modal" }}
+          options={{ headerShown: false }}
           name="DocumentCamera"
           component={DocumentCamera}
         />
@@ -165,7 +205,7 @@ const Router = () => {
           component={PaymentMethods}
         />
         <BiBipHomeStackNavigator.Screen
-          options={{ title: "Yeni Kart Ekle", headerBackTitle: "Geri" }}
+          options={{ title: "Yeni Kart Ekle" }}
           name="AddNewCard"
           component={AddNewCard}
         />
@@ -202,12 +242,12 @@ const Router = () => {
         screenOptions={{
           headerShown: true,
         }}
-        initialRouteName="MapStack"
+        initialRouteName="BiBipHomeStack"
         backBehavior="initialRoute"
         drawerContent={(props) => <CustomDrawer {...props} />}
       >
         <BiBipRootDrawerNavigator.Screen
-          name="MapStack"
+          name="BiBipHomeStack"
           component={BiBipHomeStack}
           options={{
             headerShown: false,
@@ -218,25 +258,67 @@ const Router = () => {
     );
   };
 
-  const CargoStack = () => {
+  const CargoHomeStack = () => {
     return (
-      <CargoRootStackNavigator.Navigator>
-        <CargoRootStackNavigator.Screen name="CargoHome" component={Loading} />
-      </CargoRootStackNavigator.Navigator>
+      <CargoHomeStackNavigator.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <CargoHomeStackNavigator.Screen
+          name="CargoHome"
+          component={CargoHome}
+        />
+      </CargoHomeStackNavigator.Navigator>
+    );
+  };
+
+  const CargoDrawer = () => {
+    return (
+      <CargoRootDrawerNavigator.Navigator
+        screenOptions={{
+          headerShown: true,
+        }}
+        initialRouteName="CargoHomeStack"
+        backBehavior="initialRoute"
+        drawerContent={(props) => <CustomCargoDrawer {...props} />}
+      >
+        <CargoRootDrawerNavigator.Screen
+          name="CargoHomeStack"
+          component={CargoHomeStack}
+          options={{
+            headerShown: false,
+            title: "Harita",
+          }}
+        />
+      </CargoRootDrawerNavigator.Navigator>
     );
   };
 
   const App = () => {
     return (
-      <AppStack.Navigator
-        initialRouteName="BiBipDrawer"
+      <AppSignedInDrawer.Navigator
+        initialRouteName="BiBipStack"
         screenOptions={{
-          headerShown: false,
+          headerShown: true,
         }}
+        drawerContent={(props) => <CustomDrawer {...props} />}
       >
-        <AppStack.Screen name="BiBipDrawer" component={BiBipDrawer} />
-        <AppStack.Screen name="CargoStack" component={CargoStack} />
-      </AppStack.Navigator>
+        <AppSignedInDrawer.Screen
+          name="BiBipStack"
+          options={{
+            headerShown: false,
+          }}
+          component={BiBipHomeStack}
+        />
+        <AppSignedInDrawer.Screen
+          name="CargoStack"
+          options={{
+            headerShown: false,
+          }}
+          component={CargoHomeStack}
+        />
+      </AppSignedInDrawer.Navigator>
     );
   };
 
@@ -251,7 +333,7 @@ const Router = () => {
   if (!userContext.isLoading && !userContext.user) {
     return (
       <NavigationContainer>
-        <AppRoot />
+        <AppSignedOut />
       </NavigationContainer>
     );
   }
@@ -267,7 +349,7 @@ const Router = () => {
           <BiBipTripStack />
         )
       ) : (
-        <AppRoot />
+        <AppSignedOut />
       )}
     </NavigationContainer>
   );

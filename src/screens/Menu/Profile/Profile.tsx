@@ -15,7 +15,10 @@ import {
   View,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
-import { BiBipHomeStackParamList } from "../../../../Router";
+import {
+  AppSignedInDrawerParamList,
+  BiBipHomeStackParamList,
+} from "../../../../Router";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment from "moment";
 import { useQuery } from "react-query";

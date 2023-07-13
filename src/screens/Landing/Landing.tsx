@@ -8,15 +8,21 @@ import Handle from "../../components/views/AnimatedIndicator/AnimatedIndicator";
 import HomeButton from "../../../assets/home-logo.svg";
 import CargoButton from "../../../assets/kargo_logo.svg";
 import MarketButton from "../../../assets/market_logo.svg";
+import { CompositeNavigationProp } from "@react-navigation/native";
+import { DrawerNavigationProp } from "@react-navigation/drawer";
+import { BiBipHomeStackParamList } from "../../../Router";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 interface LandingProps {
   handle: (index: number) => void;
   modalPosition: Animated.SharedValue<number>;
+  navigate: (screen: string) => void;
 }
 
 const Landing: FunctionComponent<LandingProps> = ({
   handle,
   modalPosition,
+  navigate,
 }) => {
   const bottomSheetRef = useRef<BottomSheet>(null);
 
@@ -68,6 +74,7 @@ const Landing: FunctionComponent<LandingProps> = ({
           <TouchableOpacity
             onPress={() => {
               bottomSheetRef.current?.collapse();
+              navigate("BiBipStack");
             }}
           >
             <HomeButton width={"auto"} height={150} />
@@ -83,11 +90,14 @@ const Landing: FunctionComponent<LandingProps> = ({
             />
           </View>
           <View className="shadow-md shadow-black/30">
-            <CargoButton
-              opacity={0.3}
-              width={(width - 32) / 2 - 2}
-              height={109.57}
-            />
+            <TouchableOpacity
+              onPress={() => {
+                bottomSheetRef.current?.collapse();
+                navigate("CargoStack");
+              }}
+            >
+              <CargoButton width={(width - 32) / 2 - 2} height={109.57} />
+            </TouchableOpacity>
           </View>
         </View>
       </View>

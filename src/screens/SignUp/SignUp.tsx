@@ -10,7 +10,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { AppRootStackParamList } from "../../../Router";
+import { AppSignedOutStackParamList } from "../../../Router";
 import BiBipButton from "../../components/buttons/BiBipButton/BiBipButton";
 import { Formik } from "formik";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -19,7 +19,7 @@ import moment from "moment";
 import { StatusBar } from "expo-status-bar";
 import { signUp } from "./SignUp.action";
 
-type NavigatorProps = StackScreenProps<AppRootStackParamList, "SignUp">;
+type NavigatorProps = StackScreenProps<AppSignedOutStackParamList, "SignUp">;
 
 interface SignUpProps extends NavigatorProps {}
 

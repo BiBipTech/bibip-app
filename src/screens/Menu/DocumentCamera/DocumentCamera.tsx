@@ -3,7 +3,10 @@ import { Camera, CameraType } from "expo-camera";
 import { FunctionComponent, useContext, useRef, useState } from "react";
 import { Image, View } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay/lib";
-import { BiBipHomeStackParamList } from "../../../../Router";
+import {
+  AppSignedInDrawerParamList,
+  BiBipHomeStackParamList,
+} from "../../../../Router";
 import BiBipButton from "../../../components/buttons/BiBipButton/BiBipButton";
 import CameraView from "../../../components/inputs/CameraView/CameraView";
 import { promiseWithLoader } from "../../../utils/aws/api";

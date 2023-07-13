@@ -1,11 +1,5 @@
 import { StackScreenProps } from "@react-navigation/stack";
-import {
-  FunctionComponent,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { FunctionComponent, useContext, useState } from "react";
 import {
   Alert,
   Image,
@@ -18,15 +12,10 @@ import {
   View,
 } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay/lib";
-import { endTrip } from "../Trip/Trip.action";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FlatList } from "react-native-gesture-handler";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { PhotoType } from "./TripEnd.type";
-import { AxiosError } from "axios";
-import { Auth, Storage } from "aws-amplify";
-import * as ImageManipulator from "expo-image-manipulator";
-import { SaveFormat } from "expo-image-manipulator";
 import { onEndTrip, photoTypeString, uploadPhoto } from "./TripEnd.action";
 import { BiBipTripStackParamList } from "../../../../Router";
 import UserContext from "../../../utils/context/UserContext";
@@ -34,7 +23,6 @@ import { promiseWithLoader } from "../../../utils/aws/api";
 import BiBipIconButton from "../../../components/buttons/BiBipIconButton/BiBipIconButton";
 import { cloneWithNewReference } from "../../../utils/util/array";
 import BiBipButton from "../../../components/buttons/BiBipButton/BiBipButton";
-import useCustomTailwind from "../../../utils/hooks/useCustomTailwind";
 
 type NavigatorProps = StackScreenProps<BiBipTripStackParamList, "TripEnd">;
 

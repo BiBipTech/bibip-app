@@ -4,7 +4,10 @@ import { FunctionComponent, useContext, useEffect } from "react";
 import { FlatList, View } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import { useQuery } from "react-query";
-import { BiBipHomeStackParamList } from "../../../../Router";
+import {
+  AppSignedInDrawerParamList,
+  BiBipHomeStackParamList,
+} from "../../../../Router";
 import BiBipButton from "../../../components/buttons/BiBipButton/BiBipButton";
 import RideCard from "../../../components/views/RideCard/RideCard";
 import UserContext from "../../../utils/context/UserContext";
