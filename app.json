@@ -1,5 +1,14 @@
 {
   "expo": {
+    "plugins": [
+      [
+        "@rnmapbox/maps",
+        {
+          "RNMapboxMapsImpl": "mapbox",
+          "RNMapboxMapsDownloadToken": "sk.eyJ1IjoiZXl1YjIwMDEiLCJhIjoiY2xrMm5wMm53MGZoeTNxcDJmMjZtMGRqZCJ9.RSxSjbI2gRFKMQ5s5CdTIA"
+        }
+      ]
+    ],
     "name": "bibip",
     "owner": "bibiptech",
     "slug": "bibip-app",
