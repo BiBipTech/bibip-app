@@ -17,7 +17,7 @@ import {
 import { TextInput } from "react-native-gesture-handler";
 import {
   AppSignedInDrawerParamList,
-  BiBipHomeStackParamList,
+  AppSignedInStackParamList,
 } from "../../../../Router";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment from "moment";
@@ -34,7 +34,7 @@ import BiBipButton from "../../../components/buttons/BiBipButton/BiBipButton";
 import { promiseWithLoader } from "../../../utils/aws/api";
 import { showMessage, hideMessage } from "react-native-flash-message";
 
-type NavigatorProps = StackScreenProps<BiBipHomeStackParamList, "Profile">;
+type NavigatorProps = StackScreenProps<AppSignedInStackParamList, "Profile">;
 
 interface ProfileProps extends NavigatorProps {}
 

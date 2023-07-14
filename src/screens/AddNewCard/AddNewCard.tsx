@@ -10,7 +10,7 @@ import { Animated, Keyboard, Pressable, TextInput, View } from "react-native";
 import * as Linking from "expo-linking";
 
 import MaskInput from "react-native-mask-input";
-import { BiBipHomeStackParamList } from "../../../Router";
+import { AppSignedInStackParamList } from "../../../Router";
 import BiBipButton from "../../components/buttons/BiBipButton/BiBipButton";
 import { warn } from "../../utils/api/alert";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
@@ -21,7 +21,7 @@ import Spinner from "react-native-loading-spinner-overlay/lib";
 import { listCards, saveCardToDb } from "../../utils/api/pbm";
 import { matchMaskedPan } from "../../utils/api/card";
 
-type NavigatorProps = StackScreenProps<BiBipHomeStackParamList, "AddNewCard">;
+type NavigatorProps = StackScreenProps<AppSignedInStackParamList, "AddNewCard">;
 
 interface AddNewCardProps extends NavigatorProps {}
 

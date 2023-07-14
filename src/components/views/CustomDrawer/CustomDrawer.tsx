@@ -54,7 +54,7 @@ const CustomDrawer: FunctionComponent<CustomDrawerProps> = ({ ...props }) => {
 
   return (
     <View className="flex h-full w-full">
-      <View className="bg-bibip-green-500 pt-10 rounded-b-2xl">
+      <View className="bg-cyan-500 pt-10 rounded-b-2xl">
         <View className="p-6 justify-start items-start rounded-md">
           {!nameLoading ? (
             <Text className="text-xl text-white">

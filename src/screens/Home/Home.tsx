@@ -1,11 +1,11 @@
 import { Dimensions, Text, View } from "react-native";
-import React, { FC, useContext, useEffect, useState } from "react";
+import React, { FC, useContext, useEffect, useRef, useState } from "react";
 import BiBipIconButton from "../../components/buttons/BiBipIconButton/BiBipIconButton";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { DrawerScreenProps } from "@react-navigation/drawer";
 import {
   AppDrawerBiBipHomeStackCompositeProps,
-  BiBipHomeStackParamList,
+  AppSignedInStackParamList,
 } from "../../../Router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Spinner from "react-native-loading-spinner-overlay";
@@ -24,6 +24,8 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
+import BottomSheet from "@gorhom/bottom-sheet";
+import MarkerIcon from "../../../assets/marker-icon.svg";
 
 const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
   route,
@@ -37,6 +39,8 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
     license: "",
   });
   const [value, setValue] = useState(0);
+
+  const bottomSheetRef = useRef<BottomSheet>(null);
 
   const userContext = useContext(UserContext);
 
@@ -65,7 +69,8 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
             "Eksik belgeler!",
             "Yüklemediğin belgeler var, lütfen sürüşe başlayabilmek için profil ekranından bu belgeleri ekle!",
             () => {
-              navigation.navigate("Profile");
+              // @ts-ignore
+              navigation.navigate("AppStack", { screen: "Profile" });
             },
             "Profil'e git"
           );
@@ -73,6 +78,10 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
       }),
     enabled: !!userContext.user,
   });
+
+  useEffect(() => {
+    setTimeout(() => bottomSheetRef.current?.snapToIndex(1), 500);
+  }, []);
 
   useEffect(() => {
     if (isCarsLoading) setIsLoading(true);
@@ -108,8 +117,10 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
           handle={(i) => {}}
           navigate={navigation.navigate}
           modalPosition={modalPosition}
+          bottomSheetRef={bottomSheetRef}
         />
         <CustomMapView
+          MarkerIcon={MarkerIcon}
           onLocationSet={(loc) => {
             setLocation(loc);
           }}
@@ -125,6 +136,18 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
             buttonSize="small"
             onPress={() => {
               navigation.openDrawer();
+            }}
+          >
+            <Ionicons name="menu" color="white" size={32} />
+          </BiBipIconButton>
+        </View>
+
+        <View className={`absolute right-12 top-16`}>
+          <BiBipIconButton
+            buttonSize="small"
+            onPress={() => {
+              // @ts-ignore
+              navigation.navigate("AppStack", { screen: "Test" });
             }}
           >
             <Ionicons name="menu" color="white" size={32} />
@@ -180,9 +203,6 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
               // navigation.navigate("QRModal", {
               //   location: location!,
               // });
-              setValue(1);
-              await new Promise((resolve) => setTimeout(resolve, 1000));
-              setValue(0);
             }}
           >
             <Ionicons name="qr-code-outline" color="white" size={48} />

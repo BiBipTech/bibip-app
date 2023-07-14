@@ -1,11 +1,11 @@
 import { Dimensions, Text, View } from "react-native";
-import React, { FC, useContext, useEffect, useState } from "react";
+import React, { FC, useContext, useEffect, useRef, useState } from "react";
 import BiBipIconButton from "../../../components/buttons/BiBipIconButton/BiBipIconButton";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { DrawerScreenProps } from "@react-navigation/drawer";
 import {
   AppDrawerCargoHomeStackCompositeProps,
-  BiBipHomeStackParamList,
+  AppSignedInStackParamList,
   CargoHomeStackParamList,
 } from "../../../../Router";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -21,6 +21,8 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
+import BottomSheet from "@gorhom/bottom-sheet";
+import MarkerIcon from "../../../../assets/marker-icon.svg";
 
 const CargoHome: FC<AppDrawerCargoHomeStackCompositeProps<"CargoHome">> = ({
   route,
@@ -28,6 +30,8 @@ const CargoHome: FC<AppDrawerCargoHomeStackCompositeProps<"CargoHome">> = ({
 }) => {
   const [location, setLocation] = useState<LatLng>();
   const [isLoading, setIsLoading] = useState(false);
+
+  const bottomSheetRef = useRef<BottomSheet>(null);
 
   const modalPosition = useSharedValue(0);
   const windowHeight = Dimensions.get("window").height;
@@ -58,8 +62,10 @@ const CargoHome: FC<AppDrawerCargoHomeStackCompositeProps<"CargoHome">> = ({
           handle={(i) => {}}
           navigate={navigation.navigate}
           modalPosition={modalPosition}
+          bottomSheetRef={bottomSheetRef}
         />
         <CustomMapView
+          MarkerIcon={MarkerIcon}
           onLocationSet={(loc) => {
             setLocation(loc);
           }}

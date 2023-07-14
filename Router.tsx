@@ -38,6 +38,8 @@ import CargoHome from "./src/screens/Cargo/Home/CargoHome";
 import CustomCargoDrawer from "./src/components/views/CargoDrawer/CargoDrawer";
 import { Text, TouchableOpacity, View } from "react-native";
 import useCustomTailwind from "./src/utils/hooks/useCustomTailwind";
+import ChargeStationHome from "./src/screens/ChargingStation/Home/ChargeStationHome";
+import Test from "./src/screens/Test";
 
 export type AppSignedOutStackParamList = {
   Login: undefined;
@@ -45,26 +47,11 @@ export type AppSignedOutStackParamList = {
   SignUp: { phoneNumber: string };
 };
 
-export type AppSignedInDrawerStackParamList = {};
-
-export type AppSignedInDrawerParamList = {
+export type AppSignedInStackParamList = {
   BiBipStack: undefined;
   CargoStack: undefined;
-};
-
-export type BiBipRootDrawerParamList = {
-  BiBipHomeStack: undefined;
-};
-
-export type CargoRootDrawerParamList = {
-  CargoHomeStack: undefined;
-};
-
-export type BiBipHomeStackParamList = {
-  BiBipHome: undefined;
-  QRModal: {
-    location: LatLng;
-  };
+  ChargeStationStack: undefined;
+  Test: undefined;
   Profile: undefined;
   DocumentCamera: {
     document: "id" | "license" | "photo";
@@ -74,6 +61,25 @@ export type BiBipHomeStackParamList = {
   AddNewCard: undefined;
   Success: undefined;
   Error: undefined;
+};
+
+export type AppSignedInDrawerParamList = {
+  AppStack: undefined;
+};
+
+export type BiBipRootDrawerParamList = {
+  BiBipHomeStack: undefined;
+};
+
+export type CargoRootDrawerParamList = {
+  CargoHomeStack: undefined;
+};
+//BiBipHomeStackParamList
+export type BiBipHomeStackParamList = {
+  BiBipHome: undefined;
+  QRModal: {
+    location: LatLng;
+  };
 };
 
 export type BiBipTripStackParamList = {
@@ -102,9 +108,12 @@ export type CargoHomeStackParamList = {
   CargoHome: undefined;
 };
 
+export type ChargeStationHomeStackParamList = {
+  ChargeStationHome: undefined;
+};
+
 const AppSignedOutStack = createStackNavigator<AppSignedOutStackParamList>();
-const AppSignedInDrawerStack =
-  createStackNavigator<AppSignedInDrawerStackParamList>();
+const AppSignedInStack = createStackNavigator<AppSignedInStackParamList>();
 const AppSignedInDrawer = createDrawerNavigator<AppSignedInDrawerParamList>();
 
 const BiBipRootDrawerNavigator =
@@ -117,6 +126,9 @@ const BiBipTripStackNavigator = createStackNavigator<BiBipTripStackParamList>();
 
 const CargoHomeStackNavigator = createStackNavigator<CargoHomeStackParamList>();
 
+const ChargeStationHomeStackNavigator =
+  createStackNavigator<ChargeStationHomeStackParamList>();
+
 export type AppDrawerBiBipHomeStackCompositeProps<
   T extends keyof BiBipHomeStackParamList
 > = CompositeScreenProps<
@@ -128,6 +140,13 @@ export type AppDrawerCargoHomeStackCompositeProps<
   T extends keyof CargoHomeStackParamList
 > = CompositeScreenProps<
   StackScreenProps<CargoHomeStackParamList, T>,
+  DrawerScreenProps<AppSignedInDrawerParamList>
+>;
+
+export type AppDrawerChargeStationHomeStackCompositeProps<
+  T extends keyof ChargeStationHomeStackParamList
+> = CompositeScreenProps<
+  StackScreenProps<ChargeStationHomeStackParamList, T>,
   DrawerScreenProps<AppSignedInDrawerParamList>
 >;
 
@@ -179,40 +198,6 @@ const Router = () => {
             gestureResponseDistance: 350,
           }}
           component={QRModal}
-        />
-
-        <BiBipHomeStackNavigator.Screen
-          options={{
-            title: "Profil",
-          }}
-          name="Profile"
-          component={Profile}
-        />
-        <BiBipHomeStackNavigator.Screen
-          options={{ headerShown: false }}
-          name="DocumentCamera"
-          component={DocumentCamera}
-        />
-
-        <BiBipHomeStackNavigator.Screen
-          options={{ title: "Sürüş Geçmişi" }}
-          name="RideHistory"
-          component={RideHistory}
-        />
-        <BiBipHomeStackNavigator.Screen
-          options={{ title: "Ödeme Yöntemleri" }}
-          name="PaymentMethods"
-          component={PaymentMethods}
-        />
-        <BiBipHomeStackNavigator.Screen
-          options={{ title: "Yeni Kart Ekle" }}
-          name="AddNewCard"
-          component={AddNewCard}
-        />
-        <BiBipHomeStackNavigator.Screen
-          options={{ headerShown: false }}
-          name="Success"
-          component={Success}
         />
       </BiBipHomeStackNavigator.Navigator>
     );
@@ -273,6 +258,21 @@ const Router = () => {
     );
   };
 
+  const ChargeStationStack = () => {
+    return (
+      <ChargeStationHomeStackNavigator.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <ChargeStationHomeStackNavigator.Screen
+          name="ChargeStationHome"
+          component={ChargeStationHome}
+        />
+      </ChargeStationHomeStackNavigator.Navigator>
+    );
+  };
+
   const CargoDrawer = () => {
     return (
       <CargoRootDrawerNavigator.Navigator
@@ -295,29 +295,79 @@ const Router = () => {
     );
   };
 
-  const App = () => {
+  const AppStack = () => {
     return (
-      <AppSignedInDrawer.Navigator
-        initialRouteName="BiBipStack"
-        screenOptions={{
-          headerShown: true,
-        }}
-        drawerContent={(props) => <CustomDrawer {...props} />}
-      >
-        <AppSignedInDrawer.Screen
+      <AppSignedInStack.Navigator initialRouteName="BiBipStack">
+        <AppSignedInStack.Screen
           name="BiBipStack"
           options={{
             headerShown: false,
           }}
           component={BiBipHomeStack}
         />
-        <AppSignedInDrawer.Screen
+        <AppSignedInStack.Screen
           name="CargoStack"
           options={{
             headerShown: false,
           }}
           component={CargoHomeStack}
         />
+        <AppSignedInStack.Screen
+          name="ChargeStationStack"
+          options={{
+            headerShown: false,
+          }}
+          component={ChargeStationStack}
+        />
+        <AppSignedInStack.Screen name="Test" component={Test} />
+        <AppSignedInStack.Screen
+          options={{
+            title: "Profil",
+            headerBackTitle: "Geri",
+          }}
+          name="Profile"
+          component={Profile}
+        />
+        <AppSignedInStack.Screen
+          options={{ headerShown: false }}
+          name="DocumentCamera"
+          component={DocumentCamera}
+        />
+
+        <AppSignedInStack.Screen
+          options={{ title: "Sürüş Geçmişi", headerBackTitle: "Geri" }}
+          name="RideHistory"
+          component={RideHistory}
+        />
+        <AppSignedInStack.Screen
+          options={{ title: "Ödeme Yöntemleri", headerBackTitle: "Geri" }}
+          name="PaymentMethods"
+          component={PaymentMethods}
+        />
+        <AppSignedInStack.Screen
+          options={{ title: "Yeni Kart Ekle", headerBackTitle: "Geri" }}
+          name="AddNewCard"
+          component={AddNewCard}
+        />
+        <AppSignedInStack.Screen
+          options={{ headerShown: false }}
+          name="Success"
+          component={Success}
+        />
+      </AppSignedInStack.Navigator>
+    );
+  };
+
+  const AppDrawer = () => {
+    return (
+      <AppSignedInDrawer.Navigator
+        initialRouteName="AppStack"
+        screenOptions={{
+          headerShown: false,
+        }}
+        drawerContent={(props) => <CustomDrawer {...props} />}
+      >
+        <AppSignedInDrawer.Screen name="AppStack" component={AppStack} />
       </AppSignedInDrawer.Navigator>
     );
   };
@@ -344,7 +394,7 @@ const Router = () => {
         <Loading />
       ) : userContext.user ? (
         !userContext.isInTrip ? (
-          <App />
+          <AppDrawer />
         ) : (
           <BiBipTripStack />
         )

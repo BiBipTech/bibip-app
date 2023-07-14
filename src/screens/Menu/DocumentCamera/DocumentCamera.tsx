@@ -5,7 +5,7 @@ import { Image, View } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import {
   AppSignedInDrawerParamList,
-  BiBipHomeStackParamList,
+  AppSignedInStackParamList,
 } from "../../../../Router";
 import BiBipButton from "../../../components/buttons/BiBipButton/BiBipButton";
 import CameraView from "../../../components/inputs/CameraView/CameraView";
@@ -14,7 +14,7 @@ import UserContext from "../../../utils/context/UserContext";
 import { uploadPhoto } from "./DocumentCamera.action";
 
 type NavigatorProps = StackScreenProps<
-  BiBipHomeStackParamList,
+  AppSignedInStackParamList,
   "DocumentCamera"
 >;
 

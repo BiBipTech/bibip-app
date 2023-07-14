@@ -5,7 +5,7 @@ import Spinner from "react-native-loading-spinner-overlay/lib";
 import { useQuery } from "react-query";
 import {
   AppSignedInDrawerParamList,
-  BiBipHomeStackParamList,
+  AppSignedInStackParamList,
 } from "../../../../Router";
 import BiBipButton from "../../../components/buttons/BiBipButton/BiBipButton";
 import WalletCard from "../../../components/views/WalletCard/WalletCard";
@@ -13,7 +13,7 @@ import { getDefaultCard, listCards } from "../../../utils/api/pbm";
 import UserContext from "../../../utils/context/UserContext";
 
 type NavigatorProps = StackScreenProps<
-  BiBipHomeStackParamList,
+  AppSignedInStackParamList,
   "PaymentMethods"
 >;
 

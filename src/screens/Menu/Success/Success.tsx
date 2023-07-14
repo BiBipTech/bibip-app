@@ -3,11 +3,11 @@ import { FunctionComponent } from "react";
 import { Text, View } from "react-native";
 import {
   AppSignedInDrawerParamList,
-  BiBipHomeStackParamList,
+  AppSignedInStackParamList,
 } from "../../../../Router";
 import BiBipButton from "../../../components/buttons/BiBipButton/BiBipButton";
 
-type NavigatorProps = StackScreenProps<BiBipHomeStackParamList, "Success">;
+type NavigatorProps = StackScreenProps<AppSignedInStackParamList, "Success">;
 
 interface SuccessProps extends NavigatorProps {}
 
