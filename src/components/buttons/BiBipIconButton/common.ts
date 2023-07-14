@@ -10,7 +10,7 @@ export const buttonStyles = cva(
         large: "w-20 h-20",
       },
       intent: {
-        primary: "bg-bibip-green-500",
+        primary: "bg-cyan-500",
         inverted: "bg-white",
         danger: "bg-transparent",
       },

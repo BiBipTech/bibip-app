@@ -8,7 +8,6 @@
       }
 
       .cls-2 {
-        font-family: Poppins-ExtraBold, Poppins;
         font-size: 48px;
         font-weight: 700;
       }
@@ -27,7 +26,6 @@
       }
 
       .cls-3 {
-        font-family: Poppins-Regular, Poppins;
         font-size: 17px;
       }
     </style>

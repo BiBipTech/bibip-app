@@ -1,9 +1,12 @@
 import { Dimensions, Text, View } from "react-native";
-import React, { FC, useContext, useEffect, useState } from "react";
+import React, { FC, useContext, useEffect, useRef, useState } from "react";
 import BiBipIconButton from "../../components/buttons/BiBipIconButton/BiBipIconButton";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { DrawerScreenProps } from "@react-navigation/drawer";
-import { BiBipHomeStackParamList } from "../../../Router";
+import {
+  AppDrawerBiBipHomeStackCompositeProps,
+  AppSignedInStackParamList,
+} from "../../../Router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Spinner from "react-native-loading-spinner-overlay";
 import { useQuery } from "react-query";
@@ -15,20 +18,19 @@ import { LatLng } from "react-native-maps";
 import UserContext from "../../utils/context/UserContext";
 import { fetchDocumentStatuses } from "../Menu/Profile/Profile.action";
 import { warn } from "../../utils/api/alert";
-import { Motion } from "@legendapp/motion";
 import { findCarFromLocation } from "./Home.action";
-import AppCarousel from "../../components/inputs/AppCarousel/AppCarousel";
 import Landing from "../Landing/Landing";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
+import BottomSheet from "@gorhom/bottom-sheet";
+import MarkerIcon from "../../../assets/marker-icon.svg";
 
-type NavigatorProps = DrawerScreenProps<BiBipHomeStackParamList, "Map">;
-
-interface HomeProps extends NavigatorProps {}
-
-const Home: FC<HomeProps> = ({ route, navigation }) => {
+const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
+  route,
+  navigation,
+}) => {
   const [location, setLocation] = useState<LatLng>();
   const [isLoading, setIsLoading] = useState(true);
   const [documents, setDocuments] = useState({
@@ -37,6 +39,8 @@ const Home: FC<HomeProps> = ({ route, navigation }) => {
     license: "",
   });
   const [value, setValue] = useState(0);
+
+  const bottomSheetRef = useRef<BottomSheet>(null);
 
   const userContext = useContext(UserContext);
 
@@ -65,7 +69,8 @@ const Home: FC<HomeProps> = ({ route, navigation }) => {
             "Eksik belgeler!",
             "Yüklemediğin belgeler var, lütfen sürüşe başlayabilmek için profil ekranından bu belgeleri ekle!",
             () => {
-              navigation.navigate("Profile");
+              // @ts-ignore
+              navigation.navigate("AppStack", { screen: "Profile" });
             },
             "Profil'e git"
           );
@@ -73,6 +78,10 @@ const Home: FC<HomeProps> = ({ route, navigation }) => {
       }),
     enabled: !!userContext.user,
   });
+
+  useEffect(() => {
+    setTimeout(() => bottomSheetRef.current?.snapToIndex(1), 500);
+  }, []);
 
   useEffect(() => {
     if (isCarsLoading) setIsLoading(true);
@@ -104,8 +113,14 @@ const Home: FC<HomeProps> = ({ route, navigation }) => {
     <SafeAreaProvider>
       <View className="items-center justify-center h-full w-full flex-1">
         <Spinner visible={isLoading} />
-        <Landing handle={(i) => {}} modalPosition={modalPosition} />
+        <Landing
+          handle={(i) => {}}
+          navigate={navigation.navigate}
+          modalPosition={modalPosition}
+          bottomSheetRef={bottomSheetRef}
+        />
         <CustomMapView
+          MarkerIcon={MarkerIcon}
           onLocationSet={(loc) => {
             setLocation(loc);
           }}
@@ -121,6 +136,18 @@ const Home: FC<HomeProps> = ({ route, navigation }) => {
             buttonSize="small"
             onPress={() => {
               navigation.openDrawer();
+            }}
+          >
+            <Ionicons name="menu" color="white" size={32} />
+          </BiBipIconButton>
+        </View>
+
+        <View className={`absolute right-12 top-16`}>
+          <BiBipIconButton
+            buttonSize="small"
+            onPress={() => {
+              // @ts-ignore
+              navigation.navigate("AppStack", { screen: "Test" });
             }}
           >
             <Ionicons name="menu" color="white" size={32} />
@@ -176,9 +203,6 @@ const Home: FC<HomeProps> = ({ route, navigation }) => {
               // navigation.navigate("QRModal", {
               //   location: location!,
               // });
-              setValue(1);
-              await new Promise((resolve) => setTimeout(resolve, 1000));
-              setValue(0);
             }}
           >
             <Ionicons name="qr-code-outline" color="white" size={48} />

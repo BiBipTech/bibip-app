@@ -4,13 +4,19 @@ import { FunctionComponent, useContext, useEffect } from "react";
 import { FlatList, View } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import { useQuery } from "react-query";
-import { BiBipHomeStackParamList } from "../../../../Router";
+import {
+  AppSignedInDrawerParamList,
+  AppSignedInStackParamList,
+} from "../../../../Router";
 import BiBipButton from "../../../components/buttons/BiBipButton/BiBipButton";
 import RideCard from "../../../components/views/RideCard/RideCard";
 import UserContext from "../../../utils/context/UserContext";
 import { getTripsOfUser } from "./RideHistory.action";
 
-type NavigationProps = StackScreenProps<BiBipHomeStackParamList, "RideHistory">;
+type NavigationProps = StackScreenProps<
+  AppSignedInStackParamList,
+  "RideHistory"
+>;
 
 interface RideHistoryProps extends NavigationProps {}
 

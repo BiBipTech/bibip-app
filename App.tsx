@@ -41,7 +41,7 @@ export default function App() {
         <Router />
       </UserContext.Provider>
       <FlashMessage position="top" />
-      <StatusBar style="dark" />
+      <StatusBar style="auto" />
     </QueryClientProvider>
   );
 }

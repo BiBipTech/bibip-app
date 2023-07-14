@@ -7,7 +7,6 @@
       }
 
       .cls-2 {
-        font-family: Poppins-Regular, Poppins;
         font-size: 16px;
       }
 
@@ -87,7 +86,6 @@
       }
 
       .cls-4 {
-        font-family: Poppins-Black, Poppins;
         font-size: 27.68px;
         font-weight: 800;
       }

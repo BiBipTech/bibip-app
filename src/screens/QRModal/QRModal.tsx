@@ -6,7 +6,10 @@ import UserContext from "../../utils/context/UserContext";
 import BarcodeScanner from "../../components/inputs/BarcodeScanner/BarcodeScanner";
 import { startTrip } from "./QRModal.action";
 import { StackScreenProps } from "@react-navigation/stack";
-import { BiBipHomeStackParamList } from "../../../Router";
+import {
+  AppSignedInStackParamList,
+  BiBipHomeStackParamList,
+} from "../../../Router";
 import { Auth } from "aws-amplify";
 import { getTripStatus, promiseWithLoader } from "../../utils/aws/api";
 

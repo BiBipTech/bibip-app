@@ -1,4 +1,10 @@
-import { FunctionComponent, useCallback, useMemo, useRef } from "react";
+import {
+  FunctionComponent,
+  RefObject,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 import { Dimensions, TouchableOpacity, View } from "react-native";
 import BottomSheet from "@gorhom/bottom-sheet";
 import Animated from "react-native-reanimated";
@@ -7,23 +13,29 @@ import HillShapeUp from "../../../assets/hill-shape-up.svg";
 import Handle from "../../components/views/AnimatedIndicator/AnimatedIndicator";
 import HomeButton from "../../../assets/home-logo.svg";
 import CargoButton from "../../../assets/kargo_logo.svg";
-import MarketButton from "../../../assets/market_logo.svg";
+import ChargeStationButton from "../../../assets/charge_station_logo.svg";
+import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 
 interface LandingProps {
   handle: (index: number) => void;
   modalPosition: Animated.SharedValue<number>;
+  navigate: (screen: string) => void;
+  bottomSheetRef: RefObject<BottomSheetMethods>;
+  hideInfoBox?: () => void;
 }
 
 const Landing: FunctionComponent<LandingProps> = ({
   handle,
   modalPosition,
+  navigate,
+  hideInfoBox,
+  bottomSheetRef,
 }) => {
-  const bottomSheetRef = useRef<BottomSheet>(null);
-
   // variables
   const snapPoints = useMemo(() => ["4%", "40%", "79%"], []);
 
   const handleSheetChanges = useCallback((index: number) => {
+    if (index > 0 && hideInfoBox) hideInfoBox();
     handle(index);
   }, []);
 
@@ -33,7 +45,7 @@ const Landing: FunctionComponent<LandingProps> = ({
   return (
     <BottomSheet
       ref={bottomSheetRef}
-      index={1}
+      index={0}
       style={[
         {
           zIndex: 3,
@@ -49,6 +61,7 @@ const Landing: FunctionComponent<LandingProps> = ({
           <View
             className="items-center justify-end flex flex-1 w-full h-24 absolute -top-11"
             onTouchEnd={() => {
+              if (hideInfoBox) hideInfoBox();
               if (animatedIndex.value === 2) bottomSheetRef.current?.collapse();
               else bottomSheetRef.current?.snapToIndex(animatedIndex.value + 1);
             }}
@@ -68,6 +81,7 @@ const Landing: FunctionComponent<LandingProps> = ({
           <TouchableOpacity
             onPress={() => {
               bottomSheetRef.current?.collapse();
+              navigate("BiBipStack");
             }}
           >
             <HomeButton width={"auto"} height={150} />
@@ -76,18 +90,27 @@ const Landing: FunctionComponent<LandingProps> = ({
 
         <View className="flex flex-row justify-between items-start">
           <View className="shadow-md shadow-black/30">
-            <MarketButton
-              width={(width - 32) / 2 - 2}
-              height={109.57}
-              opacity={0.3}
-            />
+            <TouchableOpacity
+              onPress={() => {
+                bottomSheetRef.current?.collapse();
+                navigate("ChargeStationStack");
+              }}
+            >
+              <ChargeStationButton
+                width={(width - 32) / 2 - 2}
+                height={109.57}
+              />
+            </TouchableOpacity>
           </View>
           <View className="shadow-md shadow-black/30">
-            <CargoButton
-              opacity={0.3}
-              width={(width - 32) / 2 - 2}
-              height={109.57}
-            />
+            <TouchableOpacity
+              onPress={() => {
+                bottomSheetRef.current?.collapse();
+                navigate("CargoStack");
+              }}
+            >
+              <CargoButton width={(width - 32) / 2 - 2} height={109.57} />
+            </TouchableOpacity>
           </View>
         </View>
       </View>

@@ -1,10 +1,13 @@
 import { StackScreenProps } from "@react-navigation/stack";
 import { FunctionComponent } from "react";
 import { Text, View } from "react-native";
-import { BiBipHomeStackParamList } from "../../../../Router";
+import {
+  AppSignedInDrawerParamList,
+  AppSignedInStackParamList,
+} from "../../../../Router";
 import BiBipButton from "../../../components/buttons/BiBipButton/BiBipButton";
 
-type NavigatorProps = StackScreenProps<BiBipHomeStackParamList, "Success">;
+type NavigatorProps = StackScreenProps<AppSignedInStackParamList, "Success">;
 
 interface SuccessProps extends NavigatorProps {}
 

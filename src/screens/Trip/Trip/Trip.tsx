@@ -17,6 +17,7 @@ import { useQuery } from "react-query";
 import { getCarId } from "./Trip.action";
 import UserContext from "../../../utils/context/UserContext";
 import Spinner from "react-native-loading-spinner-overlay/lib";
+import MarkerIcon from "../../../../assets/marker-icon.svg";
 
 type NavigatorProps = StackScreenProps<BiBipTripStackParamList, "Trip">;
 
@@ -91,7 +92,7 @@ const Trip: FunctionComponent<TripProps> = memo(({ navigation }) => {
   return (
     <View className="w-full h-full flex-col flex justify-between">
       <Spinner visible={isLoading} />
-      <CustomMapView />
+      <CustomMapView MarkerIcon={MarkerIcon} />
       <SafeAreaView className="mx-8">
         <TripNotification />
       </SafeAreaView>
