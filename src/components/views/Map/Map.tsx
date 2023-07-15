@@ -1,7 +1,14 @@
-import { useForegroundPermissions } from "expo-location";
+import {
+  Accuracy,
+  LocationAccuracy,
+  getCurrentPositionAsync,
+  getLastKnownPositionAsync,
+  useForegroundPermissions,
+} from "expo-location";
 import {
   FunctionComponent,
   ReactNode,
+  useCallback,
   useEffect,
   useRef,
   useState,
@@ -10,11 +17,7 @@ import { Platform, Pressable, View } from "react-native";
 import { Car } from "../../../models";
 import useCustomTailwind from "../../../utils/hooks/useCustomTailwind";
 import BiBipIconButton from "../../buttons/BiBipIconButton/BiBipIconButton";
-import {
-  animateToLocation,
-  getCurrentLocation,
-  onMarkerSelect,
-} from "./Map.action";
+
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MarkerIcon from "../../../../assets/marker-icon.svg";
 import { SvgProps } from "react-native-svg";
@@ -38,11 +41,35 @@ const CustomMapView: FunctionComponent<MapProps> = ({
 }) => {
   const mapRef = useRef<Mapbox.MapView>(null);
   const camera = useRef<Mapbox.Camera>(null);
-  const userLocation = useRef<Mapbox.UserLocation>(null);
 
+  const [userLocation, setUserLocation] = useState<LatLng | null>(null);
   const [locationFocused, setLocationFocused] = useState(false);
 
   const [status, requestPermission] = useForegroundPermissions();
+
+  const animateToLocation = useCallback(() => {
+    camera.current?.setCamera({
+      centerCoordinate: [
+        userLocation?.longitude ?? 0,
+        userLocation?.latitude ?? 0,
+      ],
+      animationDuration: 500,
+      zoomLevel: 16,
+    });
+  }, [camera, userLocation]);
+
+  useEffect(() => {
+    getCurrentPositionAsync({
+      accuracy: Accuracy.Balanced,
+    }).then((val) => {
+      console.log(val);
+
+      setUserLocation({
+        latitude: val.coords.latitude,
+        longitude: val.coords.longitude,
+      });
+    });
+  }, []);
 
   useEffect(() => {
     if (status) {
@@ -53,15 +80,17 @@ const CustomMapView: FunctionComponent<MapProps> = ({
   }, []);
 
   useEffect(() => {
-    // if (locationFocused) return;
-    // if (userLocation) {
-    //   animateToLocation(mapRef, 15, userLocation);
-    //   setLocationFocused(true);
-    //   if (onLocationSet) {
-    //     onLocationSet(userLocation);
-    //   }
-    // }
-  }, [userLocation]);
+    console.log(userLocation, locationFocused);
+
+    if (locationFocused || !userLocation || camera.current === null) return;
+    if (userLocation) {
+      animateToLocation();
+      setLocationFocused(true);
+      if (onLocationSet) {
+        onLocationSet(userLocation);
+      }
+    }
+  }, [userLocation, camera.current]);
 
   return (
     <View
@@ -80,13 +109,15 @@ const CustomMapView: FunctionComponent<MapProps> = ({
       >
         {markers &&
           markers.map((car) => {
-            console.log(car.id);
-
             return (
               <Mapbox.MarkerView
-                coordinate={[car.location!.lat, car.location!.lng]}
+                coordinate={[car.location!.lng, car.location!.lat]}
                 // onPress={onMarker ? () => onMarker(car) : undefined}
                 key={car.id}
+                anchor={{
+                  x: 0.5,
+                  y: 1,
+                }}
               >
                 <MarkerIcon height={75} width={75} onPress={() => {}} />
               </Mapbox.MarkerView>
@@ -97,16 +128,18 @@ const CustomMapView: FunctionComponent<MapProps> = ({
           animationMode="moveTo"
           animationDuration={250}
         />
-        <Mapbox.UserLocation ref={userLocation} />
+        <Mapbox.UserLocation />
       </Mapbox.MapView>
       <View className="absolute bottom-12 left-12">
         <BiBipIconButton
           intent="inverted"
           buttonSize="medium"
           onPress={() => {
-            const coords = userLocation.current?.state.coordinates;
             camera.current?.setCamera({
-              centerCoordinate: coords ?? [],
+              centerCoordinate: [
+                userLocation?.longitude ?? 0,
+                userLocation?.latitude ?? 0,
+              ],
               zoomLevel: 17,
               animationDuration: 1000,
               animationMode: "flyTo",
