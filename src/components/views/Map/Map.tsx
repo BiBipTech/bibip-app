@@ -7,7 +7,6 @@ import {
   useState,
 } from "react";
 import { Platform, Pressable, View } from "react-native";
-import MapView, { LatLng, MapViewProps, Marker } from "react-native-maps";
 import { Car } from "../../../models";
 import useCustomTailwind from "../../../utils/hooks/useCustomTailwind";
 import BiBipIconButton from "../../buttons/BiBipIconButton/BiBipIconButton";
@@ -19,6 +18,8 @@ import {
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MarkerIcon from "../../../../assets/marker-icon.svg";
 import { SvgProps } from "react-native-svg";
+import Mapbox from "@rnmapbox/maps";
+import { LatLng, MapViewProps } from "react-native-maps";
 
 interface MapProps extends MapViewProps {
   markers?: Car[];
@@ -35,9 +36,10 @@ const CustomMapView: FunctionComponent<MapProps> = ({
   MarkerIcon,
   ...props
 }) => {
-  const mapRef = useRef<MapView>(null);
+  const mapRef = useRef<Mapbox.MapView>(null);
+  const camera = useRef<Mapbox.Camera>(null);
+  const userLocation = useRef<Mapbox.UserLocation>(null);
 
-  const [userLocation, setUserLocation] = useState<LatLng>();
   const [locationFocused, setLocationFocused] = useState(false);
 
   const [status, requestPermission] = useForegroundPermissions();
@@ -51,14 +53,14 @@ const CustomMapView: FunctionComponent<MapProps> = ({
   }, []);
 
   useEffect(() => {
-    if (locationFocused) return;
-    if (userLocation) {
-      animateToLocation(mapRef, 15, userLocation);
-      setLocationFocused(true);
-      if (onLocationSet) {
-        onLocationSet(userLocation);
-      }
-    }
+    // if (locationFocused) return;
+    // if (userLocation) {
+    //   animateToLocation(mapRef, 15, userLocation);
+    //   setLocationFocused(true);
+    //   if (onLocationSet) {
+    //     onLocationSet(userLocation);
+    //   }
+    // }
   }, [userLocation]);
 
   return (
@@ -68,233 +70,48 @@ const CustomMapView: FunctionComponent<MapProps> = ({
         zIndex: -1,
       }}
     >
-      <MapView
-        provider="google"
-        style={useCustomTailwind("w-full h-full z-3")}
-        onUserLocationChange={(e) => getCurrentLocation(e, setUserLocation)}
-        userLocationAnnotationTitle="Hello"
-        userLocationUpdateInterval={Platform.OS === "ios" ? undefined : 1000000}
+      <Mapbox.MapView
         ref={mapRef}
-        showsMyLocationButton={false}
-        showsUserLocation
-        customMapStyle={[
-          {
-            elementType: "geometry",
-            stylers: [
-              {
-                color: "#242f3e",
-              },
-            ],
-          },
-          {
-            elementType: "labels.text.fill",
-            stylers: [
-              {
-                color: "#746855",
-              },
-            ],
-          },
-          {
-            elementType: "labels.text.stroke",
-            stylers: [
-              {
-                color: "#242f3e",
-              },
-            ],
-          },
-          {
-            featureType: "administrative",
-            elementType: "geometry",
-            stylers: [
-              {
-                visibility: "off",
-              },
-            ],
-          },
-          {
-            featureType: "administrative.locality",
-            elementType: "labels.text.fill",
-            stylers: [
-              {
-                color: "#d59563",
-              },
-            ],
-          },
-          {
-            featureType: "poi",
-            stylers: [
-              {
-                visibility: "off",
-              },
-            ],
-          },
-          {
-            featureType: "poi",
-            elementType: "labels.text.fill",
-            stylers: [
-              {
-                color: "#d59563",
-              },
-            ],
-          },
-          {
-            featureType: "poi.park",
-            elementType: "geometry",
-            stylers: [
-              {
-                color: "#263c3f",
-              },
-            ],
-          },
-          {
-            featureType: "poi.park",
-            elementType: "labels.text.fill",
-            stylers: [
-              {
-                color: "#6b9a76",
-              },
-            ],
-          },
-          {
-            featureType: "road",
-            elementType: "geometry",
-            stylers: [
-              {
-                color: "#38414e",
-              },
-            ],
-          },
-          {
-            featureType: "road",
-            elementType: "geometry.stroke",
-            stylers: [
-              {
-                color: "#212a37",
-              },
-            ],
-          },
-          {
-            featureType: "road",
-            elementType: "labels.icon",
-            stylers: [
-              {
-                visibility: "off",
-              },
-            ],
-          },
-          {
-            featureType: "road",
-            elementType: "labels.text.fill",
-            stylers: [
-              {
-                color: "#9ca5b3",
-              },
-            ],
-          },
-          {
-            featureType: "road.highway",
-            elementType: "geometry",
-            stylers: [
-              {
-                color: "#746855",
-              },
-            ],
-          },
-          {
-            featureType: "road.highway",
-            elementType: "geometry.stroke",
-            stylers: [
-              {
-                color: "#1f2835",
-              },
-            ],
-          },
-          {
-            featureType: "road.highway",
-            elementType: "labels.text.fill",
-            stylers: [
-              {
-                color: "#f3d19c",
-              },
-            ],
-          },
-          {
-            featureType: "transit",
-            stylers: [
-              {
-                visibility: "off",
-              },
-            ],
-          },
-          {
-            featureType: "transit",
-            elementType: "geometry",
-            stylers: [
-              {
-                color: "#2f3948",
-              },
-            ],
-          },
-          {
-            featureType: "transit.station",
-            elementType: "labels.text.fill",
-            stylers: [
-              {
-                color: "#d59563",
-              },
-            ],
-          },
-          {
-            featureType: "water",
-            elementType: "geometry",
-            stylers: [
-              {
-                color: "#17263c",
-              },
-            ],
-          },
-          {
-            featureType: "water",
-            elementType: "labels.text.fill",
-            stylers: [
-              {
-                color: "#515c6d",
-              },
-            ],
-          },
-          {
-            featureType: "water",
-            elementType: "labels.text.stroke",
-            stylers: [
-              {
-                color: "#17263c",
-              },
-            ],
-          },
-        ]}
-        {...props}
+        className="w-full h-full"
+        styleURL="mapbox://styles/eyub2001/clk2pmr3g00g301pf23265zbw"
+        onPress={(e) => {
+          console.log(e.geometry);
+        }}
       >
         {markers &&
-          markers.map((car) => (
-            <Marker
-              coordinate={{
-                latitude: car.location!.lat,
-                longitude: car.location!.lng,
-              }}
-              onPress={onMarker ? () => onMarker(car) : undefined}
-              key={car.id}
-            >
-              <View className="shadow-md">
-                <MarkerIcon height={75} width={75} />
-              </View>
-            </Marker>
-          ))}
-      </MapView>
+          markers.map((car) => {
+            console.log(car.id);
+
+            return (
+              <Mapbox.MarkerView
+                coordinate={[car.location!.lat, car.location!.lng]}
+                // onPress={onMarker ? () => onMarker(car) : undefined}
+                key={car.id}
+              >
+                <MarkerIcon height={75} width={75} onPress={() => {}} />
+              </Mapbox.MarkerView>
+            );
+          })}
+        <Mapbox.Camera
+          ref={camera}
+          animationMode="moveTo"
+          animationDuration={250}
+        />
+        <Mapbox.UserLocation ref={userLocation} />
+      </Mapbox.MapView>
       <View className="absolute bottom-12 left-12">
         <BiBipIconButton
           intent="inverted"
           buttonSize="medium"
-          onPress={() => animateToLocation(mapRef, 17, userLocation!)}
+          onPress={() => {
+            const coords = userLocation.current?.state.coordinates;
+            camera.current?.setCamera({
+              centerCoordinate: coords ?? [],
+              zoomLevel: 17,
+              animationDuration: 1000,
+              animationMode: "flyTo",
+            });
+          }}
         >
           <Ionicons name="locate" color="#23a65e" size={32} />
         </BiBipIconButton>
