@@ -30,6 +30,8 @@ interface MapProps extends MapViewProps {
   locationInterval?: number;
   onMarker?: (car: Car) => void;
   MarkerIcon: React.FC<SvgProps>;
+  onMarkerSelect?: () => void;
+  onMapPress?: () => void;
 }
 
 const CustomMapView: FunctionComponent<MapProps> = ({
@@ -37,6 +39,8 @@ const CustomMapView: FunctionComponent<MapProps> = ({
   onLocationSet,
   onMarker,
   MarkerIcon,
+  onMarkerSelect,
+  onMapPress,
   ...props
 }) => {
   const mapRef = useRef<Mapbox.MapView>(null);
@@ -104,23 +108,26 @@ const CustomMapView: FunctionComponent<MapProps> = ({
         className="w-full h-full"
         styleURL="mapbox://styles/eyub2001/clk2pmr3g00g301pf23265zbw"
         onPress={(e) => {
-          console.log(e.geometry);
+          if (onMapPress) onMapPress();
         }}
       >
         {markers &&
           markers.map((car) => {
             return (
-              <Mapbox.MarkerView
+              <Mapbox.PointAnnotation
                 coordinate={[car.location!.lng, car.location!.lat]}
                 // onPress={onMarker ? () => onMarker(car) : undefined}
-                key={car.id}
+                id={car.id}
                 anchor={{
                   x: 0.5,
                   y: 1,
                 }}
+                onSelected={(payload) => {
+                  if (onMarkerSelect) onMarkerSelect();
+                }}
               >
                 <MarkerIcon height={75} width={75} onPress={() => {}} />
-              </Mapbox.MarkerView>
+              </Mapbox.PointAnnotation>
             );
           })}
         <Mapbox.Camera
