@@ -67,6 +67,7 @@ const ChargeStationHome: FC<
             setLocation(loc);
           }}
           markers={[
+            //@ts-ignore
             {
               id: "1",
               location: {
@@ -74,55 +75,11 @@ const ChargeStationHome: FC<
                 lng: 29.01620543662604,
               },
             },
-            {
-              id: "2",
-              location: {
-                lat: 41.11198122664561,
-                lng: 29.01600543662604,
-              },
-            },
-            {
-              id: "3",
-              location: {
-                lat: 41.11118122664561,
-                lng: 29.01650543662604,
-              },
-            },
-            {
-              id: "4",
-              location: {
-                lat: 41.11318122664561,
-                lng: 29.01950543662604,
-              },
-            },
-            {
-              id: "5",
-              location: {
-                lat: 41.11418122664561,
-                lng: 29.01250543662604,
-              },
-            },
-            {
-              id: "6",
-              location: {
-                lat: 41.114197334537636,
-                lng: 29.01583168655634,
-              },
-            },
-            {
-              id: "7",
-              location: {
-                lat: 41.1135138029715,
-                lng: 29.017763547599316,
-              },
-            },
           ]}
-          onMarkerPress={(e) => {
+          onMarkerSelect={() => {
             setInfoBoxShown(1);
           }}
-          onPress={(e) => {
-            console.log(e.nativeEvent.coordinate);
-
+          onMapPress={() => {
             bottomSheetRef.current?.collapse();
             setInfoBoxShown(0);
           }}
