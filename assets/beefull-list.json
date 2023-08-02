@@ -1,0 +1,18 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "E-Garaj",
+        "id": 1,
+        "icon": "stationIcon",
+        "address": "Maslak, Maslak Mahallesi"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [29.016443637927085, 41.11319786408867]
+      }
+    }
+  ]
+}

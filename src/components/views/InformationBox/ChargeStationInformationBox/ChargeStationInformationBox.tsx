@@ -8,21 +8,31 @@ import {
 import NavigationButton from "../../../buttons/NavigationButton/NavigationButton";
 import StarRating from "react-native-star-rating-widget";
 import InformationBoxButton from "../../../buttons/InformationBoxButton/InformationBoxButton";
+import IconWithLabel from "../../../buttons/IconWithLabel";
 
-interface ChargeStationInformationBoxProps {}
+interface ChargeStationInformationBoxProps {
+  selectedStation: {
+    name: string;
+    distance: string;
+    duration: string;
+    latitude: number;
+    longitude: number;
+    address: string;
+  } | null;
+}
 
 const ChargeStationInformationBox: FunctionComponent<
   ChargeStationInformationBoxProps
-> = () => {
+> = ({ selectedStation }) => {
   return (
     <View className="w-full bg-gray-900 rounded-2xl shadow-md h-64 pb-2 pt-2 px-4 flex flex-col justify-around">
       <View className="flex flex-row justify-between">
-        <View className="flex flex-col justify-between items-start">
-          <Text className="text-gray-100 text-start font-bold text-xl">
-            99 Prospect Park W
+        <View className="flex flex-col flex-initial w-4/5 justify-between items-start">
+          <Text className="text-gray-100 text-start font-bold text-lg">
+            {selectedStation?.name}
           </Text>
-          <Text className="text-gray-100 text-start">
-            Brooklyn, 99 Prospect Park W
+          <Text className="text-gray-100 text-start break-all">
+            {selectedStation?.address}
           </Text>
         </View>
         <NavigationButton />
@@ -51,18 +61,18 @@ const ChargeStationInformationBox: FunctionComponent<
       </View>
 
       <View className="flex flex-row justify-start divide-x-4 divide-transparent">
-        <View className="bg-bibip-red-400 p-2 rounded-lg">
-          <Text className="text-gray-100">In Use</Text>
+        <View className="bg-bibip-red-400 px-2 py-1 rounded-md">
+          <Text className="text-gray-100 text-xs">In Use</Text>
         </View>
         <IconWithLabel
-          icon={<Ionicons size={24} name="location-sharp" color={"white"} />}
-          label="1.9 km"
+          icon={<Ionicons size={16} name="location-sharp" color={"white"} />}
+          label={`${selectedStation?.distance} km`}
         />
         <IconWithLabel
           icon={
-            <MaterialCommunityIcons size={24} name="taxi" color={"white"} />
+            <MaterialCommunityIcons size={16} name="taxi" color={"white"} />
           }
-          label="7 mins"
+          label={`${selectedStation?.duration} dk.`}
         />
       </View>
 
@@ -74,22 +84,6 @@ const ChargeStationInformationBox: FunctionComponent<
         <View className="w-2" />
         <InformationBoxButton text="Book" />
       </View>
-    </View>
-  );
-};
-
-interface IconWithLabelProps {
-  icon: ReactNode;
-  label: string;
-}
-const IconWithLabel: FunctionComponent<IconWithLabelProps> = ({
-  icon,
-  label,
-}) => {
-  return (
-    <View className="ml-2 flex flex-row items-center">
-      {icon}
-      <Text className="ml-1 text-gray-100">{label}</Text>
     </View>
   );
 };

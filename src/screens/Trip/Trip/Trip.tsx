@@ -9,7 +9,7 @@ import {
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BiBipTripStackParamList } from "../../../../Router";
-import CustomMapView from "../../../components/views/Map/Map";
+import CarMap from "../../../components/views/Map/CarMap/CarMap";
 import TripInfo from "../../../components/views/TripInfo/TripInfo";
 import TripNotification from "../../../components/views/TripNotification/TripNotification";
 import * as Location from "expo-location";
@@ -92,7 +92,7 @@ const Trip: FunctionComponent<TripProps> = memo(({ navigation }) => {
   return (
     <View className="w-full h-full flex-col flex justify-between">
       <Spinner visible={isLoading} />
-      <CustomMapView MarkerIcon={MarkerIcon} />
+      {/* <CarMap /> */}
       <SafeAreaView className="mx-8">
         <TripNotification />
       </SafeAreaView>

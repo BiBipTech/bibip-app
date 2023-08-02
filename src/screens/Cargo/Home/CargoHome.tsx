@@ -1,20 +1,11 @@
-import { Dimensions, Text, View } from "react-native";
-import React, { FC, useContext, useEffect, useRef, useState } from "react";
+import { Dimensions, View } from "react-native";
+import React, { FC, useEffect, useRef, useState } from "react";
 import BiBipIconButton from "../../../components/buttons/BiBipIconButton/BiBipIconButton";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { DrawerScreenProps } from "@react-navigation/drawer";
-import {
-  AppDrawerCargoHomeStackCompositeProps,
-  AppSignedInStackParamList,
-  CargoHomeStackParamList,
-} from "../../../../Router";
+import { AppDrawerCargoHomeStackCompositeProps } from "../../../../Router";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import Spinner from "react-native-loading-spinner-overlay";
-import { useQuery } from "react-query";
-import gql from "../../../utils/gql/gql";
-import { ListCarsResult } from "./CargoHome.type";
-import * as queries from "../../../graphql/queries";
-import CustomMapView from "../../../components/views/Map/Map";
 import { LatLng } from "react-native-maps";
 import Landing from "../../Landing/Landing";
 import Animated, {
@@ -22,8 +13,9 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 import BottomSheet from "@gorhom/bottom-sheet";
-import MarkerIcon from "../../../../assets/marker-icon.svg";
-
+import CargoMap from "../../../components/views/Map/CargoMap/CargoMap";
+import { useTailwindColor } from "../../../utils/hooks/useTailwindColor";
+import { SharedElement } from "react-navigation-shared-element";
 const CargoHome: FC<AppDrawerCargoHomeStackCompositeProps<"CargoHome">> = ({
   route,
   navigation,
@@ -34,12 +26,13 @@ const CargoHome: FC<AppDrawerCargoHomeStackCompositeProps<"CargoHome">> = ({
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const modalPosition = useSharedValue(0);
+
   const windowHeight = Dimensions.get("window").height;
 
   const modalLowerBound = windowHeight * 0.96;
   const modalUpperBound = windowHeight * 0.6;
 
-  const animated = useAnimatedStyle(() => {
+  const animatedQr = useAnimatedStyle(() => {
     const value =
       (modalPosition.value - modalUpperBound) /
       (modalLowerBound - modalUpperBound);
@@ -48,6 +41,21 @@ const CargoHome: FC<AppDrawerCargoHomeStackCompositeProps<"CargoHome">> = ({
       transform: [
         {
           translateX: (1 - value) * 200,
+        },
+      ],
+      zIndex: -1,
+    };
+  }, [modalPosition]);
+
+  const animatedPackage = useAnimatedStyle(() => {
+    const value =
+      (modalPosition.value - modalUpperBound) /
+      (modalLowerBound - modalUpperBound);
+
+    return {
+      transform: [
+        {
+          translateX: -(1 - value) * 200,
         },
       ],
       zIndex: -1,
@@ -64,12 +72,19 @@ const CargoHome: FC<AppDrawerCargoHomeStackCompositeProps<"CargoHome">> = ({
           modalPosition={modalPosition}
           bottomSheetRef={bottomSheetRef}
         />
-        <CustomMapView
-          MarkerIcon={MarkerIcon}
-          onLocationSet={(loc) => {
-            setLocation(loc);
+        {/* <SharedElement
+          className="flex flex-1 h-full w-full"
+          style={{
+            zIndex: -1,
           }}
+          id="map"
+        > */}
+        <CargoMap
+          onMapPress={() => {}}
+          onMarkerSelect={() => {}}
+          setLocation={setLocation}
         />
+        {/* </SharedElement> */}
         <View className={`absolute left-12 top-16`}>
           <BiBipIconButton
             buttonSize="small"
@@ -80,15 +95,36 @@ const CargoHome: FC<AppDrawerCargoHomeStackCompositeProps<"CargoHome">> = ({
             <Ionicons name="menu" color="white" size={32} />
           </BiBipIconButton>
         </View>
-
-        <Animated.View className="absolute right-8 bottom-24" style={animated}>
+        <Animated.View
+          style={animatedPackage}
+          className="absolute left-8 bottom-24"
+        >
+          <SharedElement id="test">
+            <BiBipIconButton
+              buttonSize="large"
+              intent="primary"
+              disabled={location === undefined}
+              onPress={async () => {
+                navigation.navigate("TrackPackage");
+              }}
+            >
+              <Ionicons name="cube-outline" color="white" size={48} />
+            </BiBipIconButton>
+          </SharedElement>
+        </Animated.View>
+        <Animated.View
+          className="absolute right-8 bottom-24"
+          style={animatedQr}
+        >
           <BiBipIconButton
             buttonSize="large"
             intent="primary"
             disabled={location === undefined}
-            onPress={async () => {}}
+            onPress={async () => {
+              navigation.navigate("NewPackage");
+            }}
           >
-            <Ionicons name="qr-code-outline" color="white" size={48} />
+            <FontAwesome5 name="plus" color="white" size={48} />
           </BiBipIconButton>
         </Animated.View>
       </View>

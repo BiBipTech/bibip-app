@@ -1,9 +1,7 @@
-import { FunctionComponent, useRef } from "react";
-import { Text, View } from "react-native";
-import ChargeStationInformationBox from "../components/views/InformationBox/ChargeStationInformationBox/ChargeStationInformationBox";
-import Mapbox, { UserLocationRenderMode } from "@rnmapbox/maps";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import MarkerIcon from "../../assets/marker-icon.svg";
+import { FunctionComponent, useEffect, useMemo, useState } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+import Mapbox from "@rnmapbox/maps";
+
 interface TestProps {}
 
 Mapbox.setAccessToken(
@@ -11,45 +9,40 @@ Mapbox.setAccessToken(
 );
 
 const Test: FunctionComponent<TestProps> = () => {
-  const map = useRef<Mapbox.MapView>(null);
-  const camera = useRef<Mapbox.Camera>(null);
-  const userLocation = useRef<Mapbox.UserLocation>(null);
+  const [count, setCount] = useState(5);
+  const [renderCount, setRenderCount] = useState(0);
+
+  const doubleCount = useMemo(() => {
+    const timestamp = +new Date() + 5000;
+
+    while (timestamp > +new Date()) {}
+
+    return count * 2;
+  }, [count]);
+
+  useEffect(() => {
+    console.log(doubleCount);
+  }, [doubleCount, renderCount]);
 
   return (
-    <View className="">
-      <Mapbox.MapView
-        className="w-full h-full -z-10"
-        onPress={(e) => {
-          console.log(e);
+    <View className="justify-center items-center h-full w-full">
+      <Text className="text-xl">{renderCount}</Text>
+      <TouchableOpacity
+        className="bg-cyan-500 px-8 py-4 rounded-md mt-8"
+        onPress={() => {
+          setRenderCount((prevRenderCount) => prevRenderCount + 1);
         }}
-        styleURL="mapbox://styles/eyub2001/clk2pmr3g00g301pf23265zbw"
-        ref={map}
       >
-        <Mapbox.UserLocation ref={userLocation} animated />
-        <Mapbox.Camera
-          ref={camera}
-          animationMode="moveTo"
-          animationDuration={250}
-        />
-        <Mapbox.MarkerView coordinate={[29.01685781844475, 41.11086392747893]}>
-          <MarkerIcon width={75} height={75} />
-        </Mapbox.MarkerView>
-      </Mapbox.MapView>
-      <View className="absolute bottom-16 left-16">
-        <TouchableOpacity
-          onPress={async () => {
-            console.log(userLocation.current?.state);
-            const coords = userLocation.current?.state.coordinates;
-            camera.current?.setCamera({
-              centerCoordinate: coords ?? [],
-              zoomLevel: 17,
-              animationDuration: 1000,
-              animationMode: "flyTo",
-            });
-          }}
-          className="rounded-full bg-bibip-green-500 w-12 h-12"
-        />
-      </View>
+        <Text className="text-white text-xl">Hello</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        className="bg-cyan-500 px-8 py-4 rounded-md mt-8"
+        onPress={() => {
+          setCount((prevCount) => prevCount + 1);
+        }}
+      >
+        <Text className="text-white text-xl">Hello</Text>
+      </TouchableOpacity>
     </View>
   );
 };

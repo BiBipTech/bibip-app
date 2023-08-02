@@ -12,13 +12,13 @@
     "name": "bibip",
     "owner": "bibiptech",
     "slug": "bibip-app",
-    "version": "0.1.7",
+    "version": "0.1.8",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "scheme": "bibipapp",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/logosvg.svg",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -39,7 +39,7 @@
         "NSLocationAlwaysUsageDescription": "Size daha kaliteli hizmet sunabilmemiz için konumunuza erişmeye ihtiyacımız var!",
         "ITSAppUsesNonExemptEncryption": false
       },
-      "buildNumber": "3"
+      "buildNumber": "1"
     },
     "android": {
       "package": "tech.bibip.app",

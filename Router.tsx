@@ -3,7 +3,9 @@ import {
   NavigationContainer,
 } from "@react-navigation/native";
 import {
+  CardStyleInterpolators,
   StackScreenProps,
+  TransitionSpecs,
   createStackNavigator,
 } from "@react-navigation/stack";
 import {
@@ -33,13 +35,14 @@ import Success from "./src/screens/Menu/Success/Success";
 import Profile from "./src/screens/Menu/Profile/Profile";
 import DocumentCamera from "./src/screens/Menu/DocumentCamera/DocumentCamera";
 import SignUp from "./src/screens/SignUp/SignUp";
-import Landing from "./src/screens/Landing/Landing";
 import CargoHome from "./src/screens/Cargo/Home/CargoHome";
 import CustomCargoDrawer from "./src/components/views/CargoDrawer/CargoDrawer";
-import { Text, TouchableOpacity, View } from "react-native";
-import useCustomTailwind from "./src/utils/hooks/useCustomTailwind";
 import ChargeStationHome from "./src/screens/ChargingStation/Home/ChargeStationHome";
 import Test from "./src/screens/Test";
+import TrackPackage from "./src/screens/Cargo/TrackPackage/TrackPackage";
+import { createSharedElementStackNavigator } from "react-navigation-shared-element";
+import Animated from "react-native-reanimated";
+import NewPackage from "./src/screens/Cargo/NewPackage/NewPackage";
 
 export type AppSignedOutStackParamList = {
   Login: undefined;
@@ -106,6 +109,8 @@ export type BiBipTripStackParamList = {
 
 export type CargoHomeStackParamList = {
   CargoHome: undefined;
+  TrackPackage: undefined;
+  NewPackage: undefined;
 };
 
 export type ChargeStationHomeStackParamList = {
@@ -124,7 +129,8 @@ const CargoRootDrawerNavigator =
 const BiBipHomeStackNavigator = createStackNavigator<BiBipHomeStackParamList>();
 const BiBipTripStackNavigator = createStackNavigator<BiBipTripStackParamList>();
 
-const CargoHomeStackNavigator = createStackNavigator<CargoHomeStackParamList>();
+const CargoHomeStackNavigator =
+  createSharedElementStackNavigator<CargoHomeStackParamList>();
 
 const ChargeStationHomeStackNavigator =
   createStackNavigator<ChargeStationHomeStackParamList>();
@@ -253,6 +259,52 @@ const Router = () => {
         <CargoHomeStackNavigator.Screen
           name="CargoHome"
           component={CargoHome}
+          sharedElements={() => {
+            return [
+              {
+                id: "test",
+                animation: "fade-in",
+                align: "auto",
+                resize: "clip",
+              },
+              {
+                id: "map",
+              },
+            ];
+          }}
+        />
+        <CargoHomeStackNavigator.Screen
+          name="TrackPackage"
+          component={TrackPackage}
+          options={{
+            title: "Kargo Takip",
+            headerBackTitle: "Geri",
+            headerShown: true,
+          }}
+          sharedElements={() => {
+            return [
+              {
+                id: "test",
+                animation: "fade-in",
+                align: "auto",
+                resize: "clip",
+              },
+            ];
+          }}
+        />
+        <CargoHomeStackNavigator.Screen
+          name="NewPackage"
+          component={NewPackage}
+          options={{
+            headerShown: true,
+            title: "Yeni Kargo",
+            headerBackTitle: "Geri",
+          }}
+          sharedElements={() => [
+            {
+              id: "map",
+            },
+          ]}
         />
       </CargoHomeStackNavigator.Navigator>
     );
@@ -364,6 +416,7 @@ const Router = () => {
         initialRouteName="AppStack"
         screenOptions={{
           headerShown: false,
+          swipeEnabled: false,
         }}
         drawerContent={(props) => <CustomDrawer {...props} />}
       >
