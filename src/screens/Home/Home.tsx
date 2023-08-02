@@ -13,7 +13,7 @@ import { useQuery } from "react-query";
 import gql from "../../utils/gql/gql";
 import { ListCarsResult } from "./Home.type";
 import * as queries from "../../graphql/queries";
-import CustomMapView from "../../components/views/Map/Map";
+import CarMap from "../../components/views/Map/CarMap/CarMap";
 import { LatLng } from "react-native-maps";
 import UserContext from "../../utils/context/UserContext";
 import { fetchDocumentStatuses } from "../Menu/Profile/Profile.action";
@@ -26,13 +26,19 @@ import Animated, {
 } from "react-native-reanimated";
 import BottomSheet from "@gorhom/bottom-sheet";
 import MarkerIcon from "../../../assets/marker-icon.svg";
+import { Motion } from "@legendapp/motion";
+import ChargeStationInformationBox from "../../components/views/InformationBox/ChargeStationInformationBox/ChargeStationInformationBox";
+import BeefullInformationBox, {
+  BeefullStation,
+} from "../../components/views/InformationBox/BeefullInformationBox/BeefullInformationBox";
 
 const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
   route,
   navigation,
 }) => {
   const [location, setLocation] = useState<LatLng>();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
   const [documents, setDocuments] = useState({
     id: "",
     photo: "",
@@ -40,12 +46,19 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
   });
   const [value, setValue] = useState(0);
 
+  const [carInfo, setCarInfo] = useState(0);
+  const [beefullInfo, setBeefullInfo] = useState(0);
+
+  const [selectedBeefullStation, setSelectedBeefullStation] =
+    useState<BeefullStation | null>(null);
+
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const userContext = useContext(UserContext);
 
   const {
     isLoading: isCarsLoading,
+    isFetching: isCarsFetching,
     error,
     data: cars,
   } = useQuery("getCars", () =>
@@ -80,13 +93,15 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
   });
 
   useEffect(() => {
-    setTimeout(() => bottomSheetRef.current?.snapToIndex(1), 500);
-  }, []);
+    const timeOutId = setTimeout(
+      () => bottomSheetRef.current?.snapToIndex(1),
+      500
+    );
 
-  useEffect(() => {
-    if (isCarsLoading) setIsLoading(true);
-    else setIsLoading(false);
-  }, [isCarsLoading]);
+    return () => {
+      clearTimeout(timeOutId);
+    };
+  }, []);
 
   const modalPosition = useSharedValue(0);
   const windowHeight = Dimensions.get("window").height;
@@ -109,29 +124,74 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
     };
   }, [modalPosition]);
 
+  const isSpinnerVisible = isLoading || isCarsLoading;
+
   return (
     <SafeAreaProvider>
       <View className="items-center justify-center h-full w-full flex-1">
-        <Spinner visible={isLoading} />
+        <Spinner visible={isSpinnerVisible} />
         <Landing
+          hideInfoBox={() => {
+            setCarInfo(0);
+            setBeefullInfo(0);
+          }}
           handle={(i) => {}}
           navigate={navigation.navigate}
           modalPosition={modalPosition}
           bottomSheetRef={bottomSheetRef}
         />
-        <CustomMapView
-          MarkerIcon={MarkerIcon}
-          onLocationSet={(loc) => {
-            setLocation(loc);
+        {cars ? (
+          <CarMap
+            setBeefullInfo={setBeefullInfo}
+            setCarInfo={setCarInfo}
+            onMapPress={() => {
+              setValue(0);
+              bottomSheetRef.current?.collapse();
+              setBeefullInfo(0);
+              setCarInfo(0);
+            }}
+            onMarkerSelect={() => {
+              setValue(1);
+              bottomSheetRef.current?.collapse();
+            }}
+            setLocation={setLocation}
+            cars={cars}
+            setSelectedBeefullStation={setSelectedBeefullStation}
+          />
+        ) : (
+          <Spinner visible />
+        )}
+        <Motion.View
+          className={"absolute top-10 w-full px-4"}
+          animate={{
+            y: beefullInfo === 1 ? 0 : -250,
+            opacity: beefullInfo === 1 ? 1 : 0,
           }}
-          onPress={() => setValue(0)}
-          onMarkerPress={({ nativeEvent: { coordinate } }) => {
-            setValue(1);
-            console.log(findCarFromLocation(cars, coordinate as LatLng));
+          transition={{
+            duration: 250,
+            speed: 1,
           }}
-          markers={cars}
-        />
-        <View className={`absolute left-12 top-16`}>
+        >
+          <BeefullInformationBox
+            selectedBeefullStation={
+              selectedBeefullStation ?? {
+                name: "",
+                address: "",
+                distance: "0",
+                duration: "0",
+              }
+            }
+          />
+        </Motion.View>
+        <Motion.View
+          className={`absolute left-7 top-16`}
+          animate={{
+            y: beefullInfo === 1 ? 250 : 0,
+          }}
+          transition={{
+            duration: 250,
+          }}
+        >
           <BiBipIconButton
             buttonSize="small"
             onPress={() => {
@@ -140,8 +200,8 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
           >
             <Ionicons name="menu" color="white" size={32} />
           </BiBipIconButton>
-        </View>
-
+        </Motion.View>
+        {/* 
         <View className={`absolute right-12 top-16`}>
           <BiBipIconButton
             buttonSize="small"
@@ -152,7 +212,7 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
           >
             <Ionicons name="menu" color="white" size={32} />
           </BiBipIconButton>
-        </View>
+        </View> */}
 
         <Animated.View className="absolute right-8 bottom-24" style={animated}>
           <BiBipIconButton

@@ -1,25 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg id="katman_2" data-name="katman 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 71.5 120.39">
+<svg id="katman_2" data-name="katman 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  viewBox="0 0 71.5 120.39">
   <defs>
     <style>
       .cls-1 {
         stroke-width: 3px;
       }
 
-      .cls-1, .cls-2, .cls-3, .cls-4 {
+      .cls-1,
+      .cls-2,
+      .cls-3,
+      .cls-4 {
         stroke-miterlimit: 10;
       }
 
-      .cls-1, .cls-2, .cls-4 {
+      .cls-1,
+      .cls-2,
+      .cls-4 {
         stroke: #fff;
       }
 
-      .cls-1, .cls-3, .cls-4 {
+      .cls-1,
+      .cls-3,
+      .cls-4 {
         fill: none;
       }
 
       .cls-5 {
-        fill: #23a65e;
+        fill: #06b6d4;
       }
 
       .cls-2 {
@@ -32,30 +40,36 @@
       }
 
       .cls-3 {
-        stroke: #23a65e;
+        stroke: #06b6d4;
       }
 
-      .cls-3, .cls-4 {
+      .cls-3,
+      .cls-4 {
         stroke-width: 2px;
       }
     </style>
   </defs>
   <g id="katman_2-2" data-name="katman 2">
     <g>
-      <image class="cls-6" width="56" height="53" transform="translate(4.55 61.72) scale(1.11)" xlink:href="SVG/F8B9860940292873.png"/>
-      <path class="cls-5" d="m21.82,79.01c5.65,1.11,10.18,8.52,13.73,24.02,1.88-11.73,5.42-21.37,13.95-24.02-10.07,1.66-19.37,1.77-27.68,0Z"/>
+      <image class="cls-6" width="56" height="53" transform="translate(4.55 61.72) scale(1.11)"
+        xlink:href="SVG/F8B9860940292873.png" />
+      <path class="cls-5"
+        d="m21.82,79.01c5.65,1.11,10.18,8.52,13.73,24.02,1.88-11.73,5.42-21.37,13.95-24.02-10.07,1.66-19.37,1.77-27.68,0Z" />
     </g>
-    <rect class="cls-3" x="1" y="1" width="69.5" height="79.12" rx="15.01" ry="15.01"/>
-    <rect class="cls-5" x="4.55" y="3.97" width="62.7" height="73.02" rx="13.23" ry="13.23"/>
+    <rect class="cls-3" x="1" y="1" width="69.5" height="79.12" rx="15.01" ry="15.01" />
+    <rect class="cls-5" x="4.55" y="3.97" width="62.7" height="73.02" rx="13.23" ry="13.23" />
   </g>
   <g id="katman_3" data-name="katman 3">
-    <path class="cls-1" d="m41.92,33.99h-24.55c-2.18,0-3.94-1.76-3.94-3.94v-10.66c0-2.18,1.76-3.94,3.94-3.94h24.55c2.18,0,3.94,1.76,3.94,3.94v10.66c0,2.18-1.76,3.94-3.94,3.94Z"/>
-    <line class="cls-1" x1="17.62" y1="62.71" x2="17.38" y2="33.99"/>
-    <line class="cls-1" x1="12.86" y1="62.94" x2="42.01" y2="62.94"/>
-    <path class="cls-1" d="m52.5,63.44l-6.48-7.7c-3.13-3.58-2.77-9.01.81-12.15s9.01-2.77,12.15.81,2.77,9.01-.81,12.15"/>
-    <circle class="cls-2" cx="52.62" cy="49.67" r=".93"/>
-    <path class="cls-4" d="m28.1,40.88h6.01l-3,5.22h4.33c1.13,0,1.53.78.7,1.82l-8.3,9.05c-1.18,1.23-1.45,1.13-1.01,0l2.43-6.37-3.78-.06c-1.53-.11-2.11-.78-1.42-2.19l4.05-7.47Z"/>
-    <line class="cls-1" x1="22.7" y1="23.4" x2="30.17" y2="33.99"/>
-    <line class="cls-1" x1="42.01" y1="38.2" x2="41.92" y2="33.99"/>
+    <path class="cls-1"
+      d="m41.92,33.99h-24.55c-2.18,0-3.94-1.76-3.94-3.94v-10.66c0-2.18,1.76-3.94,3.94-3.94h24.55c2.18,0,3.94,1.76,3.94,3.94v10.66c0,2.18-1.76,3.94-3.94,3.94Z" />
+    <line class="cls-1" x1="17.62" y1="62.71" x2="17.38" y2="33.99" />
+    <line class="cls-1" x1="12.86" y1="62.94" x2="42.01" y2="62.94" />
+    <path class="cls-1"
+      d="m52.5,63.44l-6.48-7.7c-3.13-3.58-2.77-9.01.81-12.15s9.01-2.77,12.15.81,2.77,9.01-.81,12.15" />
+    <circle class="cls-2" cx="52.62" cy="49.67" r=".93" />
+    <path class="cls-4"
+      d="m28.1,40.88h6.01l-3,5.22h4.33c1.13,0,1.53.78.7,1.82l-8.3,9.05c-1.18,1.23-1.45,1.13-1.01,0l2.43-6.37-3.78-.06c-1.53-.11-2.11-.78-1.42-2.19l4.05-7.47Z" />
+    <line class="cls-1" x1="22.7" y1="23.4" x2="30.17" y2="33.99" />
+    <line class="cls-1" x1="42.01" y1="38.2" x2="41.92" y2="33.99" />
   </g>
 </svg>
