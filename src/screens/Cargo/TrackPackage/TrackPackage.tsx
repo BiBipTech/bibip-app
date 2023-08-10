@@ -52,19 +52,19 @@ const PackageNumberSearch: FunctionComponent = (props) => {
             placeholderTextColor={useTailwindColor("bg-gray-400")}
           />
         </View>
-        <SharedElement id="test" className="ml-2">
-          <BiBipIconButton
-            className="bg-green-500 ml-2 rounded-md p-4"
-            buttonSize={"medium"}
-            intent="inverted"
-          >
-            <Ionicons
-              name="qr-code"
-              color={useTailwindColor("bg-bibip-green-500")}
-              size={32}
-            />
-          </BiBipIconButton>
-        </SharedElement>
+        {/* <SharedElement id="test" className="ml-2"> */}
+        <BiBipIconButton
+          className="bg-green-500 ml-6 rounded-md p-4"
+          buttonSize={"medium"}
+          intent="inverted"
+        >
+          <Ionicons
+            name="qr-code"
+            color={useTailwindColor("bg-bibip-green-500")}
+            size={32}
+          />
+        </BiBipIconButton>
+        {/* </SharedElement> */}
       </View>
     </View>
   );

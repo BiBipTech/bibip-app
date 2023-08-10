@@ -259,19 +259,19 @@ const Router = () => {
         <CargoHomeStackNavigator.Screen
           name="CargoHome"
           component={CargoHome}
-          sharedElements={() => {
-            return [
-              {
-                id: "test",
-                animation: "fade-in",
-                align: "auto",
-                resize: "clip",
-              },
-              {
-                id: "map",
-              },
-            ];
-          }}
+          // sharedElements={() => {
+          //   return [
+          //     {
+          //       id: "test",
+          //       animation: "fade-in",
+          //       align: "auto",
+          //       resize: "clip",
+          //     },
+          //     {
+          //       id: "map",
+          //     },
+          //   ];
+          // }}
         />
         <CargoHomeStackNavigator.Screen
           name="TrackPackage"
@@ -281,16 +281,16 @@ const Router = () => {
             headerBackTitle: "Geri",
             headerShown: true,
           }}
-          sharedElements={() => {
-            return [
-              {
-                id: "test",
-                animation: "fade-in",
-                align: "auto",
-                resize: "clip",
-              },
-            ];
-          }}
+          // sharedElements={() => {
+          //   return [
+          //     {
+          //       id: "test",
+          //       animation: "fade-in",
+          //       align: "auto",
+          //       resize: "clip",
+          //     },
+          //   ];
+          // }}
         />
         <CargoHomeStackNavigator.Screen
           name="NewPackage"
@@ -300,11 +300,11 @@ const Router = () => {
             title: "Yeni Kargo",
             headerBackTitle: "Geri",
           }}
-          sharedElements={() => [
-            {
-              id: "map",
-            },
-          ]}
+          // sharedElements={() => [
+          //   {
+          //     id: "map",
+          //   },
+          // ]}
         />
       </CargoHomeStackNavigator.Navigator>
     );

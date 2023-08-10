@@ -18,7 +18,7 @@
     "userInterfaceStyle": "automatic",
     "scheme": "bibipapp",
     "splash": {
-      "image": "./assets/logosvg.svg",
+      "image": "./assets/logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

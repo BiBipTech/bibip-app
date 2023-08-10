@@ -95,27 +95,21 @@ const CargoHome: FC<AppDrawerCargoHomeStackCompositeProps<"CargoHome">> = ({
             <Ionicons name="menu" color="white" size={32} />
           </BiBipIconButton>
         </View>
-        <Animated.View
-          style={animatedPackage}
-          className="absolute left-8 bottom-24"
-        >
-          <SharedElement id="test">
-            <BiBipIconButton
-              buttonSize="large"
-              intent="primary"
-              disabled={location === undefined}
-              onPress={async () => {
-                navigation.navigate("TrackPackage");
-              }}
-            >
-              <Ionicons name="cube-outline" color="white" size={48} />
-            </BiBipIconButton>
-          </SharedElement>
-        </Animated.View>
-        <Animated.View
-          className="absolute right-8 bottom-24"
-          style={animatedQr}
-        >
+        <View style={animatedPackage} className="absolute left-8 bottom-24">
+          {/* <SharedElement id="test"> */}
+          <BiBipIconButton
+            buttonSize="large"
+            intent="primary"
+            disabled={location === undefined}
+            onPress={async () => {
+              navigation.navigate("TrackPackage");
+            }}
+          >
+            <Ionicons name="cube-outline" color="white" size={48} />
+          </BiBipIconButton>
+          {/* </SharedElement> */}
+        </View>
+        <View className="absolute right-8 bottom-24" style={animatedQr}>
           <BiBipIconButton
             buttonSize="large"
             intent="primary"
@@ -126,7 +120,7 @@ const CargoHome: FC<AppDrawerCargoHomeStackCompositeProps<"CargoHome">> = ({
           >
             <FontAwesome5 name="plus" color="white" size={48} />
           </BiBipIconButton>
-        </Animated.View>
+        </View>
       </View>
     </SafeAreaProvider>
   );
