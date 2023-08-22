@@ -1,5 +1,5 @@
 import { FunctionComponent, ReactNode } from "react";
-import { Text, Touchable, TouchableOpacity, View } from "react-native";
+import { Text, View } from "react-native";
 import {
   FontAwesome,
   Ionicons,
@@ -19,11 +19,12 @@ interface ChargeStationInformationBoxProps {
     longitude: number;
     address: string;
   } | null;
+  onComment: () => void;
 }
 
 const ChargeStationInformationBox: FunctionComponent<
   ChargeStationInformationBoxProps
-> = ({ selectedStation }) => {
+> = ({ selectedStation, onComment }) => {
   return (
     <View className="w-full bg-gray-900 rounded-2xl shadow-md h-64 pb-2 pt-2 px-4 flex flex-col justify-around">
       <View className="flex flex-row justify-between">
@@ -82,7 +83,12 @@ const ChargeStationInformationBox: FunctionComponent<
       <View className="flex flex-row w-full justify-between">
         <InformationBoxButton invert text="View" />
         <View className="w-2" />
-        <InformationBoxButton text="Book" />
+        <InformationBoxButton
+          text="Puanla"
+          onPress={() => {
+            onComment();
+          }}
+        />
       </View>
     </View>
   );

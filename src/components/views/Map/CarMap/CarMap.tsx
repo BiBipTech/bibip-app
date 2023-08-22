@@ -14,6 +14,7 @@ import { LatLng } from "react-native-maps";
 import { Car } from "../../../../models";
 import { BeefullStation } from "../../InformationBox/BeefullInformationBox/BeefullInformationBox";
 import { getDirections } from "../../../../utils/api/mapbox";
+import { useForegroundPermissions } from "expo-location";
 
 interface CarMapProps {
   onMarkerSelect: () => void;
@@ -38,6 +39,9 @@ const CarMap: FunctionComponent<CarMapProps> = ({
 }) => {
   const [cameraRef, setCameraRef] = useState<CameraRef | null>(null);
   const [loc, setLoc] = useState<number[]>([]);
+  const [permissionGranted, setPermissionGranted] = useState(false);
+
+  const [status, requestPermission] = useForegroundPermissions();
 
   const isLocationSet = useRef(false);
 
@@ -57,6 +61,18 @@ const CarMap: FunctionComponent<CarMapProps> = ({
   }, []);
   const userLocation = useCallback((node: Mapbox.UserLocation) => {
     setUserLocationRef(node);
+  }, []);
+
+  useEffect(() => {
+    if (status?.granted) return;
+
+    requestPermission().then((val) => {
+      if (val.granted || !val.canAskAgain) setPermissionGranted(true);
+
+      requestPermission().then((val) => {
+        if (val.granted || !val.canAskAgain) setPermissionGranted(true);
+      });
+    });
   }, []);
 
   useEffect(() => {
@@ -99,140 +115,142 @@ const CarMap: FunctionComponent<CarMapProps> = ({
         zIndex: -1,
       }}
     >
-      <Mapbox.MapView
-        ref={mapRef}
-        onPress={onMapPress}
-        className="w-full h-full"
-        styleURL="mapbox://styles/eyub2001/clk2pmr3g00g301pf23265zbw"
-      >
-        <Mapbox.ShapeSource
-          shape={JSON.parse(
-            JSON.stringify({
-              type: "FeatureCollection",
-              features: [...Cars, ...ChargeStations.features],
-            })
-          )}
-          id="symbolLocationSource"
-          hitbox={{ width: 18, height: 18 }}
-          onPress={async (point) => {
-            if (point.features.length === 1) {
-              const geometry = point.features[0].geometry as {
-                coordinates: [number, number];
-                type: string;
-              };
-              const { icon, name, address, id } =
-                point.features[0].properties ?? {};
-
-              if (icon === "stationIcon") {
-                const res = await getDirections(
-                  `${loc[0]}%2C${loc[1]}`,
-                  `${geometry.coordinates[0]}%2C${geometry.coordinates[1]}`
-                );
-                const { distance, duration } = res.routes[0];
-
-                const beefullStation = {
-                  name,
-                  address,
-                  distance: (distance / 1000).toFixed(1),
-                  duration: (duration / 60).toFixed(1),
+      {permissionGranted && (
+        <Mapbox.MapView
+          ref={mapRef}
+          onPress={onMapPress}
+          className="w-full h-full"
+          styleURL="mapbox://styles/eyub2001/clk2pmr3g00g301pf23265zbw"
+        >
+          <Mapbox.ShapeSource
+            shape={JSON.parse(
+              JSON.stringify({
+                type: "FeatureCollection",
+                features: [...Cars, ...ChargeStations.features],
+              })
+            )}
+            id="symbolLocationSource"
+            hitbox={{ width: 18, height: 18 }}
+            onPress={async (point) => {
+              if (point.features.length === 1) {
+                const geometry = point.features[0].geometry as {
+                  coordinates: [number, number];
+                  type: string;
                 };
-                setSelectedBeefullStation(beefullStation);
-                onMarkerSelect();
-                setBeefullInfo(1);
+                const { icon, name, address, id } =
+                  point.features[0].properties ?? {};
+
+                if (icon === "stationIcon") {
+                  const res = await getDirections(
+                    `${loc[0]}%2C${loc[1]}`,
+                    `${geometry.coordinates[0]}%2C${geometry.coordinates[1]}`
+                  );
+                  const { distance, duration } = res.routes[0];
+
+                  const beefullStation = {
+                    name,
+                    address,
+                    distance: (distance / 1000).toFixed(1),
+                    duration: (duration / 60).toFixed(1),
+                  };
+                  setSelectedBeefullStation(beefullStation);
+                  onMarkerSelect();
+                  setBeefullInfo(1);
+                }
+
+                cameraRef?.setCamera({
+                  centerCoordinate: geometry.coordinates,
+                  zoomLevel: 16,
+                  animationDuration: 750,
+                });
+                return;
               }
 
+              const currentZoom = await mapRef.current?.getZoom();
               cameraRef?.setCamera({
-                centerCoordinate: geometry.coordinates,
-                zoomLevel: 16,
-                animationDuration: 750,
+                centerCoordinate: [
+                  point.coordinates.longitude,
+                  point.coordinates.latitude,
+                ],
+                zoomLevel: (currentZoom ?? 13) + 1,
               });
-              return;
-            }
-
-            const currentZoom = await mapRef.current?.getZoom();
-            cameraRef?.setCamera({
-              centerCoordinate: [
-                point.coordinates.longitude,
-                point.coordinates.latitude,
-              ],
-              zoomLevel: (currentZoom ?? 13) + 1,
-            });
-          }}
-          clusterRadius={50}
-          clusterMaxZoomLevel={14}
-          cluster
-        >
-          <Mapbox.SymbolLayer
-            id="pointCount"
-            style={layerStyles.clusterCount}
-          />
-          <Mapbox.CircleLayer
-            id="clusteredPoints"
-            belowLayerID="pointCount"
-            filter={["has", "point_count"]}
-            style={{
-              circlePitchAlignment: "map",
-              circleColor: [
-                "step",
-                ["get", "point_count"],
-                "#51bbd6",
-                100,
-                "#f1f075",
-                250,
-                "#f28cb1",
-                750,
-                "#ff0000",
-              ],
-              circleRadius: [
-                "step",
-                ["get", "point_count"],
-                20,
-                100,
-                25,
-                250,
-                30,
-                750,
-                40,
-              ],
-              circleOpacity: 0.84,
-              circleStrokeWidth: 0,
-              circleStrokeColor: "blue",
             }}
-          />
-          <Mapbox.Images images={images} onImageMissing={(imageKey) => {}} />
-          <Mapbox.SymbolLayer
-            id="singlePoint"
-            filter={["!has", "point_count"]}
-            style={{
-              iconImage: ["get", "icon"],
-              iconSize: [
-                "match",
-                ["get", "icon"],
-                "stationIcon",
-                0.09,
-                "carIcon",
-                0.6,
-                1,
-              ],
-            }}
-          />
-        </Mapbox.ShapeSource>
+            clusterRadius={50}
+            clusterMaxZoomLevel={14}
+            cluster
+          >
+            <Mapbox.SymbolLayer
+              id="pointCount"
+              style={layerStyles.clusterCount}
+            />
+            <Mapbox.CircleLayer
+              id="clusteredPoints"
+              belowLayerID="pointCount"
+              filter={["has", "point_count"]}
+              style={{
+                circlePitchAlignment: "map",
+                circleColor: [
+                  "step",
+                  ["get", "point_count"],
+                  "#51bbd6",
+                  100,
+                  "#f1f075",
+                  250,
+                  "#f28cb1",
+                  750,
+                  "#ff0000",
+                ],
+                circleRadius: [
+                  "step",
+                  ["get", "point_count"],
+                  20,
+                  100,
+                  25,
+                  250,
+                  30,
+                  750,
+                  40,
+                ],
+                circleOpacity: 0.84,
+                circleStrokeWidth: 0,
+                circleStrokeColor: "blue",
+              }}
+            />
+            <Mapbox.Images images={images} onImageMissing={(imageKey) => {}} />
+            <Mapbox.SymbolLayer
+              id="singlePoint"
+              filter={["!has", "point_count"]}
+              style={{
+                iconImage: ["get", "icon"],
+                iconSize: [
+                  "match",
+                  ["get", "icon"],
+                  "stationIcon",
+                  0.09,
+                  "carIcon",
+                  0.6,
+                  1,
+                ],
+              }}
+            />
+          </Mapbox.ShapeSource>
 
-        <Mapbox.UserLocation
-          visible
-          onUpdate={(location) => {
-            setLocation({
-              latitude: location.coords.latitude,
-              longitude: location.coords.longitude,
-            });
-            if (isLocationSet.current) return;
-            isLocationSet.current = true;
-            setLoc([location.coords.longitude, location.coords.latitude]);
-          }}
-          ref={userLocation}
-        />
-        <Mapbox.Camera ref={camera} />
-      </Mapbox.MapView>
+          <Mapbox.UserLocation
+            visible
+            onUpdate={(location) => {
+              setLocation({
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+              });
+              if (isLocationSet.current) return;
+              isLocationSet.current = true;
+              setLoc([location.coords.longitude, location.coords.latitude]);
+            }}
+            ref={userLocation}
+          />
+          <Mapbox.Camera ref={camera} />
+        </Mapbox.MapView>
+      )}
     </View>
   );
 };

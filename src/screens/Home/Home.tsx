@@ -31,6 +31,8 @@ import ChargeStationInformationBox from "../../components/views/InformationBox/C
 import BeefullInformationBox, {
   BeefullStation,
 } from "../../components/views/InformationBox/BeefullInformationBox/BeefullInformationBox";
+import { promiseWithLoader } from "../../utils/aws/api";
+import { startTrip } from "../QRModal/QRModal.action";
 
 const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
   route,
@@ -67,7 +69,13 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
     })
   );
 
-  const {} = useQuery({
+  useEffect(() => {
+    console.log(userContext);
+
+    if (userContext.token) console.log(userContext.token);
+  }, [userContext]);
+
+  const { refetch: refetchDocuments } = useQuery({
     queryKey: "documents",
     queryFn: () =>
       fetchDocumentStatuses(userContext.user!).then((val) => {
@@ -220,49 +228,50 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
             intent="primary"
             disabled={location === undefined}
             onPress={async () => {
-              // promiseWithLoader(
-              //   setIsLoading,
-              //   startTrip(
-              //     "+905379440278",
-              //     "4876ccd3-d404-4cfb-a1c9-c7d69fd23a11",
-              //     {
-              //       latitude: location?.latitude!,
-              //       longitude: location?.longitude!,
-              //     },
-              //     userContext.token!
-              //   ).then((val) => {
-              //     userContext.setIsInTrip(true);
-              //   })
-              // );
-              // if (
-              //   documents.id === "" ||
-              //   documents.license === "" ||
-              //   documents.photo === ""
-              // ) {
-              //   warn(
-              //     "Hay aksi!",
-              //     "Bir şeyler yanlış gitti! Lütfen tekrar dene!",
-              //     () => {},
-              //     "Tamam"
-              //   );
-              //   return;
-              // }
-              // if (
-              //   documents.id !== "true" ||
-              //   documents.license !== "true" ||
-              //   documents.photo !== "true"
-              // ) {
-              //   warn(
-              //     "Eksik belgeler!",
-              //     "Eksik veya onaylanmamış belgen var. Eğer hepsini yüklediysen daha sonra tekrar dene!",
-              //     () => {},
-              //     "Tamam"
-              //   );
-              //   return;
-              // }
-              // navigation.navigate("QRModal", {
-              //   location: location!,
-              // });
+              promiseWithLoader(
+                setIsLoading,
+                startTrip(
+                  "+905379440278",
+                  "4876ccd3-d404-4cfb-a1c9-c7d69fd23a11",
+                  {
+                    latitude: location?.latitude!,
+                    longitude: location?.longitude!,
+                  },
+                  userContext.token!
+                ).then((val) => {
+                  userContext.setIsInTrip(true);
+                })
+              );
+              if (
+                documents.id === "" ||
+                documents.license === "" ||
+                documents.photo === ""
+              ) {
+                warn(
+                  "Hay aksi!",
+                  "Bir şeyler yanlış gitti! Lütfen tekrar dene!",
+                  () => {},
+                  "Tamam"
+                );
+                refetchDocuments();
+                return;
+              }
+              if (
+                documents.id !== "true" ||
+                documents.license !== "true" ||
+                documents.photo !== "true"
+              ) {
+                warn(
+                  "Eksik belgeler!",
+                  "Eksik veya onaylanmamış belgen var. Eğer hepsini yüklediysen daha sonra tekrar dene!",
+                  () => {},
+                  "Tamam"
+                );
+                return;
+              }
+              navigation.navigate("QRModal", {
+                location: location!,
+              });
             }}
           >
             <Ionicons name="qr-code-outline" color="white" size={48} />

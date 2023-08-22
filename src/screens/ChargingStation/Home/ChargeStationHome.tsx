@@ -12,28 +12,19 @@ import Landing from "../../Landing/Landing";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
-  withSpring,
   withTiming,
 } from "react-native-reanimated";
 import BottomSheet from "@gorhom/bottom-sheet";
 import ChargeStationInformationBox from "../../../components/views/InformationBox/ChargeStationInformationBox/ChargeStationInformationBox";
-import { Motion } from "@legendapp/motion";
-import MarkerIcon from "../../../../assets/station-marker-icon.svg";
 import ChargeStationMap from "../../../components/views/Map/ChargeStationMap/ChargeStationMap";
 import { promiseWithLoader } from "../../../utils/aws/api";
-import {
-  getDirections,
-  getIsochrone,
-  getReverseGeocode,
-} from "../../../utils/api/mapbox";
-import ChargeStationCarousel from "../../../components/views/Carousel/ChargeStationCarousel/ChargeStationCarousel";
+import { getDirections } from "../../../utils/api/mapbox";
 
 const ChargeStationHome: FC<
   AppDrawerChargeStationHomeStackCompositeProps<"ChargeStationHome">
 > = ({ route, navigation }) => {
   const [location, setLocation] = useState<LatLng>();
   const [isLoading, setIsLoading] = useState(false);
-  const [infoBoxShown, setInfoBoxShown] = useState(0);
   const [selectedStation, setSelectedStation] = useState<{
     name: string;
     distance: string;
@@ -46,6 +37,7 @@ const ChargeStationHome: FC<
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const modalPosition = useSharedValue(0);
+  const infoBoxShown = useSharedValue(0);
   const windowHeight = Dimensions.get("window").height;
 
   const modalLowerBound = windowHeight * 0.96;
@@ -55,6 +47,7 @@ const ChargeStationHome: FC<
     const value =
       (modalPosition.value - modalUpperBound) /
       (modalLowerBound - modalUpperBound);
+    console.log(modalPosition.value);
 
     return {
       transform: [
@@ -67,25 +60,29 @@ const ChargeStationHome: FC<
   }, [modalPosition]);
 
   const animatedDrawerButton = useAnimatedStyle(() => {
+    console.log(infoBoxShown.value);
+
     return {
       transform: [
         {
-          translateY: withTiming(infoBoxShown * 250),
+          translateY: withTiming(infoBoxShown.value * 250),
         },
       ],
     };
-  });
+  }, [infoBoxShown]);
 
   const animatedInformationBox = useAnimatedStyle(() => {
+    console.log(infoBoxShown.value);
+
     return {
       transform: [
         {
-          translateY: withTiming((1 - infoBoxShown) * -250),
+          translateY: withTiming((1 - infoBoxShown.value) * -250),
         },
       ],
-      opacity: withTiming(infoBoxShown),
+      opacity: withTiming(infoBoxShown.value),
     };
-  });
+  }, [infoBoxShown]);
 
   return (
     <SafeAreaProvider>
@@ -93,7 +90,7 @@ const ChargeStationHome: FC<
         <Spinner visible={isLoading} />
         <Landing
           hideInfoBox={() => {
-            setInfoBoxShown(0);
+            infoBoxShown.value = 0;
           }}
           handle={(i) => {}}
           navigate={navigation.navigate}
@@ -123,19 +120,24 @@ const ChargeStationHome: FC<
               }`,
             });
             bottomSheetRef.current?.collapse();
-            setInfoBoxShown(1);
+            infoBoxShown.value = 1;
             return res.routes[0].geometry.coordinates;
           }}
           onMapPress={() => {
             bottomSheetRef.current?.collapse();
-            setInfoBoxShown(0);
+            infoBoxShown.value = 0;
           }}
         />
         <Animated.View
           className={"absolute top-10 w-full px-4"}
           style={animatedInformationBox}
         >
-          <ChargeStationInformationBox selectedStation={selectedStation} />
+          <ChargeStationInformationBox
+            selectedStation={selectedStation}
+            onComment={() => {
+              navigation.navigate("ChargeStationComment");
+            }}
+          />
         </Animated.View>
         <Animated.View
           className={`absolute left-7 top-16`}

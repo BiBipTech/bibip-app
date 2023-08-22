@@ -8,7 +8,7 @@ import {
   Platform,
   StyleProp,
 } from "react-native";
-import React, { useRef, useState, useEffect, useContext } from "react";
+import React, { useContext } from "react";
 import styles from "./OTP.style";
 import COLORS from "../../assets/COLORS";
 import BiBipButton from "../../components/buttons/BiBipButton/BiBipButton";

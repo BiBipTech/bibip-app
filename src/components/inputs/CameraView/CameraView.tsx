@@ -20,6 +20,8 @@ const CameraView: FunctionComponent<CameraViewProps> = ({
   setImageUri,
   type,
 }) => {
+  const [permissionGranted, setPermissionGranted] = useState(false);
+
   const [permission, requestPermission] = Camera.useCameraPermissions();
 
   const camera = useRef<Camera>(null);
@@ -28,8 +30,14 @@ const CameraView: FunctionComponent<CameraViewProps> = ({
     return null;
   }
 
-  if (!permission.granted) {
-    requestPermission();
+  if (!permission.granted || permission.canAskAgain) {
+    requestPermission().then((res) => {
+      if (res.granted || !res.canAskAgain) setPermissionGranted(true);
+
+      requestPermission().then((res) => {
+        if (res.granted || !res.canAskAgain) setPermissionGranted(true);
+      });
+    });
   }
 
   return (
