@@ -33,6 +33,7 @@ const BiBipButton: FunctionComponent<BiBipButtonProps> = ({
   fontWeight,
   mini,
   style,
+  className,
   ...props
 }) => {
   return (
