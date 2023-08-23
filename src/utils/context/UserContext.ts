@@ -9,7 +9,7 @@ export type UserContextType = {
   token: string | undefined;
   isInTrip: boolean | undefined;
   setIsInTrip: (isInTrip: boolean) => void;
-  updateToken: () => void;
+  updateToken: () => Promise<void>;
   isInTripLoading: boolean;
 };
 
@@ -21,7 +21,7 @@ const UserContext = createContext<UserContextType>({
   token: undefined,
   isInTrip: false,
   setIsInTrip: (isInTrip: boolean) => {},
-  updateToken: () => {},
+  updateToken: async () => {},
   isInTripLoading: true,
 });
 
