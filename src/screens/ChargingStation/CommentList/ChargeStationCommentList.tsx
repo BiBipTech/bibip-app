@@ -64,7 +64,7 @@ const ChargeStationCommentList: FunctionComponent<
         data={comments}
         renderItem={({ item }) => (
           <View className="mb-2 p-4 w-full rounded-xl border border-gray-300 bg-white">
-            <View className="flex flex-row justify-between">
+            <View className="flex flex-row justify-between items-center">
               <Text>{item.fullName}</Text>
               <StarRating
                 rating={item.rating}
