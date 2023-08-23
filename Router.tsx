@@ -44,6 +44,7 @@ import { createSharedElementStackNavigator } from "react-navigation-shared-eleme
 import Animated from "react-native-reanimated";
 import NewPackage from "./src/screens/Cargo/NewPackage/NewPackage";
 import ChargeStationComment from "./src/screens/ChargingStation/Comment/ChargeStationComment";
+import ChargeStationCommentList from "./src/screens/ChargingStation/CommentList/ChargeStationCommentList";
 
 export type AppSignedOutStackParamList = {
   Login: undefined;
@@ -116,7 +117,12 @@ export type CargoHomeStackParamList = {
 
 export type ChargeStationHomeStackParamList = {
   ChargeStationHome: undefined;
-  ChargeStationComment: undefined;
+  ChargeStationComment: {
+    stationId: number;
+  };
+  ChargeStationCommentList: {
+    stationId: number;
+  };
 };
 
 const AppSignedOutStack = createStackNavigator<AppSignedOutStackParamList>();
@@ -328,6 +334,17 @@ const Router = () => {
           component={ChargeStationComment}
           options={{
             headerShown: true,
+            headerTitle: "Yorum Yap",
+            headerBackTitle: "Geri",
+          }}
+        />
+        <ChargeStationHomeStackNavigator.Screen
+          name="ChargeStationCommentList"
+          component={ChargeStationCommentList}
+          options={{
+            headerShown: true,
+            headerTitle: "Yorumlar",
+            headerBackTitle: "Geri",
           }}
         />
       </ChargeStationHomeStackNavigator.Navigator>

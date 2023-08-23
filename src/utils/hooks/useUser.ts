@@ -37,10 +37,10 @@ const useUser = () => {
     return res;
   };
 
-  const updateToken = () => {
-    Auth.currentSession().then((val) => {
-      setToken(val.getIdToken().getJwtToken());
-    });
+  const updateToken = async () => {
+    const res = await Auth.currentSession();
+
+    setToken(res.getIdToken().getJwtToken());
   };
 
   useEffect(() => {

@@ -15,24 +15,24 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import BottomSheet from "@gorhom/bottom-sheet";
-import ChargeStationInformationBox from "../../../components/views/InformationBox/ChargeStationInformationBox/ChargeStationInformationBox";
+import ChargeStationInformationBox, {
+  ChargeStation,
+} from "../../../components/views/InformationBox/ChargeStationInformationBox/ChargeStationInformationBox";
 import ChargeStationMap from "../../../components/views/Map/ChargeStationMap/ChargeStationMap";
-import { promiseWithLoader } from "../../../utils/aws/api";
+import { awsGet, promiseWithLoader } from "../../../utils/aws/api";
 import { getDirections } from "../../../utils/api/mapbox";
+import UserContext from "../../../utils/context/UserContext";
 
 const ChargeStationHome: FC<
   AppDrawerChargeStationHomeStackCompositeProps<"ChargeStationHome">
 > = ({ route, navigation }) => {
+  const { token, updateToken } = useContext(UserContext);
+
   const [location, setLocation] = useState<LatLng>();
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedStation, setSelectedStation] = useState<{
-    name: string;
-    distance: string;
-    duration: string;
-    latitude: number;
-    longitude: number;
-    address: string;
-  } | null>(null);
+  const [selectedStation, setSelectedStation] = useState<ChargeStation | null>(
+    null
+  );
 
   const bottomSheetRef = useRef<BottomSheet>(null);
 
@@ -47,7 +47,6 @@ const ChargeStationHome: FC<
     const value =
       (modalPosition.value - modalUpperBound) /
       (modalLowerBound - modalUpperBound);
-    console.log(modalPosition.value);
 
     return {
       transform: [
@@ -60,8 +59,6 @@ const ChargeStationHome: FC<
   }, [modalPosition]);
 
   const animatedDrawerButton = useAnimatedStyle(() => {
-    console.log(infoBoxShown.value);
-
     return {
       transform: [
         {
@@ -72,8 +69,6 @@ const ChargeStationHome: FC<
   }, [infoBoxShown]);
 
   const animatedInformationBox = useAnimatedStyle(() => {
-    console.log(infoBoxShown.value);
-
     return {
       transform: [
         {
@@ -83,6 +78,55 @@ const ChargeStationHome: FC<
       opacity: withTiming(infoBoxShown.value),
     };
   }, [infoBoxShown]);
+
+  const { data: commentCount, refetch: refetchCommentCount } = useQuery(
+    "getStationCommentCount",
+    async () => {
+      await updateToken();
+
+      const requestUrl = `https://8xoo4gmefh.execute-api.eu-central-1.amazonaws.com/dev/ratings/count?stationId=${selectedStation?.id}`;
+
+      const res = await awsGet(requestUrl, token!);
+
+      return res.data as {
+        count: number;
+        averageRating: number | null;
+      };
+    },
+    {
+      enabled: false,
+      cacheTime: 0,
+      onError: (err) => {
+        // console.log(JSON.stringify(err));
+      },
+      retry: false,
+    }
+  );
+
+  useEffect(() => {
+    navigation.addListener("focus", () => {
+      refetchCommentCount();
+    });
+
+    return () => {
+      navigation.removeListener("focus", () => {
+        refetchCommentCount();
+      });
+    };
+  }, []);
+
+  useEffect(() => {
+    if (commentCount && selectedStation)
+      setSelectedStation({
+        ...selectedStation,
+        commentCount: commentCount.count,
+        averageRating: commentCount.averageRating ?? 5.0,
+      });
+  }, [commentCount]);
+
+  useEffect(() => {
+    if (selectedStation) refetchCommentCount();
+  }, [selectedStation]);
 
   return (
     <SafeAreaProvider>
@@ -118,6 +162,9 @@ const ChargeStationHome: FC<
               address: `${cs.address.split(", ")[0]}, ${
                 cs.address.split(", ")[1]
               }`,
+              id: cs.id,
+              commentCount: commentCount?.count,
+              averageRating: commentCount?.averageRating ?? 5.0,
             });
             bottomSheetRef.current?.collapse();
             infoBoxShown.value = 1;
@@ -135,7 +182,14 @@ const ChargeStationHome: FC<
           <ChargeStationInformationBox
             selectedStation={selectedStation}
             onComment={() => {
-              navigation.navigate("ChargeStationComment");
+              navigation.navigate("ChargeStationComment", {
+                stationId: selectedStation?.id ?? 0,
+              });
+            }}
+            onSeeCommentList={() => {
+              navigation.navigate("ChargeStationCommentList", {
+                stationId: selectedStation?.id ?? 0,
+              });
             }}
           />
         </Animated.View>

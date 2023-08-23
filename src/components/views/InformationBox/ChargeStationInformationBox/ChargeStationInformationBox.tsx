@@ -1,4 +1,4 @@
-import { FunctionComponent, ReactNode } from "react";
+import { FunctionComponent, ReactNode, useContext, useEffect } from "react";
 import { Text, View } from "react-native";
 import {
   FontAwesome,
@@ -9,22 +9,31 @@ import NavigationButton from "../../../buttons/NavigationButton/NavigationButton
 import StarRating from "react-native-star-rating-widget";
 import InformationBoxButton from "../../../buttons/InformationBoxButton/InformationBoxButton";
 import IconWithLabel from "../../../buttons/IconWithLabel";
+import { useQuery } from "react-query";
+import { awsGet, awsPost } from "../../../../utils/aws/api";
+import UserContext from "../../../../utils/context/UserContext";
+
+export type ChargeStation = {
+  name: string;
+  distance: string;
+  duration: string;
+  latitude: number;
+  longitude: number;
+  address: string;
+  id: number;
+  commentCount?: number;
+  averageRating?: number;
+} | null;
 
 interface ChargeStationInformationBoxProps {
-  selectedStation: {
-    name: string;
-    distance: string;
-    duration: string;
-    latitude: number;
-    longitude: number;
-    address: string;
-  } | null;
+  selectedStation: ChargeStation;
   onComment: () => void;
+  onSeeCommentList: () => void;
 }
 
 const ChargeStationInformationBox: FunctionComponent<
   ChargeStationInformationBoxProps
-> = ({ selectedStation, onComment }) => {
+> = ({ selectedStation, onComment, onSeeCommentList }) => {
   return (
     <View className="w-full bg-gray-900 rounded-2xl shadow-md h-64 pb-2 pt-2 px-4 flex flex-col justify-around">
       <View className="flex flex-row justify-between">
@@ -38,11 +47,20 @@ const ChargeStationInformationBox: FunctionComponent<
         </View>
         <NavigationButton />
       </View>
-      <View className="flex flex-row justify-start items-baseline divide-x-4 divide-transparent">
-        <Text className="text-gray-100 text-end">4.5</Text>
+      <View
+        className="flex flex-row justify-start items-baseline divide-x-4 divide-transparent"
+        onTouchEnd={() => {
+          console.log("touched");
+
+          onSeeCommentList();
+        }}
+      >
+        <Text className="text-gray-100 text-end">
+          {selectedStation?.averageRating?.toFixed(1) ?? 5.0}
+        </Text>
         <StarRating
           onChange={(rating) => console.log(rating)}
-          rating={4.5}
+          rating={selectedStation?.averageRating ?? 5}
           starSize={17}
           color="gold"
           onRatingStart={() => console.log()}
@@ -58,7 +76,9 @@ const ChargeStationInformationBox: FunctionComponent<
             return <FontAwesome name="star" size={size} color={color} />;
           }}
         />
-        <Text className="text-gray-100 text-end">(107 reviews)</Text>
+        <Text className="text-gray-100 text-end">
+          ({selectedStation?.commentCount ?? "..."} reviews)
+        </Text>
       </View>
 
       <View className="flex flex-row justify-start divide-x-4 divide-transparent">

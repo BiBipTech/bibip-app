@@ -69,12 +69,6 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
     })
   );
 
-  useEffect(() => {
-    console.log(userContext);
-
-    if (userContext.token) console.log(userContext.token);
-  }, [userContext]);
-
   const { refetch: refetchDocuments } = useQuery({
     queryKey: "documents",
     queryFn: () =>

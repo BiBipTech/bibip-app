@@ -27,7 +27,12 @@ interface ChargeStationCommentProps {}
 
 const ChargeStationComment: FunctionComponent<
   AppDrawerChargeStationHomeStackCompositeProps<"ChargeStationComment">
-> = ({ navigation: navigate }) => {
+> = ({
+  navigation: navigate,
+  route: {
+    params: { stationId },
+  },
+}) => {
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
   const [activeStyle, setActiveStyle] = useState(false);
@@ -64,7 +69,7 @@ const ChargeStationComment: FunctionComponent<
           comment: comment,
           username: username,
           fullName: fullName,
-          stationId: 1,
+          stationId: stationId,
         },
         user.token
       );
@@ -86,6 +91,10 @@ const ChargeStationComment: FunctionComponent<
   );
 
   useEffect(() => {
+    console.log(stationId);
+  }, [stationId]);
+
+  useEffect(() => {
     Keyboard.addListener("keyboardWillChangeFrame", (e) => {
       keyboardLocation.value = e.endCoordinates.screenY;
     });
@@ -98,7 +107,7 @@ const ChargeStationComment: FunctionComponent<
   return (
     <View className="p-4 bg-white">
       <Spinner visible={isLoading} />
-      <KeyboardAwareScrollView className="w-full h-full bg-white rounded-2xl py-2 shadow-md px-4">
+      <ScrollView className="w-full h-full bg-white rounded-2xl py-2 shadow-md px-4">
         <StarRating
           rating={rating}
           onChange={(rating) => {
@@ -121,7 +130,7 @@ const ChargeStationComment: FunctionComponent<
           onChangeText={(text) => setComment(text)}
           placeholder="Yorumunuzu buraya yazın."
         />
-      </KeyboardAwareScrollView>
+      </ScrollView>
       <Animated.View className="absolute w-full" style={buttonAnimated}>
         <TouchableOpacity
           className="w-full bg-bibip-green-500 left-4 rounded-xl py-3"
