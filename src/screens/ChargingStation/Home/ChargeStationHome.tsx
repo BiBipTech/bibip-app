@@ -1,16 +1,25 @@
 import { Dimensions, Text, View } from "react-native";
-import React, { FC, useContext, useEffect, useRef, useState } from "react";
+import React, {
+  FC,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import BiBipIconButton from "../../../components/buttons/BiBipIconButton/BiBipIconButton";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AppDrawerChargeStationHomeStackCompositeProps } from "../../../../Router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Spinner from "react-native-loading-spinner-overlay";
 import { useQuery } from "react-query";
-import CarMap from "../../../components/views/Map/CarMap/CarMap";
 import { LatLng } from "react-native-maps";
 import Landing from "../../Landing/Landing";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, {
+  runOnJS,
   useAnimatedStyle,
+  useDerivedValue,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
@@ -38,46 +47,11 @@ const ChargeStationHome: FC<
 
   const modalPosition = useSharedValue(0);
   const infoBoxShown = useSharedValue(0);
-  const windowHeight = Dimensions.get("window").height;
+  const commentListShown = useSharedValue(false);
 
-  const modalLowerBound = windowHeight * 0.96;
-  const modalUpperBound = windowHeight * 0.6;
-
-  const animated = useAnimatedStyle(() => {
-    const value =
-      (modalPosition.value - modalUpperBound) /
-      (modalLowerBound - modalUpperBound);
-
-    return {
-      transform: [
-        {
-          translateX: (1 - value) * 200,
-        },
-      ],
-      zIndex: -1,
-    };
-  }, [modalPosition]);
-
-  const animatedDrawerButton = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateY: withTiming(infoBoxShown.value * 250),
-        },
-      ],
-    };
-  }, [infoBoxShown]);
-
-  const animatedInformationBox = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateY: withTiming((1 - infoBoxShown.value) * -250),
-        },
-      ],
-      opacity: withTiming(infoBoxShown.value),
-    };
-  }, [infoBoxShown]);
+  useEffect(() => {
+    console.log("ChargeStationHome.tsx: useEffect: images: ", Math.random());
+  });
 
   const { data: commentCount, refetch: refetchCommentCount } = useQuery(
     "getStationCommentCount",
@@ -97,23 +71,23 @@ const ChargeStationHome: FC<
       enabled: false,
       cacheTime: 0,
       onError: (err) => {
-        // console.log(JSON.stringify(err));
+        console.log(JSON.stringify(err));
       },
       retry: false,
+      refetchOnMount: !!selectedStation,
+      refetchOnWindowFocus: !!selectedStation,
     }
   );
 
-  useEffect(() => {
-    navigation.addListener("focus", () => {
-      refetchCommentCount();
-    });
+  const { top } = useSafeAreaInsets();
 
-    return () => {
-      navigation.removeListener("focus", () => {
-        refetchCommentCount();
-      });
+  const infoBoxAnimation = useAnimatedStyle(() => {
+    return {
+      top: withTiming(infoBoxShown.value === 1 ? top : -300),
+      opacity: withTiming(infoBoxShown.value),
+      paddingHorizontal: withTiming(commentListShown.value ? 0 : 16),
     };
-  }, []);
+  }, [infoBoxShown, commentListShown]);
 
   useEffect(() => {
     if (commentCount && selectedStation)
@@ -133,16 +107,23 @@ const ChargeStationHome: FC<
       <View className="items-center justify-center h-full w-full flex-1">
         <Spinner visible={isLoading} />
         <Landing
-          hideInfoBox={() => {
-            infoBoxShown.value = 0;
+          hideInfoBox={useMemo(
+            () => () => {
+              infoBoxShown.value = 0;
+              commentListShown.value = false;
+            },
+            []
+          )}
+          navigate={(s: any) => {
+            navigation.navigate(s);
           }}
-          handle={(i) => {}}
-          navigate={navigation.navigate}
           modalPosition={modalPosition}
           bottomSheetRef={bottomSheetRef}
         />
         <ChargeStationMap
-          setLocation={setLocation}
+          setLocation={(s) => {
+            setLocation(s);
+          }}
           onMarkerSelect={async (cs) => {
             const res = await promiseWithLoader(
               setIsLoading,
@@ -168,16 +149,21 @@ const ChargeStationHome: FC<
             });
             bottomSheetRef.current?.collapse();
             infoBoxShown.value = 1;
+            // setInfoBoxShown(1);
             return res.routes[0].geometry.coordinates;
           }}
-          onMapPress={() => {
-            bottomSheetRef.current?.collapse();
-            infoBoxShown.value = 0;
-          }}
+          onMapPress={useMemo(
+            () => () => {
+              bottomSheetRef.current?.collapse();
+              infoBoxShown.value = 0;
+              commentListShown.value = false;
+            },
+            []
+          )}
         />
         <Animated.View
-          className={"absolute top-10 w-full px-4"}
-          style={animatedInformationBox}
+          className={"absolute top-10 w-full"}
+          style={infoBoxAnimation}
         >
           <ChargeStationInformationBox
             selectedStation={selectedStation}
@@ -186,16 +172,32 @@ const ChargeStationHome: FC<
                 stationId: selectedStation?.id ?? 0,
               });
             }}
-            onSeeCommentList={() => {
-              navigation.navigate("ChargeStationCommentList", {
+            onReport={() => {
+              navigation.navigate("ChargeStationReport", {
                 stationId: selectedStation?.id ?? 0,
               });
             }}
+            onSeeCommentList={() => {
+              // navigation.navigate("ChargeStationCommentList", {
+              //   stationId: selectedStation?.id ?? 0,
+              // });
+              commentListShown.value = !commentListShown.value;
+            }}
+            commentListShown={commentListShown}
           />
         </Animated.View>
         <Animated.View
           className={`absolute left-7 top-16`}
-          style={animatedDrawerButton}
+          style={useAnimatedStyle(() => {
+            return {
+              transform: [
+                {
+                  translateY: withTiming(infoBoxShown.value === 0 ? 0 : 280),
+                },
+              ],
+              zIndex: -1,
+            };
+          }, [])}
         >
           <BiBipIconButton
             buttonSize="small"
@@ -207,7 +209,12 @@ const ChargeStationHome: FC<
           </BiBipIconButton>
         </Animated.View>
 
-        <Animated.View className="absolute right-8 bottom-24" style={animated}>
+        <View
+          className="absolute right-8 bottom-24"
+          style={{
+            zIndex: -1,
+          }}
+        >
           <BiBipIconButton
             buttonSize="large"
             intent="primary"
@@ -216,7 +223,7 @@ const ChargeStationHome: FC<
           >
             <Ionicons name="qr-code-outline" color="white" size={48} />
           </BiBipIconButton>
-        </Animated.View>
+        </View>
       </View>
     </SafeAreaProvider>
   );

@@ -7,12 +7,13 @@ import UserContext from "./src/utils/context/UserContext";
 import { QueryClientProvider, QueryClient } from "react-query";
 import FlashMessage from "react-native-flash-message";
 import { StatusBar } from "expo-status-bar";
-import { configureMotion } from "@legendapp/motion";
+import "react-native-gesture-handler";
+import moment from "moment";
+import "moment/locale/tr";
 
 Amplify.configure(awsconfig);
-configureMotion({
-  timing: "ms",
-});
+
+moment.locale("tr");
 
 export default function App() {
   const user = useUser();

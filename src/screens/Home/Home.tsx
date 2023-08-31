@@ -2,11 +2,7 @@ import { Dimensions, Text, View } from "react-native";
 import React, { FC, useContext, useEffect, useRef, useState } from "react";
 import BiBipIconButton from "../../components/buttons/BiBipIconButton/BiBipIconButton";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { DrawerScreenProps } from "@react-navigation/drawer";
-import {
-  AppDrawerBiBipHomeStackCompositeProps,
-  AppSignedInStackParamList,
-} from "../../../Router";
+import { AppDrawerBiBipHomeStackCompositeProps } from "../../../Router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Spinner from "react-native-loading-spinner-overlay";
 import { useQuery } from "react-query";
@@ -18,21 +14,17 @@ import { LatLng } from "react-native-maps";
 import UserContext from "../../utils/context/UserContext";
 import { fetchDocumentStatuses } from "../Menu/Profile/Profile.action";
 import { warn } from "../../utils/api/alert";
-import { findCarFromLocation } from "./Home.action";
 import Landing from "../Landing/Landing";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
+  withTiming,
 } from "react-native-reanimated";
 import BottomSheet from "@gorhom/bottom-sheet";
-import MarkerIcon from "../../../assets/marker-icon.svg";
-import { Motion } from "@legendapp/motion";
-import ChargeStationInformationBox from "../../components/views/InformationBox/ChargeStationInformationBox/ChargeStationInformationBox";
-import BeefullInformationBox, {
-  BeefullStation,
-} from "../../components/views/InformationBox/BeefullInformationBox/BeefullInformationBox";
 import { promiseWithLoader } from "../../utils/aws/api";
 import { startTrip } from "../QRModal/QRModal.action";
+import { Car } from "../../models";
+import BiBipCarInformationBox from "../../components/views/InformationBox/BiBipCarInformationBox/BiBipCarInformationBox";
 
 const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
   route,
@@ -40,20 +32,13 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
 }) => {
   const [location, setLocation] = useState<LatLng>();
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedCar, setSelectedCar] = useState<Car | null | undefined>(null);
 
   const [documents, setDocuments] = useState({
     id: "",
     photo: "",
     license: "",
   });
-  const [value, setValue] = useState(0);
-
-  const [carInfo, setCarInfo] = useState(0);
-  const [beefullInfo, setBeefullInfo] = useState(0);
-
-  const [selectedBeefullStation, setSelectedBeefullStation] =
-    useState<BeefullStation | null>(null);
-
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const userContext = useContext(UserContext);
@@ -106,12 +91,52 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
   }, []);
 
   const modalPosition = useSharedValue(0);
+  const carInfoBoxShown = useSharedValue(false);
+
   const windowHeight = Dimensions.get("window").height;
 
   const modalLowerBound = windowHeight * 0.96;
   const modalUpperBound = windowHeight * 0.6;
 
-  const animated = useAnimatedStyle(() => {
+  const informationBoxAnimation = useAnimatedStyle(() => {
+    if (carInfoBoxShown.value)
+      return {
+        transform: [
+          {
+            translateY: withTiming(0),
+          },
+        ],
+      };
+    else
+      return {
+        transform: [
+          {
+            translateY: withTiming(-400),
+          },
+        ],
+      };
+  }, [carInfoBoxShown]);
+
+  const drawerButtonAnimation = useAnimatedStyle(() => {
+    if (carInfoBoxShown.value)
+      return {
+        transform: [
+          {
+            translateY: withTiming(250),
+          },
+        ],
+      };
+
+    return {
+      transform: [
+        {
+          translateY: withTiming(0),
+        },
+      ],
+    };
+  }, [carInfoBoxShown]);
+
+  const qrButtonAnimation = useAnimatedStyle(() => {
     const value =
       (modalPosition.value - modalUpperBound) /
       (modalLowerBound - modalUpperBound);
@@ -133,66 +158,39 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
       <View className="items-center justify-center h-full w-full flex-1">
         <Spinner visible={isSpinnerVisible} />
         <Landing
-          hideInfoBox={() => {
-            setCarInfo(0);
-            setBeefullInfo(0);
-          }}
-          handle={(i) => {}}
           navigate={navigation.navigate}
           modalPosition={modalPosition}
           bottomSheetRef={bottomSheetRef}
         />
         {cars ? (
           <CarMap
-            setBeefullInfo={setBeefullInfo}
-            setCarInfo={setCarInfo}
             onMapPress={() => {
-              setValue(0);
-              bottomSheetRef.current?.collapse();
-              setBeefullInfo(0);
-              setCarInfo(0);
-            }}
-            onMarkerSelect={() => {
-              setValue(1);
-              bottomSheetRef.current?.collapse();
+              bottomSheetRef.current?.snapToIndex(0);
+
+              carInfoBoxShown.value = false;
             }}
             setLocation={setLocation}
             cars={cars}
-            setSelectedBeefullStation={setSelectedBeefullStation}
+            onCarSelect={(car: Car) => {
+              setSelectedCar(car);
+              carInfoBoxShown.value = true;
+              bottomSheetRef.current?.snapToIndex(0);
+            }}
           />
         ) : (
           <Spinner visible />
         )}
-        <Motion.View
-          className={"absolute top-10 w-full px-4"}
-          animate={{
-            y: beefullInfo === 1 ? 0 : -250,
-            opacity: beefullInfo === 1 ? 1 : 0,
-          }}
-          transition={{
-            duration: 250,
-            speed: 1,
-          }}
-        >
-          <BeefullInformationBox
-            selectedBeefullStation={
-              selectedBeefullStation ?? {
-                name: "",
-                address: "",
-                distance: "0",
-                duration: "0",
-              }
-            }
-          />
-        </Motion.View>
-        <Motion.View
+        {selectedCar && (
+          <Animated.View
+            className={"absolute top-12 w-full px-4"}
+            style={informationBoxAnimation}
+          >
+            <BiBipCarInformationBox selectedCar={selectedCar} />
+          </Animated.View>
+        )}
+        <Animated.View
           className={`absolute left-7 top-16`}
-          animate={{
-            y: beefullInfo === 1 ? 250 : 0,
-          }}
-          transition={{
-            duration: 250,
-          }}
+          style={drawerButtonAnimation}
         >
           <BiBipIconButton
             buttonSize="small"
@@ -202,21 +200,11 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
           >
             <Ionicons name="menu" color="white" size={32} />
           </BiBipIconButton>
-        </Motion.View>
-        {/* 
-        <View className={`absolute right-12 top-16`}>
-          <BiBipIconButton
-            buttonSize="small"
-            onPress={() => {
-              // @ts-ignore
-              navigation.navigate("AppStack", { screen: "Test" });
-            }}
-          >
-            <Ionicons name="menu" color="white" size={32} />
-          </BiBipIconButton>
-        </View> */}
-
-        <Animated.View className="absolute right-8 bottom-24" style={animated}>
+        </Animated.View>
+        <Animated.View
+          className="absolute right-8 bottom-24"
+          style={qrButtonAnimation}
+        >
           <BiBipIconButton
             buttonSize="large"
             intent="primary"

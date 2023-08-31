@@ -91,6 +91,10 @@ const ChargeStationComment: FunctionComponent<
   );
 
   useEffect(() => {
+    console.log("ChargeStationComment.tsx: useEffect: images: ", Math.random());
+  });
+
+  useEffect(() => {
     console.log(stationId);
   }, [stationId]);
 
@@ -111,7 +115,6 @@ const ChargeStationComment: FunctionComponent<
         <StarRating
           rating={rating}
           onChange={(rating) => {
-            console.log(rating);
             setRating(rating);
           }}
           style={{ alignSelf: "center", marginBottom: 8 }}

@@ -2,8 +2,8 @@ import {
   FunctionComponent,
   RefObject,
   useCallback,
+  useEffect,
   useMemo,
-  useRef,
 } from "react";
 import { Dimensions, TouchableOpacity, View } from "react-native";
 import BottomSheet from "@gorhom/bottom-sheet";
@@ -17,7 +17,7 @@ import ChargeStationButton from "../../../assets/charge_station_logo.svg";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 
 interface LandingProps {
-  handle: (index: number) => void;
+  handle?: (index: number) => void;
   modalPosition: Animated.SharedValue<number>;
   navigate: (screen: string) => void;
   bottomSheetRef: RefObject<BottomSheetMethods>;
@@ -36,10 +36,32 @@ const Landing: FunctionComponent<LandingProps> = ({
 
   const handleSheetChanges = useCallback((index: number) => {
     if (index > 0 && hideInfoBox) hideInfoBox();
-    handle(index);
+    if (handle) handle(index);
   }, []);
 
   const width = Dimensions.get("window").width;
+
+  useEffect(() => {
+    console.log(handle, Math.random());
+  }, [handle]);
+  useEffect(() => {
+    console.log("modalPosition", Math.random());
+  }, [modalPosition]);
+  useEffect(() => {
+    console.log("navigate", Math.random());
+  }, [navigate]);
+  useEffect(() => {
+    console.log(hideInfoBox, Math.random());
+  }, [hideInfoBox]);
+  useEffect(() => {
+    console.log("bottomSheetRef", Math.random());
+  }, [bottomSheetRef]);
+  useEffect(() => {
+    console.log("handleSheetChanges", Math.random());
+  }, [handleSheetChanges]);
+  useEffect(() => {
+    console.log("width", Math.random());
+  }, [width]);
 
   // renders
   return (
@@ -50,7 +72,7 @@ const Landing: FunctionComponent<LandingProps> = ({
         {
           zIndex: 3,
         },
-        useCustomTailwind("bg-transparent rounded-3xl shadow-2xl"),
+        useCustomTailwind("bg-transparent rounded-3xl"),
       ]}
       backgroundStyle={useCustomTailwind("rounded-3xl border border-white")}
       animatedPosition={modalPosition}
@@ -77,7 +99,7 @@ const Landing: FunctionComponent<LandingProps> = ({
       }}
     >
       <View className=" p-4 flex flex-col justify-start">
-        <View className="shadow-md shadow-black/30">
+        <View>
           <TouchableOpacity
             onPress={() => {
               bottomSheetRef.current?.collapse();
@@ -89,7 +111,7 @@ const Landing: FunctionComponent<LandingProps> = ({
         </View>
 
         <View className="flex flex-row justify-between items-start">
-          <View className="shadow-md shadow-black/30">
+          <View>
             <TouchableOpacity
               onPress={() => {
                 bottomSheetRef.current?.collapse();
@@ -102,7 +124,7 @@ const Landing: FunctionComponent<LandingProps> = ({
               />
             </TouchableOpacity>
           </View>
-          <View className="shadow-md shadow-black/30">
+          <View>
             <TouchableOpacity
               onPress={() => {
                 bottomSheetRef.current?.collapse();

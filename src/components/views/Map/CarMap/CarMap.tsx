@@ -7,35 +7,29 @@ import {
   useRef,
   useState,
 } from "react";
-import { View } from "react-native";
+import { Image, View } from "react-native";
 import { CameraRef } from "@rnmapbox/maps/lib/typescript/components/Camera";
-import ChargeStations from "../../../../../assets/beefull-list.json";
 import { LatLng } from "react-native-maps";
 import { Car } from "../../../../models";
-import { BeefullStation } from "../../InformationBox/BeefullInformationBox/BeefullInformationBox";
-import { getDirections } from "../../../../utils/api/mapbox";
 import { useForegroundPermissions } from "expo-location";
+import CarMarkerIcon from "../../../../../assets/marker-icon.svg";
 
 interface CarMapProps {
-  onMarkerSelect: () => void;
   onMapPress: () => void;
   setLocation: Dispatch<React.SetStateAction<LatLng | undefined>>;
   cars: Car[] | undefined;
-  setCarInfo: Dispatch<React.SetStateAction<number>>;
-  setBeefullInfo: Dispatch<React.SetStateAction<number>>;
-  setSelectedBeefullStation: Dispatch<
-    React.SetStateAction<BeefullStation | null>
-  >;
+  onCarSelect: (car: Car) => void;
 }
 
+Mapbox.setAccessToken(
+  "pk.eyJ1IjoiZXl1YjIwMDEiLCJhIjoiY2xpeDYydThxMDR3YzNzcW10cjNoeXI2dSJ9.S8sjCUJxSfbzIbOj-7vWNA"
+);
+
 const CarMap: FunctionComponent<CarMapProps> = ({
-  onMarkerSelect,
   onMapPress,
   setLocation,
   cars,
-  setBeefullInfo,
-  setSelectedBeefullStation,
-  setCarInfo,
+  onCarSelect,
 }) => {
   const [cameraRef, setCameraRef] = useState<CameraRef | null>(null);
   const [loc, setLoc] = useState<number[]>([]);
@@ -49,11 +43,6 @@ const CarMap: FunctionComponent<CarMapProps> = ({
     useState<Mapbox.UserLocation | null>(null);
 
   const mapRef = useRef<Mapbox.MapView>(null);
-
-  const [images, setImages] = useState({
-    stationIcon: require("../../../../../assets/beefull-marker.png"),
-    carIcon: require("../../../../../assets/marker-icon.png"),
-  });
 
   // map related callback references
   const camera = useCallback((node: CameraRef) => {
@@ -86,28 +75,6 @@ const CarMap: FunctionComponent<CarMapProps> = ({
     });
   }, [userLocationRef, cameraRef, loc]);
 
-  const Cars = cars?.map((car) => ({
-    type: "Feature",
-    properties: {
-      icon: "carIcon",
-    },
-    geometry: {
-      type: "Point",
-      coordinates: [car.location?.lng, car.location?.lat],
-    },
-  })) ?? [
-    {
-      type: "Feature",
-      properties: {
-        icon: "stationIcon",
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [29, 41],
-      },
-    },
-  ];
-
   return (
     <View
       className="w-full h-full"
@@ -122,119 +89,27 @@ const CarMap: FunctionComponent<CarMapProps> = ({
           className="w-full h-full"
           styleURL="mapbox://styles/eyub2001/clk2pmr3g00g301pf23265zbw"
         >
-          <Mapbox.ShapeSource
-            shape={JSON.parse(
-              JSON.stringify({
-                type: "FeatureCollection",
-                features: [...Cars, ...ChargeStations.features],
-              })
-            )}
-            id="symbolLocationSource"
-            hitbox={{ width: 18, height: 18 }}
-            onPress={async (point) => {
-              if (point.features.length === 1) {
-                const geometry = point.features[0].geometry as {
-                  coordinates: [number, number];
-                  type: string;
-                };
-                const { icon, name, address, id } =
-                  point.features[0].properties ?? {};
-
-                if (icon === "stationIcon") {
-                  const res = await getDirections(
-                    `${loc[0]}%2C${loc[1]}`,
-                    `${geometry.coordinates[0]}%2C${geometry.coordinates[1]}`
-                  );
-                  const { distance, duration } = res.routes[0];
-
-                  const beefullStation = {
-                    name,
-                    address,
-                    distance: (distance / 1000).toFixed(1),
-                    duration: (duration / 60).toFixed(1),
-                  };
-                  setSelectedBeefullStation(beefullStation);
-                  onMarkerSelect();
-                  setBeefullInfo(1);
-                }
-
+          {cars?.map((car, index) => (
+            <Mapbox.PointAnnotation
+              coordinate={[car.location?.lng ?? 0, car.location?.lat ?? 0]}
+              id={car.id}
+              key={car.id}
+              onSelected={(p) => {
                 cameraRef?.setCamera({
-                  centerCoordinate: geometry.coordinates,
+                  centerCoordinate: [
+                    car.location?.lng ?? 0,
+                    car.location?.lat ?? 0,
+                  ],
                   zoomLevel: 16,
-                  animationDuration: 750,
+                  animationDuration: 500,
                 });
-                return;
-              }
 
-              const currentZoom = await mapRef.current?.getZoom();
-              cameraRef?.setCamera({
-                centerCoordinate: [
-                  point.coordinates.longitude,
-                  point.coordinates.latitude,
-                ],
-                zoomLevel: (currentZoom ?? 13) + 1,
-              });
-            }}
-            clusterRadius={50}
-            clusterMaxZoomLevel={14}
-            cluster
-          >
-            <Mapbox.SymbolLayer
-              id="pointCount"
-              style={layerStyles.clusterCount}
-            />
-            <Mapbox.CircleLayer
-              id="clusteredPoints"
-              belowLayerID="pointCount"
-              filter={["has", "point_count"]}
-              style={{
-                circlePitchAlignment: "map",
-                circleColor: [
-                  "step",
-                  ["get", "point_count"],
-                  "#51bbd6",
-                  100,
-                  "#f1f075",
-                  250,
-                  "#f28cb1",
-                  750,
-                  "#ff0000",
-                ],
-                circleRadius: [
-                  "step",
-                  ["get", "point_count"],
-                  20,
-                  100,
-                  25,
-                  250,
-                  30,
-                  750,
-                  40,
-                ],
-                circleOpacity: 0.84,
-                circleStrokeWidth: 0,
-                circleStrokeColor: "blue",
+                onCarSelect(car);
               }}
-            />
-            <Mapbox.Images images={images} onImageMissing={(imageKey) => {}} />
-            <Mapbox.SymbolLayer
-              id="singlePoint"
-              filter={["!has", "point_count"]}
-              style={{
-                iconImage: ["get", "icon"],
-                iconSize: [
-                  "match",
-                  ["get", "icon"],
-                  "stationIcon",
-                  0.09,
-                  "carIcon",
-                  0.6,
-                  1,
-                ],
-              }}
-            />
-          </Mapbox.ShapeSource>
-
+            >
+              <CarMarkerIcon width={75} height={75} />
+            </Mapbox.PointAnnotation>
+          ))}
           <Mapbox.UserLocation
             visible
             onUpdate={(location) => {

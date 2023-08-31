@@ -9,11 +9,8 @@ import {
 } from "react";
 import { View } from "react-native";
 import { CameraRef } from "@rnmapbox/maps/lib/typescript/components/Camera";
-import ChargeStations from "../../../../../assets/zes-list.json";
+// import ChargeStations from "../../../../../assets/zes-list.json";
 import { LatLng } from "react-native-maps";
-import { getIsochrone, getReverseGeocode } from "../../../../utils/api/mapbox";
-import BiBipButton from "../../../buttons/BiBipButton/BiBipButton";
-import { useQuery } from "react-query";
 
 export interface ChargeStationProperties {
   id: number;
@@ -25,6 +22,22 @@ export interface ChargeStationProperties {
   };
   address: string;
 }
+
+const ChargeStations = {
+  type: "FeatureCollection",
+  features: [
+    {
+      type: "Feature",
+      properties: {
+        name: "Olcayto Bosch Araç Servisi",
+        id: 506,
+        icon: "stationIcon",
+        address: "Aos 11. Sokak, Sarıyer",
+      },
+      geometry: { type: "Point", coordinates: [29.017303, 41.1142] },
+    },
+  ],
+};
 
 interface ChargeStationMapProps {
   onMarkerSelect: (
@@ -43,6 +56,8 @@ const ChargeStationMap: FunctionComponent<ChargeStationMapProps> = ({
   const [userLocationRef, setUserLocationRef] =
     useState<Mapbox.UserLocation | null>(null);
 
+  const [locationSet, setLocationSet] = useState(false);
+
   const mapRef = useRef<Mapbox.MapView>(null);
 
   const [images, setImages] = useState({
@@ -58,6 +73,10 @@ const ChargeStationMap: FunctionComponent<ChargeStationMapProps> = ({
   const userLocation = useCallback((node: Mapbox.UserLocation) => {
     setUserLocationRef(node);
   }, []);
+
+  useEffect(() => {
+    console.log("ChargeStationMap.tsx: useEffect: images: ", Math.random());
+  });
 
   useEffect(() => {
     if (!cameraRef || !userLocationRef) return;
@@ -78,7 +97,10 @@ const ChargeStationMap: FunctionComponent<ChargeStationMapProps> = ({
     >
       <Mapbox.MapView
         ref={mapRef}
-        onPress={onMapPress}
+        onPress={() => {
+          onMapPress();
+          setDirections(null);
+        }}
         className="w-full h-full"
         styleURL="mapbox://styles/eyub2001/clk2pmr3g00g301pf23265zbw"
       >
@@ -181,28 +203,6 @@ const ChargeStationMap: FunctionComponent<ChargeStationMapProps> = ({
             }}
           />
         </Mapbox.ShapeSource>
-        {/* <Mapbox.ShapeSource id="iso" shape={JSON.parse(isochroneShape)}>
-          <Mapbox.LineLayer
-            id="isoLayer"
-            sourceID="iso"
-            sourceLayerID="iso"
-            style={{
-              // The fill color for the layer is set to a light purple
-              lineColor: "#5a3fc0",
-              lineOpacity: 1,
-            }}
-          />
-          <Mapbox.FillLayer
-            id="isoFillLayer"
-            sourceID="iso"
-            sourceLayerID="iso"
-            style={{
-              // The fill color for the layer is set to a light purple
-              fillColor: "#5a3fc0",
-              fillOpacity: 0.33,
-            }}
-          />
-        </Mapbox.ShapeSource> */}
         {directions && (
           <Mapbox.ShapeSource
             id="navigationRoute"
@@ -219,7 +219,7 @@ const ChargeStationMap: FunctionComponent<ChargeStationMapProps> = ({
               id="route"
               sourceID="navigationRoute"
               style={{
-                lineColor: "#888",
+                lineColor: "#f62424",
                 lineWidth: 4,
                 lineJoin: "round",
                 lineCap: "round",
@@ -231,10 +231,13 @@ const ChargeStationMap: FunctionComponent<ChargeStationMapProps> = ({
         <Mapbox.UserLocation
           visible
           onUpdate={(location) => {
+            if (locationSet) return;
+
             setLocation({
               latitude: location.coords.latitude,
               longitude: location.coords.longitude,
             });
+            setLocationSet(true); // prevent location from being set again
           }}
           ref={userLocation}
         />

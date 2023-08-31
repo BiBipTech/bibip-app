@@ -3,11 +3,9 @@ import {
   NavigationContainer,
 } from "@react-navigation/native";
 import {
-  CardStyleInterpolators,
-  StackScreenProps,
-  TransitionSpecs,
-  createStackNavigator,
-} from "@react-navigation/stack";
+  NativeStackScreenProps,
+  createNativeStackNavigator,
+} from "@react-navigation/native-stack";
 import {
   DrawerScreenProps,
   createDrawerNavigator,
@@ -38,13 +36,12 @@ import SignUp from "./src/screens/SignUp/SignUp";
 import CargoHome from "./src/screens/Cargo/Home/CargoHome";
 import CustomCargoDrawer from "./src/components/views/CargoDrawer/CargoDrawer";
 import ChargeStationHome from "./src/screens/ChargingStation/Home/ChargeStationHome";
-import Test from "./src/screens/Test";
 import TrackPackage from "./src/screens/Cargo/TrackPackage/TrackPackage";
 import { createSharedElementStackNavigator } from "react-navigation-shared-element";
-import Animated from "react-native-reanimated";
 import NewPackage from "./src/screens/Cargo/NewPackage/NewPackage";
 import ChargeStationComment from "./src/screens/ChargingStation/Comment/ChargeStationComment";
 import ChargeStationCommentList from "./src/screens/ChargingStation/CommentList/ChargeStationCommentList";
+import ChargeStationReport from "./src/screens/ChargingStation/Report/ChargeStationReport";
 
 export type AppSignedOutStackParamList = {
   Login: undefined;
@@ -120,13 +117,18 @@ export type ChargeStationHomeStackParamList = {
   ChargeStationComment: {
     stationId: number;
   };
+  ChargeStationReport: {
+    stationId: number;
+  };
   ChargeStationCommentList: {
     stationId: number;
   };
 };
 
-const AppSignedOutStack = createStackNavigator<AppSignedOutStackParamList>();
-const AppSignedInStack = createStackNavigator<AppSignedInStackParamList>();
+const AppSignedOutStack =
+  createNativeStackNavigator<AppSignedOutStackParamList>();
+const AppSignedInStack =
+  createNativeStackNavigator<AppSignedInStackParamList>();
 const AppSignedInDrawer = createDrawerNavigator<AppSignedInDrawerParamList>();
 
 const BiBipRootDrawerNavigator =
@@ -134,33 +136,35 @@ const BiBipRootDrawerNavigator =
 const CargoRootDrawerNavigator =
   createDrawerNavigator<CargoRootDrawerParamList>();
 
-const BiBipHomeStackNavigator = createStackNavigator<BiBipHomeStackParamList>();
-const BiBipTripStackNavigator = createStackNavigator<BiBipTripStackParamList>();
+const BiBipHomeStackNavigator =
+  createNativeStackNavigator<BiBipHomeStackParamList>();
+const BiBipTripStackNavigator =
+  createNativeStackNavigator<BiBipTripStackParamList>();
 
 const CargoHomeStackNavigator =
   createSharedElementStackNavigator<CargoHomeStackParamList>();
 
 const ChargeStationHomeStackNavigator =
-  createStackNavigator<ChargeStationHomeStackParamList>();
+  createNativeStackNavigator<ChargeStationHomeStackParamList>();
 
 export type AppDrawerBiBipHomeStackCompositeProps<
   T extends keyof BiBipHomeStackParamList
 > = CompositeScreenProps<
-  StackScreenProps<BiBipHomeStackParamList, T>,
+  NativeStackScreenProps<BiBipHomeStackParamList, T>,
   DrawerScreenProps<AppSignedInDrawerParamList>
 >;
 
 export type AppDrawerCargoHomeStackCompositeProps<
   T extends keyof CargoHomeStackParamList
 > = CompositeScreenProps<
-  StackScreenProps<CargoHomeStackParamList, T>,
+  NativeStackScreenProps<CargoHomeStackParamList, T>,
   DrawerScreenProps<AppSignedInDrawerParamList>
 >;
 
 export type AppDrawerChargeStationHomeStackCompositeProps<
   T extends keyof ChargeStationHomeStackParamList
 > = CompositeScreenProps<
-  StackScreenProps<ChargeStationHomeStackParamList, T>,
+  NativeStackScreenProps<ChargeStationHomeStackParamList, T>,
   DrawerScreenProps<AppSignedInDrawerParamList>
 >;
 
@@ -209,7 +213,6 @@ const Router = () => {
           options={{
             presentation: "modal",
             headerShown: false,
-            gestureResponseDistance: 350,
           }}
           component={QRModal}
         />
@@ -347,6 +350,15 @@ const Router = () => {
             headerBackTitle: "Geri",
           }}
         />
+        <ChargeStationHomeStackNavigator.Screen
+          name="ChargeStationReport"
+          component={ChargeStationReport}
+          options={{
+            headerShown: true,
+            headerTitle: "Raporla",
+            headerBackTitle: "Geri",
+          }}
+        />
       </ChargeStationHomeStackNavigator.Navigator>
     );
   };
@@ -383,13 +395,13 @@ const Router = () => {
           }}
           component={BiBipHomeStack}
         />
-        <AppSignedInStack.Screen
+        {/* <AppSignedInStack.Screen
           name="CargoStack"
           options={{
             headerShown: false,
           }}
           component={CargoHomeStack}
-        />
+        />*/}
         <AppSignedInStack.Screen
           name="ChargeStationStack"
           options={{
@@ -397,7 +409,6 @@ const Router = () => {
           }}
           component={ChargeStationStack}
         />
-        <AppSignedInStack.Screen name="Test" component={Test} />
         <AppSignedInStack.Screen
           options={{
             title: "Profil",

@@ -40,16 +40,19 @@ const Login: FC<LoginProps> = ({ navigation }) => {
   }, [phoneNumber]);
 
   const onPressHandler = async () => {
+    setIsLoading(true);
     try {
       const signInAttempt = await signIn(
         `+90${phoneNumber.replace(/\s/g, "")}`
       );
-
+      setIsLoading(false);
       navigation.navigate("OTP", {
         phoneNumber: phoneNumber,
         attempt: signInAttempt,
       });
     } catch (error: any) {
+      setIsLoading(false);
+
       if (error.code === "UserNotFoundException") {
         navigation.navigate("SignUp", {
           phoneNumber: phoneNumber,
