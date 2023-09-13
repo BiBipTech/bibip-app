@@ -221,20 +221,6 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
             intent="primary"
             disabled={location === undefined}
             onPress={async () => {
-              promiseWithLoader(
-                setIsLoading,
-                startTrip(
-                  "+905379440278",
-                  "4876ccd3-d404-4cfb-a1c9-c7d69fd23a11",
-                  {
-                    latitude: location?.latitude!,
-                    longitude: location?.longitude!,
-                  },
-                  userContext.token!
-                ).then((val) => {
-                  userContext.setIsInTrip(true);
-                })
-              );
               if (
                 documents.id === "" ||
                 documents.license === "" ||
