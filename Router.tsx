@@ -42,6 +42,7 @@ import NewPackage from "./src/screens/Cargo/NewPackage/NewPackage";
 import ChargeStationComment from "./src/screens/ChargingStation/Comment/ChargeStationComment";
 import ChargeStationCommentList from "./src/screens/ChargingStation/CommentList/ChargeStationCommentList";
 import ChargeStationReport from "./src/screens/ChargingStation/Report/ChargeStationReport";
+import Test from "./src/screens/Test";
 
 export type AppSignedOutStackParamList = {
   Login: undefined;
@@ -130,11 +131,6 @@ const AppSignedOutStack =
 const AppSignedInStack =
   createNativeStackNavigator<AppSignedInStackParamList>();
 const AppSignedInDrawer = createDrawerNavigator<AppSignedInDrawerParamList>();
-
-const BiBipRootDrawerNavigator =
-  createDrawerNavigator<BiBipRootDrawerParamList>();
-const CargoRootDrawerNavigator =
-  createDrawerNavigator<CargoRootDrawerParamList>();
 
 const BiBipHomeStackNavigator =
   createNativeStackNavigator<BiBipHomeStackParamList>();
@@ -238,28 +234,6 @@ const Router = () => {
     );
   };
 
-  const BiBipDrawer = () => {
-    return (
-      <BiBipRootDrawerNavigator.Navigator
-        screenOptions={{
-          headerShown: true,
-        }}
-        initialRouteName="BiBipHomeStack"
-        backBehavior="initialRoute"
-        drawerContent={(props) => <CustomDrawer {...props} />}
-      >
-        <BiBipRootDrawerNavigator.Screen
-          name="BiBipHomeStack"
-          component={BiBipHomeStack}
-          options={{
-            headerShown: false,
-            title: "Harita",
-          }}
-        />
-      </BiBipRootDrawerNavigator.Navigator>
-    );
-  };
-
   const CargoHomeStack = () => {
     return (
       <CargoHomeStackNavigator.Navigator
@@ -338,6 +312,7 @@ const Router = () => {
           options={{
             headerShown: true,
             headerTitle: "Yorum Yap",
+
             headerBackTitle: "Geri",
           }}
         />
@@ -360,28 +335,6 @@ const Router = () => {
           }}
         />
       </ChargeStationHomeStackNavigator.Navigator>
-    );
-  };
-
-  const CargoDrawer = () => {
-    return (
-      <CargoRootDrawerNavigator.Navigator
-        screenOptions={{
-          headerShown: true,
-        }}
-        initialRouteName="CargoHomeStack"
-        backBehavior="initialRoute"
-        drawerContent={(props) => <CustomCargoDrawer {...props} />}
-      >
-        <CargoRootDrawerNavigator.Screen
-          name="CargoHomeStack"
-          component={CargoHomeStack}
-          options={{
-            headerShown: false,
-            title: "Harita",
-          }}
-        />
-      </CargoRootDrawerNavigator.Navigator>
     );
   };
 
@@ -442,6 +395,11 @@ const Router = () => {
           options={{ headerShown: false }}
           name="Success"
           component={Success}
+        />
+        <AppSignedInStack.Screen
+          options={{ headerShown: false }}
+          name="Test"
+          component={Test}
         />
       </AppSignedInStack.Navigator>
     );

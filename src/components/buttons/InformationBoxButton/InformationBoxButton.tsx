@@ -17,9 +17,9 @@ const InformationBoxButton: FunctionComponent<InformationBoxButtonProps> = ({
     return (
       <TouchableOpacity
         {...props}
-        className="flex flex-grow bg-white items-center justify-center flex-col border border-bibip-red-400 rounded-full py-1"
+        className="flex flex-1 items-center justify-center flex-col border border-bibip-red-300 rounded-full py-1"
       >
-        <Text className="text-bibip-red-500 text-center text-lg">{text}</Text>
+        <Text className="text-bibip-red-300 text-center text-lg">{text}</Text>
       </TouchableOpacity>
     );
 
@@ -27,7 +27,7 @@ const InformationBoxButton: FunctionComponent<InformationBoxButtonProps> = ({
     return (
       <TouchableOpacity
         {...props}
-        className="flex flex-grow items-center justify-center flex-col border-2 border-cyan-500 rounded-full py-1"
+        className="flex flex-1 items-center justify-center flex-col border-2 border-cyan-500 rounded-full py-1"
       >
         <Text className="text-cyan-500 text-center text-lg">{text}</Text>
       </TouchableOpacity>
@@ -36,7 +36,7 @@ const InformationBoxButton: FunctionComponent<InformationBoxButtonProps> = ({
   return (
     <TouchableOpacity
       {...props}
-      className="flex flex-grow items-center justify-center bg-cyan-500 flex-col border border-cyan-500 rounded-full py-1"
+      className="flex flex-1 items-center justify-center bg-cyan-500 flex-col border border-cyan-500 rounded-full py-1"
     >
       <Text className="text-gray-100 text-center font-semibold text-lg">
         {text}

@@ -41,28 +41,6 @@ const Landing: FunctionComponent<LandingProps> = ({
 
   const width = Dimensions.get("window").width;
 
-  useEffect(() => {
-    console.log(handle, Math.random());
-  }, [handle]);
-  useEffect(() => {
-    console.log("modalPosition", Math.random());
-  }, [modalPosition]);
-  useEffect(() => {
-    console.log("navigate", Math.random());
-  }, [navigate]);
-  useEffect(() => {
-    console.log(hideInfoBox, Math.random());
-  }, [hideInfoBox]);
-  useEffect(() => {
-    console.log("bottomSheetRef", Math.random());
-  }, [bottomSheetRef]);
-  useEffect(() => {
-    console.log("handleSheetChanges", Math.random());
-  }, [handleSheetChanges]);
-  useEffect(() => {
-    console.log("width", Math.random());
-  }, [width]);
-
   // renders
   return (
     <BottomSheet

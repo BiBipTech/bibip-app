@@ -1,44 +1,35 @@
-import { FunctionComponent, useEffect, useMemo, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-import Mapbox from "@rnmapbox/maps";
+import { FunctionComponent } from "react";
+import { Text, View } from "react-native";
+import TabView from "../components/views/TabView/TabView";
 
-interface TestProps {}
-
-const Test: FunctionComponent<TestProps> = () => {
-  const [count, setCount] = useState(5);
-  const [renderCount, setRenderCount] = useState(0);
-
-  const doubleCount = useMemo(() => {
-    const timestamp = +new Date() + 5000;
-
-    while (timestamp > +new Date()) {}
-
-    return count * 2;
-  }, [count]);
-
-  useEffect(() => {
-    console.log(doubleCount);
-  }, [doubleCount, renderCount]);
-
+const Test: FunctionComponent = () => {
   return (
-    <View className="justify-center items-center h-full w-full">
-      <Text className="text-xl">{renderCount}</Text>
-      <TouchableOpacity
-        className="bg-cyan-500 px-8 py-4 rounded-md mt-8"
-        onPress={() => {
-          setRenderCount((prevRenderCount) => prevRenderCount + 1);
+    <View className="h-full w-full items-center justify-center">
+      <TabView
+        indicatorColor="green"
+        data={[
+          {
+            key: "1",
+            label: "1",
+            value: "First",
+          },
+          {
+            key: "2",
+            label: "2",
+            value: "Second",
+          },
+        ]}
+        renderItem={(item, index) => {
+          return (
+            <View
+              key={item}
+              className={`items-center justify-center h-full w-full bg-green-300`}
+            >
+              <Text>Hello</Text>
+            </View>
+          );
         }}
-      >
-        <Text className="text-white text-xl">Hello</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        className="bg-cyan-500 px-8 py-4 rounded-md mt-8"
-        onPress={() => {
-          setCount((prevCount) => prevCount + 1);
-        }}
-      >
-        <Text className="text-white text-xl">Hello</Text>
-      </TouchableOpacity>
+      />
     </View>
   );
 };

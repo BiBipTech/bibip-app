@@ -91,14 +91,6 @@ const ChargeStationComment: FunctionComponent<
   );
 
   useEffect(() => {
-    console.log("ChargeStationComment.tsx: useEffect: images: ", Math.random());
-  });
-
-  useEffect(() => {
-    console.log(stationId);
-  }, [stationId]);
-
-  useEffect(() => {
     Keyboard.addListener("keyboardWillChangeFrame", (e) => {
       keyboardLocation.value = e.endCoordinates.screenY;
     });

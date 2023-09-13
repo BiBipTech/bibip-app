@@ -67,7 +67,7 @@ export const unlockCar = async (token: string, topic: string) => {
     data: {
       topic: topic,
       message: {
-        locked: false,
+        lock: "false",
       },
     },
     headers: {

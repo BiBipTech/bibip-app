@@ -25,5 +25,5 @@ export const startTrip = async (
 };
 
 export const mqttStart = (carId: string, token: string) => {
-  return unlockCar(token, `bibip/${carId}/locked`);
+  return unlockCar(token, `car-info/${carId}`);
 };

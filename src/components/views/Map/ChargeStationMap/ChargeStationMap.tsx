@@ -9,7 +9,7 @@ import {
 } from "react";
 import { View } from "react-native";
 import { CameraRef } from "@rnmapbox/maps/lib/typescript/components/Camera";
-// import ChargeStations from "../../../../../assets/zes-list.json";
+import ChargeStations from "../../../../../assets/zes-list.json";
 import { LatLng } from "react-native-maps";
 
 export interface ChargeStationProperties {
@@ -22,23 +22,6 @@ export interface ChargeStationProperties {
   };
   address: string;
 }
-
-const ChargeStations = {
-  type: "FeatureCollection",
-  features: [
-    {
-      type: "Feature",
-      properties: {
-        name: "Olcayto Bosch Araç Servisi",
-        id: 506,
-        icon: "stationIcon",
-        address: "Aos 11. Sokak, Sarıyer",
-      },
-      geometry: { type: "Point", coordinates: [29.017303, 41.1142] },
-    },
-  ],
-};
-
 interface ChargeStationMapProps {
   onMarkerSelect: (
     chargeStation: ChargeStationProperties
@@ -73,10 +56,6 @@ const ChargeStationMap: FunctionComponent<ChargeStationMapProps> = ({
   const userLocation = useCallback((node: Mapbox.UserLocation) => {
     setUserLocationRef(node);
   }, []);
-
-  useEffect(() => {
-    console.log("ChargeStationMap.tsx: useEffect: images: ", Math.random());
-  });
 
   useEffect(() => {
     if (!cameraRef || !userLocationRef) return;

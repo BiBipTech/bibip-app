@@ -1,4 +1,12 @@
-import { Dimensions, Text, View } from "react-native";
+import {
+  Dimensions,
+  Keyboard,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, {
   FC,
   useContext,
@@ -23,14 +31,17 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import BottomSheet from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import ChargeStationInformationBox, {
   ChargeStation,
 } from "../../../components/views/InformationBox/ChargeStationInformationBox/ChargeStationInformationBox";
 import ChargeStationMap from "../../../components/views/Map/ChargeStationMap/ChargeStationMap";
-import { awsGet, promiseWithLoader } from "../../../utils/aws/api";
+import { awsGet, awsPost, promiseWithLoader } from "../../../utils/aws/api";
 import { getDirections } from "../../../utils/api/mapbox";
 import UserContext from "../../../utils/context/UserContext";
+import StarRating from "react-native-star-rating-widget";
+import { Auth } from "aws-amplify";
+import { useTailwindColor } from "../../../utils/hooks/useTailwindColor";
 
 const ChargeStationHome: FC<
   AppDrawerChargeStationHomeStackCompositeProps<"ChargeStationHome">
@@ -44,14 +55,11 @@ const ChargeStationHome: FC<
   );
 
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const commentSheetRef = useRef<BottomSheet>(null);
 
   const modalPosition = useSharedValue(0);
   const infoBoxShown = useSharedValue(0);
   const commentListShown = useSharedValue(false);
-
-  useEffect(() => {
-    console.log("ChargeStationHome.tsx: useEffect: images: ", Math.random());
-  });
 
   const { data: commentCount, refetch: refetchCommentCount } = useQuery(
     "getStationCommentCount",
@@ -71,7 +79,7 @@ const ChargeStationHome: FC<
       enabled: false,
       cacheTime: 0,
       onError: (err) => {
-        console.log(JSON.stringify(err));
+        // console.log(JSON.stringify(err));
       },
       retry: false,
       refetchOnMount: !!selectedStation,
@@ -102,6 +110,71 @@ const ChargeStationHome: FC<
     if (selectedStation) refetchCommentCount();
   }, [selectedStation]);
 
+  const [rating, setRating] = useState(5);
+  const [comment, setComment] = useState("");
+  const [activeStyle, setActiveStyle] = useState(false);
+
+  const windowHeight = Dimensions.get("window").height;
+  const keyboardLocation = useSharedValue(windowHeight);
+
+  const user = useContext(UserContext);
+
+  const commentInput = useRef<TextInput>(null);
+
+  const { refetch: sendComment } = useQuery(
+    "sendComment",
+    async () => {
+      setIsLoading(true);
+
+      const currentUser = await Auth.currentAuthenticatedUser();
+      const fullName = currentUser.attributes.name;
+      const username = currentUser.attributes.phone_number;
+
+      if (!username || !user.token || !fullName) {
+        throw new Error("Something went wrong");
+      }
+      await user.updateToken();
+      const res = await awsPost(
+        "https://8xoo4gmefh.execute-api.eu-central-1.amazonaws.com/dev/ratings",
+        {
+          rating: rating,
+          comment: comment,
+          username: username,
+          fullName: fullName,
+          stationId: selectedStation?.id ?? 0,
+        },
+        user.token
+      );
+      return res;
+    },
+    {
+      enabled: false,
+      retry: false,
+      onSuccess: (s) => {
+        setIsLoading(false);
+        Keyboard.dismiss();
+
+        infoBoxShown.value = 1;
+        commentListShown.value = true;
+        commentSheetRef.current?.collapse();
+      },
+      onError: (e) => {
+        setIsLoading(false);
+        return alert("Bir hata oluştu. Lütfen tekrar deneyin.");
+      },
+    }
+  );
+
+  useEffect(() => {
+    Keyboard.addListener("keyboardWillChangeFrame", (e) => {
+      keyboardLocation.value = e.endCoordinates.screenY;
+    });
+
+    return () => {
+      Keyboard.removeAllListeners("keyboardWillChangeFrame");
+    };
+  }, []);
+
   return (
     <SafeAreaProvider>
       <View className="items-center justify-center h-full w-full flex-1">
@@ -120,6 +193,75 @@ const ChargeStationHome: FC<
           modalPosition={modalPosition}
           bottomSheetRef={bottomSheetRef}
         />
+        <BottomSheet
+          ref={commentSheetRef}
+          snapPoints={["1%", "50%"]}
+          enablePanDownToClose
+          style={{
+            backgroundColor: "white",
+            borderRadius: 9999,
+          }}
+        >
+          <View
+            className="bg-white flex flex-col h-full w-full"
+            onTouchEnd={() => {
+              commentInput.current?.blur();
+            }}
+          >
+            <Spinner visible={isLoading} />
+            <View className="w-full mb-4 bg-white rounded-2xl px-4 flex flex-col">
+              <StarRating
+                rating={rating}
+                onChange={(rating) => {
+                  setRating(rating);
+                }}
+                starSize={64}
+                style={{ alignSelf: "center" }}
+              />
+              <BottomSheetTextInput
+                multiline
+                onTouchEnd={(e) => {
+                  e.stopPropagation();
+                }}
+                enterKeyHint="done"
+                returnKeyType="done"
+                style={{
+                  width: "100%",
+                  borderWidth: 1,
+                  borderColor: useTailwindColor(
+                    activeStyle ? "bg-blue-500" : "bg-gray-400"
+                  ),
+                  borderRadius: 8,
+                  padding: 16,
+                  height: 200,
+                  textAlignVertical: "top",
+                  marginTop: 16,
+                }}
+                ref={commentInput as any}
+                placeholderTextColor={useTailwindColor(
+                  activeStyle ? "bg-blue-500" : "bg-gray-400"
+                )}
+                onBlur={() => setActiveStyle(false)}
+                onFocus={() => setActiveStyle(true)}
+                value={comment}
+                onChangeText={(text) => setComment(text)}
+                placeholder="Yorumunuzu buraya yazın."
+              />
+            </View>
+            <View className="w-full px-4">
+              <TouchableOpacity
+                className="w-full bg-bibip-green-500 rounded-xl py-3"
+                onPress={() => {
+                  sendComment();
+                }}
+              >
+                <Text className="text-center text-white rounded-md text-xl">
+                  Gönder
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </BottomSheet>
         <ChargeStationMap
           setLocation={(s) => {
             setLocation(s);
@@ -168,9 +310,13 @@ const ChargeStationHome: FC<
           <ChargeStationInformationBox
             selectedStation={selectedStation}
             onComment={() => {
-              navigation.navigate("ChargeStationComment", {
-                stationId: selectedStation?.id ?? 0,
-              });
+              // navigation.navigate("ChargeStationComment", {
+              //   stationId: selectedStation?.id ?? 0,
+              // });
+              infoBoxShown.value = 0;
+              commentListShown.value = false;
+
+              commentSheetRef.current?.expand();
             }}
             onReport={() => {
               navigation.navigate("ChargeStationReport", {
@@ -192,7 +338,7 @@ const ChargeStationHome: FC<
             return {
               transform: [
                 {
-                  translateY: withTiming(infoBoxShown.value === 0 ? 0 : 280),
+                  translateY: withTiming(infoBoxShown.value === 0 ? 0 : 210),
                 },
               ],
               zIndex: -1,

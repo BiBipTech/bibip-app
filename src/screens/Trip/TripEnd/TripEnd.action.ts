@@ -5,7 +5,7 @@ import { API, Storage } from "aws-amplify";
 import { Alert } from "react-native";
 import * as Location from "expo-location";
 import { endTrip } from "../Trip/Trip.action";
-import { AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 import { UserContextType } from "../../../utils/context/UserContext";
 import { getTripStatus } from "../../../utils/aws/api";
 import { BiBipTripStackParamList } from "../../../../Router";
@@ -14,6 +14,22 @@ import * as mutations from "../../../graphql/mutations";
 import * as queries from "../../../graphql/queries";
 
 import gql from "../../../utils/gql/gql";
+
+export const lockCar = async (token: string, topic: string) => {
+  return axios({
+    method: "post",
+    url: "https://yrck9a42ef.execute-api.eu-central-1.amazonaws.com/dev/publish",
+    data: {
+      topic: topic,
+      message: {
+        lock: "true",
+      },
+    },
+    headers: {
+      "x-aws-cognito-token": token,
+    },
+  });
+};
 
 export const uploadPhoto = async (
   photo: {
@@ -73,6 +89,8 @@ export const onEndTrip = async (
       date.toISOString()
     ).then((val) => {});
   });
+
+  await lockCar(userContext.token!, `car-info/${carId}`);
 
   const lastLocation = await Location.getCurrentPositionAsync();
   await updateCarLocation(carId, lastLocation);

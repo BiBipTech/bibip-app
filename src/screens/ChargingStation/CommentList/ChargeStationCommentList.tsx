@@ -13,6 +13,14 @@ export type ChargeStationComment = {
   fullName: string;
   timestamp: number;
 };
+export type ChargeStationReport = {
+  reportDesc: string;
+  reportTitle: string;
+  username: string;
+  fullName: string;
+  timestamp: number;
+  stationId: number;
+};
 
 const ChargeStationCommentList: FunctionComponent<
   AppDrawerChargeStationHomeStackCompositeProps<"ChargeStationCommentList">

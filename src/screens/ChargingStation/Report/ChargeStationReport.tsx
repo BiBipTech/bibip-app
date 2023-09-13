@@ -88,10 +88,6 @@ const ChargeStationReport: FunctionComponent<
   );
 
   useEffect(() => {
-    console.log(stationId);
-  }, [stationId]);
-
-  useEffect(() => {
     Keyboard.addListener("keyboardWillChangeFrame", (e) => {
       keyboardLocation.value = e.endCoordinates.screenY;
     });
