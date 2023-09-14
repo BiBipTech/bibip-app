@@ -24,6 +24,8 @@ export const startTrip = async (
   );
 };
 
-export const mqttStart = (carId: string, token: string) => {
-  return unlockCar(token, `car-info/${carId}`);
+export const mqttStart = async (carId: string, token: string) => {
+  await unlockCar(token, `car-info/${carId}`);
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  return await unlockCar(token, `car-info/${carId}`);
 };

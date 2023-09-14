@@ -16,7 +16,7 @@ import * as queries from "../../../graphql/queries";
 import gql from "../../../utils/gql/gql";
 
 export const lockCar = async (token: string, topic: string) => {
-  return axios({
+  return await axios({
     method: "post",
     url: "https://yrck9a42ef.execute-api.eu-central-1.amazonaws.com/dev/publish",
     data: {
@@ -98,6 +98,8 @@ export const onEndTrip = async (
   }
 
   try {
+    await lockCar(userContext.token!, `car-info/${carId}`);
+    await new Promise((resolve) => setTimeout(resolve, 500));
     await lockCar(userContext.token!, `car-info/${carId}`);
   } catch (err) {
     return alert(JSON.stringify(err));

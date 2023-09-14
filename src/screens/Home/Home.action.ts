@@ -61,7 +61,7 @@ export const listCars = async (
 };
 
 export const unlockCar = async (token: string, topic: string) => {
-  return axios({
+  return await axios({
     method: "post",
     url: "https://yrck9a42ef.execute-api.eu-central-1.amazonaws.com/dev/publish",
     data: {
