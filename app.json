@@ -39,7 +39,7 @@
         "NSLocationAlwaysUsageDescription": "Size daha kaliteli hizmet sunabilmemiz için konumunuza erişmeye ihtiyacımız var!",
         "ITSAppUsesNonExemptEncryption": false
       },
-      "buildNumber": "4"
+      "buildNumber": "5"
     },
     "android": {
       "package": "tech.bibip.app",

@@ -82,18 +82,25 @@ export const onEndTrip = async (
   }
   if (!isValid) return;
   const date = new Date();
-  data.forEach(async (p) => {
-    await uploadPhoto(
-      p,
-      userContext.user?.getUsername()!,
-      date.toISOString()
-    ).then((val) => {});
-  });
+  for (let i = 0; i < data.length; i++) {
+    const element = data[i];
+    try {
+      await uploadPhoto(
+        element,
+        userContext.user?.getUsername()!,
+        date.toISOString()
+      ).then((val) => {
+        console.log(val);
+      });
+    } catch (e) {
+      return alert(JSON.stringify(e));
+    }
+  }
 
   try {
     await lockCar(userContext.token!, `car-info/${carId}`);
   } catch (err) {
-    alert(JSON.stringify(err));
+    return alert(JSON.stringify(err));
   }
 
   try {
@@ -118,7 +125,7 @@ export const onEndTrip = async (
       ]);
     }
   } catch (err) {
-    alert(JSON.stringify(err));
+    return alert(JSON.stringify(err));
   }
 
   return;
