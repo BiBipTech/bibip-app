@@ -6,10 +6,10 @@ import {
   Text,
   TouchableOpacity,
   View,
+  TextInput,
 } from "react-native";
 import { AppDrawerChargeStationHomeStackCompositeProps } from "../../../../Router";
 import StarRating from "react-native-star-rating-widget";
-import { TextInput } from "react-native-gesture-handler";
 import { useTailwindColor } from "../../../utils/hooks/useTailwindColor";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Animated, {

@@ -49,9 +49,15 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
     error,
     data: cars,
   } = useQuery("getCars", () =>
-    gql<ListCarsResult>({ query: queries.listCars }).then((res) => {
-      return res.data?.listCars.items;
-    })
+    gql<ListCarsResult>({ query: queries.listCars })
+      .then((res) => {
+        console.log(res);
+
+        return res.data?.listCars.items;
+      })
+      .catch((e) => {
+        console.log(JSON.stringify(e));
+      })
   );
 
   const { refetch: refetchDocuments } = useQuery({

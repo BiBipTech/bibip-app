@@ -7,7 +7,13 @@ import {
   useRef,
   useState,
 } from "react";
-import { Dimensions, Image, Platform, View } from "react-native";
+import {
+  Dimensions,
+  Image,
+  Platform,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import BiBipIconButton from "../../buttons/BiBipIconButton/BiBipIconButton";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -42,17 +48,21 @@ const CameraView: FunctionComponent<CameraViewProps> = ({
 
   return (
     <Camera ref={camera} type={type}>
-      <SafeAreaView>
+      <SafeAreaView
+        style={{
+          zIndex: 10,
+        }}
+      >
         <View className="justify-end items-center w-full h-full">
-          <BiBipIconButton
-            buttonSize={"large"}
+          <TouchableOpacity
+            className="bg-bibip-blue-500 w-16 h-16 rounded-full justify-center items-center flex flex-col"
             onPress={async () => {
               const res = await camera.current?.takePictureAsync();
               setImageUri(res?.uri!);
             }}
           >
             <Ionicons name="camera" size={48} color="white" />
-          </BiBipIconButton>
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     </Camera>

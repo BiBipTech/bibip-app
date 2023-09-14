@@ -13,8 +13,8 @@ import {
   Pressable,
   ScrollView,
   View,
+  TextInput,
 } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
 import {
   AppSignedInDrawerParamList,
   AppSignedInStackParamList,

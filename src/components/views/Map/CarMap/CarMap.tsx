@@ -21,10 +21,6 @@ interface CarMapProps {
   onCarSelect: (car: Car) => void;
 }
 
-Mapbox.setAccessToken(
-  "pk.eyJ1IjoiZXl1YjIwMDEiLCJhIjoiY2xpeDYydThxMDR3YzNzcW10cjNoeXI2dSJ9.S8sjCUJxSfbzIbOj-7vWNA"
-);
-
 const CarMap: FunctionComponent<CarMapProps> = ({
   onMapPress,
   setLocation,

@@ -10,11 +10,15 @@ import { StatusBar } from "expo-status-bar";
 import "react-native-gesture-handler";
 import moment from "moment";
 import "moment/locale/tr";
+import Mapbox from "@rnmapbox/maps";
 
 Amplify.configure(awsconfig);
 
 moment.locale("tr");
 
+Mapbox.setAccessToken(
+  "pk.eyJ1IjoiZXl1YjIwMDEiLCJhIjoiY2xpeDYydThxMDR3YzNzcW10cjNoeXI2dSJ9.S8sjCUJxSfbzIbOj-7vWNA"
+);
 export default function App() {
   const user = useUser();
 

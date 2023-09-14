@@ -42,7 +42,7 @@ export const uploadPhoto = async (
   const compressedPhotoUri = (await compressPhoto(photo.value)).uri;
   const compressedPhoto = await getPhotoBlob(compressedPhotoUri);
   return await Storage.put(
-    `${username}/${date}/${photo.type}`,
+    `${username}/${date}/${photo.type}.png`,
     compressedPhoto
   );
 };

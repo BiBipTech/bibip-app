@@ -9,11 +9,11 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  FlatList,
   View,
 } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FlatList } from "react-native-gesture-handler";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { PhotoType } from "./TripEnd.type";
 import { onEndTrip, photoTypeString, uploadPhoto } from "./TripEnd.action";
