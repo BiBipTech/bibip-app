@@ -90,28 +90,37 @@ export const onEndTrip = async (
     ).then((val) => {});
   });
 
-  await lockCar(userContext.token!, `car-info/${carId}`);
-
-  const lastLocation = await Location.getCurrentPositionAsync();
-  await updateCarLocation(carId, lastLocation);
-  const res = await endTrip(
-    userContext.user?.getUsername()!,
-    userContext.token!,
-    carId,
-    lastLocation,
-    waypoints
-  );
-
-  if (res.status === 200) {
-    navigation.navigate("TripSummary", { tripId: res.data.tripId });
-  } else {
-    userContext.updateToken();
-    Alert.alert("Tekrar dene!", "Lütfen tekrar dene!", [
-      {
-        text: "Tamam",
-      },
-    ]);
+  try {
+    await lockCar(userContext.token!, `car-info/${carId}`);
+  } catch (err) {
+    alert(JSON.stringify(err));
   }
+
+  try {
+    const lastLocation = await Location.getCurrentPositionAsync();
+    await updateCarLocation(carId, lastLocation);
+    const res = await endTrip(
+      userContext.user?.getUsername()!,
+      userContext.token!,
+      carId,
+      lastLocation,
+      waypoints
+    );
+
+    if (res.status === 200) {
+      navigation.navigate("TripSummary", { tripId: res.data.tripId });
+    } else {
+      userContext.updateToken();
+      Alert.alert("Tekrar dene!", "Lütfen tekrar dene!", [
+        {
+          text: "Tamam",
+        },
+      ]);
+    }
+  } catch (err) {
+    alert(JSON.stringify(err));
+  }
+
   return;
 };
 
