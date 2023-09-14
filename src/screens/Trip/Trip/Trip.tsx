@@ -28,12 +28,9 @@ type NavigatorProps = StackScreenProps<BiBipTripStackParamList, "Trip">;
 interface TripProps extends NavigatorProps {}
 
 const Trip: FunctionComponent<TripProps> = memo(({ navigation }) => {
-  let interval: NodeJS.Timer;
-
   const [waypoints, setWaypoints] = useState<{ lat: number; lng: number }[]>(
     []
   );
-  const [carId, setCarId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const userContext = useContext(UserContext);
@@ -43,16 +40,18 @@ const Trip: FunctionComponent<TripProps> = memo(({ navigation }) => {
   const camera = useRef<Camera>(null);
   const userLocation = useRef<UserLocation>(null);
 
-  const { data, isLoading: isCarLoading } = useQuery({
+  const {
+    data,
+    isLoading: isCarLoading,
+    refetch: refetchCarId,
+  } = useQuery({
     queryKey: "carId",
     queryFn: () =>
       getCarId(userContext.user?.getUsername()!, userContext.token!)
         .then((val) => {
-          setCarId(val.data.carId);
-
           return val.data;
         })
-        .catch(() => {
+        .catch((e) => {
           userContext.updateToken();
 
           return "";
@@ -61,15 +60,15 @@ const Trip: FunctionComponent<TripProps> = memo(({ navigation }) => {
   });
 
   const onEndTrip = async () => {
-    while (isCarLoading) setIsLoading(true);
-
-    setTimeout(() => {
-      setIsLoading(false);
-      navigation.navigate("TripEnd", {
-        carId: carId,
-        waypoints: waypoints,
-      });
-    }, 1000);
+    if (!data.carId) {
+      userContext.updateToken();
+      refetchCarId();
+      return alert("Tekrar deneyin!");
+    }
+    navigation.navigate("TripEnd", {
+      carId: data.carId,
+      waypoints: waypoints,
+    });
   };
 
   const onPauseTrip = () => {};
@@ -81,16 +80,15 @@ const Trip: FunctionComponent<TripProps> = memo(({ navigation }) => {
       }
     }
 
-    if (interval === undefined) {
-      interval = setInterval(async () => {
-        const location = await Location.getCurrentPositionAsync();
+    const interval = setInterval(async () => {
+      const location = await Location.getCurrentPositionAsync();
 
-        waypoints.push({
-          lat: location.coords.latitude,
-          lng: location.coords.longitude,
-        });
-      }, 20000);
-    }
+      waypoints.push({
+        lat: location.coords.latitude,
+        lng: location.coords.longitude,
+      });
+    }, 5000);
+
     return () => {
       clearInterval(interval);
     };

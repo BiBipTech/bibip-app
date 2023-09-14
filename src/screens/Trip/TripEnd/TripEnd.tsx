@@ -58,6 +58,8 @@ const TripEnd: FunctionComponent<TripEndProps> = ({ navigation, route }) => {
   ]);
 
   const onEnd = async () => {
+    console.log(route.params);
+
     await promiseWithLoader(
       setIsLoading,
       onEndTrip(
