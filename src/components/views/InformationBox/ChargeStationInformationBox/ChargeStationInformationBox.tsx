@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Dimensions,
   FlatList,
+  TouchableOpacity,
   Text,
   View,
   Animated as AnimatedView,
@@ -39,7 +40,6 @@ import {
 import UserContext from "../../../../utils/context/UserContext";
 import moment from "moment";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { useTailwindColor } from "../../../../utils/hooks/useTailwindColor";
 import TabView from "../../TabView/TabView";
 

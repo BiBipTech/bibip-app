@@ -1,10 +1,15 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, useState } from "react";
 import { Text, View } from "react-native";
 import { Car } from "../../../../models";
 import NavigationButton from "../../../buttons/NavigationButton/NavigationButton";
 import IconWithLabel from "../../../buttons/IconWithLabel";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import InformationBoxButton from "../../../buttons/InformationBoxButton/InformationBoxButton";
+import { useQuery } from "react-query";
+import { getWalkingDirections } from "../../../../utils/api/mapbox";
+import * as Location from "expo-location";
+import Spinner from "react-native-loading-spinner-overlay";
+import { useTailwindColor } from "../../../../utils/hooks/useTailwindColor";
 
 interface BiBipCarInformationBoxProps {
   selectedCar: Car;
@@ -24,41 +29,70 @@ const BiBipCarInformationBox: FunctionComponent<
     updatedAt,
   },
 }) => {
-  return (
-    <View className="w-full bg-gray-900 rounded-2xl shadow-md h-64 pb-2 pt-2 px-4 flex flex-col justify-around">
-      <View className="flex flex-row justify-between">
-        <View className="flex flex-col flex-initial w-4/5 justify-between items-start">
-          <Text className="text-gray-100 text-start font-bold text-lg">
-            asdas
-          </Text>
-          <Text className="text-gray-100 text-start break-all">{inUse} </Text>
-        </View>
-        <NavigationButton />
-      </View>
-      <View className="flex flex-row justify-start items-baseline divide-x-4 divide-transparent">
-        <Text className="text-gray-100 text-xs">
-          0-30 dk: 10 TL, her 1 saat: +10 TL, günlük: 80 TL
-        </Text>
-      </View>
+  const [isLoading, setIsLoading] = useState(false);
 
-      <View className="flex flex-row justify-start divide-x-4 divide-transparent">
-        <View className="bg-bibip-red-400 px-2 py-1 rounded-md">
-          <Text className="text-gray-100 text-xs">In Use</Text>
-        </View>
+  const { data: directions } = useQuery({
+    queryKey: "getCar",
+    queryFn: async () => {
+      setIsLoading(true);
+
+      const currentLocation = await Location.getCurrentPositionAsync();
+
+      const directions = await getWalkingDirections(
+        `${currentLocation.coords.longitude}%2C${currentLocation.coords.latitude}`,
+        `${location?.lng}%2C${location?.lat}`
+      );
+      return directions;
+    },
+    onSuccess: (data) => {
+      setIsLoading(false);
+    },
+    onError: (e) => {
+      console.error(JSON.stringify(e));
+      setIsLoading(false);
+    },
+  });
+
+  return (
+    <View className="w-full bg-gray-900 rounded-2xl shadow-md h-48 pb-4 pt-2 px-4 flex flex-col justify-end">
+      <Spinner visible={isLoading} />
+      <View className="flex flex-col justify-around flex-1 divide-x-4 divide-transparent mb-4">
         <IconWithLabel
-          icon={<Ionicons size={16} name="location-sharp" color={"white"} />}
-          label={`${battery?.toFixed(1)} km`}
+          icon={
+            <Ionicons
+              size={24}
+              name="location-sharp"
+              color={useTailwindColor("bg-gray-400")}
+            />
+          }
+          label={`${(directions?.routes[0].distance! / 1000 ?? 0).toFixed(
+            1
+          )} km`}
         />
         <IconWithLabel
           icon={
-            <MaterialCommunityIcons size={16} name="taxi" color={"white"} />
+            <MaterialCommunityIcons
+              size={24}
+              name="battery"
+              color={useTailwindColor("bg-gray-400")}
+            />
           }
-          label={`${battery?.toFixed(1)} dk.`}
+          label={`%${battery?.toFixed(0)}`}
+        />
+        <IconWithLabel
+          icon={
+            <MaterialCommunityIcons
+              size={24}
+              name="cash"
+              color={useTailwindColor("bg-gray-400")}
+            />
+          }
+          label={`₺4.99 + ₺4.99/dk`}
         />
       </View>
 
       <View className="flex flex-row w-full justify-between">
-        <InformationBoxButton invert text="Yol Tarifi" />
+        <InformationBoxButton invert text="Rezerve" />
         <View className="w-2" />
         <InformationBoxButton text="QR Tara" />
       </View>

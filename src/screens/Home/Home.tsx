@@ -21,8 +21,6 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import BottomSheet from "@gorhom/bottom-sheet";
-import { promiseWithLoader } from "../../utils/aws/api";
-import { startTrip } from "../QRModal/QRModal.action";
 import { Car } from "../../models";
 import BiBipCarInformationBox from "../../components/views/InformationBox/BiBipCarInformationBox/BiBipCarInformationBox";
 
@@ -128,7 +126,7 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
       return {
         transform: [
           {
-            translateY: withTiming(250),
+            translateY: withTiming(200),
           },
         ],
       };
@@ -165,6 +163,10 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
         <Spinner visible={isSpinnerVisible} />
         <Landing
           navigate={navigation.navigate}
+          hideInfoBox={() => {
+            setSelectedCar(null);
+            carInfoBoxShown.value = false;
+          }}
           modalPosition={modalPosition}
           bottomSheetRef={bottomSheetRef}
         />
@@ -174,6 +176,7 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
               bottomSheetRef.current?.snapToIndex(0);
 
               carInfoBoxShown.value = false;
+              setSelectedCar(null);
             }}
             setLocation={setLocation}
             cars={cars}
@@ -188,7 +191,7 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
         )}
         {selectedCar && (
           <Animated.View
-            className={"absolute top-12 w-full px-4"}
+            className={"absolute top-14 w-full px-4"}
             style={informationBoxAnimation}
           >
             <BiBipCarInformationBox selectedCar={selectedCar} />
@@ -207,17 +210,6 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
             <Ionicons name="menu" color="white" size={32} />
           </BiBipIconButton>
         </Animated.View>
-        <View className={`absolute right-7 top-16`}>
-          <BiBipIconButton
-            buttonSize="small"
-            onPress={() => {
-              // @ts-ignore
-              navigation.navigate("Test");
-            }}
-          >
-            <Ionicons name="menu" color="white" size={32} />
-          </BiBipIconButton>
-        </View>
         <Animated.View
           className="absolute right-8 bottom-24"
           style={qrButtonAnimation}

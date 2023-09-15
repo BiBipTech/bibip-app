@@ -6,14 +6,20 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Animated, Keyboard, Pressable, TextInput, View } from "react-native";
+import {
+  TouchableOpacity,
+  Animated,
+  Keyboard,
+  Pressable,
+  TextInput,
+  View,
+} from "react-native";
 import * as Linking from "expo-linking";
 
 import MaskInput from "react-native-mask-input";
 import { AppSignedInStackParamList } from "../../../Router";
 import BiBipButton from "../../components/buttons/BiBipButton/BiBipButton";
 import { warn } from "../../utils/api/alert";
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import UserContext, { UserContextType } from "../../utils/context/UserContext";
 import { addCard } from "./AddNewCard.action";
 import { promiseWithLoader } from "../../utils/aws/api";

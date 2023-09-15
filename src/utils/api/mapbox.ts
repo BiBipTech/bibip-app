@@ -22,6 +22,23 @@ export const getDirections = async (origin: string, destination: string) => {
   };
 };
 
+export const getWalkingDirections = async (
+  origin: string,
+  destination: string
+) => {
+  const requestUrl = `${directionsApi}/mapbox/walking/${origin}%3B${destination}?alternatives=false&geometries=geojson&overview=simplified&steps=false&access_token=${accessToken}`;
+
+  return (await axios.get(requestUrl)).data as unknown as {
+    routes: {
+      duration: number;
+      distance: number;
+      geometry: {
+        coordinates: number[][];
+      };
+    }[];
+  };
+};
+
 export const getIsochrone = async (origin: string, duration: number) => {
   const requestUrl = `${isochroneApi}/mapbox/driving/${origin}?contours_minutes=${duration}&polygons=true&access_token=${accessToken}`;
 

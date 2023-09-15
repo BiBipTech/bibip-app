@@ -10,9 +10,9 @@ const IconWithLabel: FunctionComponent<IconWithLabelProps> = ({
   label,
 }) => {
   return (
-    <View className="ml-2 flex flex-row items-center">
+    <View className="mr-2 flex flex-row items-center">
       {icon}
-      <Text className="ml-1 text-gray-100">{label}</Text>
+      <Text className="ml-1 text-gray-100 text-lg">{label}</Text>
     </View>
   );
 };
