@@ -397,7 +397,7 @@ const Router = () => {
           component={Success}
         />
         <AppSignedInStack.Screen
-          options={{ headerShown: false }}
+          options={{ headerShown: true }}
           name="Test"
           component={Test}
         />

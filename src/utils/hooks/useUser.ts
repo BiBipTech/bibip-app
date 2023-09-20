@@ -63,8 +63,6 @@ const useUser = () => {
   }, [user]);
 
   useEffect(() => {
-    console.log(token);
-
     if (token)
       awsGet(`${TRIP_API}/fetch-trip-status/${user?.getUsername()!}`, token!)
         .then((val) => {

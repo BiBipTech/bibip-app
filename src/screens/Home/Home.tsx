@@ -210,6 +210,17 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
             <Ionicons name="menu" color="white" size={32} />
           </BiBipIconButton>
         </Animated.View>
+        <View className={`absolute right-7 top-16`}>
+          <BiBipIconButton
+            buttonSize="small"
+            onPress={() => {
+              // @ts-ignore
+              navigation.navigate("Test");
+            }}
+          >
+            <Ionicons name="menu" color="white" size={32} />
+          </BiBipIconButton>
+        </View>
         <Animated.View
           className="absolute right-8 bottom-24"
           style={qrButtonAnimation}

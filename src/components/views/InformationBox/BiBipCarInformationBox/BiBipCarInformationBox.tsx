@@ -1,5 +1,5 @@
-import { FunctionComponent, useState } from "react";
-import { Text, View } from "react-native";
+import { FunctionComponent, useEffect, useState } from "react";
+import { ActivityIndicator, Text, View } from "react-native";
 import { Car } from "../../../../models";
 import NavigationButton from "../../../buttons/NavigationButton/NavigationButton";
 import IconWithLabel from "../../../buttons/IconWithLabel";
@@ -31,7 +31,11 @@ const BiBipCarInformationBox: FunctionComponent<
 }) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const { data: directions } = useQuery({
+  const {
+    data: directions,
+    refetch: refetchDirections,
+    isFetching: directionsFetching,
+  } = useQuery({
     queryKey: "getCar",
     queryFn: async () => {
       setIsLoading(true);
@@ -53,6 +57,10 @@ const BiBipCarInformationBox: FunctionComponent<
     },
   });
 
+  useEffect(() => {
+    refetchDirections();
+  }, [id]);
+
   return (
     <View className="w-full bg-gray-900 rounded-2xl shadow-md h-48 pb-4 pt-2 px-4 flex flex-col justify-end">
       <Spinner visible={isLoading} />
@@ -65,9 +73,13 @@ const BiBipCarInformationBox: FunctionComponent<
               color={useTailwindColor("bg-gray-400")}
             />
           }
-          label={`${(directions?.routes[0].distance! / 1000 ?? 0).toFixed(
-            1
-          )} km`}
+          label={
+            directionsFetching ? (
+              <ActivityIndicator />
+            ) : (
+              `${(directions?.routes[0].distance! / 1000 ?? 0).toFixed(1)} km`
+            )
+          }
         />
         <IconWithLabel
           icon={

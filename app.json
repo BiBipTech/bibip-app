@@ -12,7 +12,7 @@
     "name": "bibip",
     "owner": "bibiptech",
     "slug": "bibip-app",
-    "version": "0.1.9",
+    "version": "0.1.10",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -39,7 +39,7 @@
         "NSLocationAlwaysUsageDescription": "Size daha kaliteli hizmet sunabilmemiz için konumunuza erişmeye ihtiyacımız var!",
         "ITSAppUsesNonExemptEncryption": false
       },
-      "buildNumber": "8"
+      "buildNumber": "1"
     },
     "android": {
       "package": "tech.bibip.app",

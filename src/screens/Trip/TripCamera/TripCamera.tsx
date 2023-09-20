@@ -85,25 +85,6 @@ const TripCamera: FunctionComponent<TripCameraProps> = ({
           <Ionicons name="camera" size={52} color="white" />
         </TouchableOpacity>
       </SafeAreaView>
-      {/* <Camera ref={camera} type={CameraType.back}>
-        <SafeAreaView
-          style={{
-            zIndex: 10,
-          }}
-        >
-          <View className="justify-end items-center w-full h-full">
-            <TouchableOpacity
-              className="bg-bibip-blue-500 w-16 h-16 rounded-full justify-center items-center flex flex-col"
-              onPress={async () => {
-                const res = await camera.current?.takePictureAsync();
-                setImageUri(res?.uri!);
-              }}
-            >
-              <Ionicons name="camera" size={48} color="white" />
-            </TouchableOpacity>
-          </View>
-        </SafeAreaView>
-      </Camera> */}
     </View>
   );
 };

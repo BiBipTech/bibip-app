@@ -3,7 +3,7 @@ import { Text, View } from "react-native";
 
 interface IconWithLabelProps {
   icon: ReactNode;
-  label: string;
+  label: string | React.ReactNode;
 }
 const IconWithLabel: FunctionComponent<IconWithLabelProps> = ({
   icon,
