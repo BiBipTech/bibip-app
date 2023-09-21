@@ -13,6 +13,10 @@ import {
 import { Auth } from "aws-amplify";
 import { getTripStatus, promiseWithLoader } from "../../utils/aws/api";
 import { Circle, Defs, Mask, Path, Rect, Svg } from "react-native-svg";
+import { useQuery } from "react-query";
+import gql from "../../utils/gql/gql";
+import { GetCarResult } from "../Trip/TripEnd/TripEnd.type";
+import * as queries from "../../graphql/queries";
 
 type NavigatorProps = StackScreenProps<BiBipHomeStackParamList, "QRModal">;
 
@@ -26,6 +30,7 @@ const QRModal: FunctionComponent<QRModalProps> = ({ route, navigation }) => {
   const userContext = useContext(UserContext);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [carId, setCarId] = useState("");
 
   return (
     <View className="align-center justify-center h-full">
@@ -33,6 +38,18 @@ const QRModal: FunctionComponent<QRModalProps> = ({ route, navigation }) => {
       <BarcodeScanner
         onBarCodeScanned={async (val) => {
           const car = JSON.parse(val.data) as CarQR;
+          setCarId(car.carId);
+
+          setIsLoading(true);
+          const res = await gql<GetCarResult>({
+            query: queries.getCar,
+            variables: {
+              id: carId,
+            },
+          });
+
+          if (res.data?.getCar.inUse === true)
+            return alert("Bu araç uygun değil!");
 
           if (!!route.params.carId && route.params.carId !== car.carId) {
             alert("Rezerve ettiğin araçla sürüş başlatabilirsin!");

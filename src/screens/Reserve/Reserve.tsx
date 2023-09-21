@@ -20,13 +20,11 @@ import moment from "moment";
 const Reserve: FunctionComponent<
   AppDrawerBiBipHomeStackCompositeProps<"Reserve">
 > = ({
-  navigation: { addListener, navigate, removeListener },
+  navigation: { addListener, navigate, removeListener, popToTop },
   route: {
     params: { carId, tripStarted },
   },
 }) => {
-  console.log("carId, tripStarted", carId, tripStarted);
-
   const [cameraRef, setCameraRef] = useState<CameraRef | null>(null);
   const [loc, setLoc] = useState<number[]>([]);
   const [userLocationRef, setUserLocationRef] =
@@ -59,23 +57,26 @@ const Reserve: FunctionComponent<
     },
   });
 
+  const beforeRemove = (
+    e: EventArg<
+      "beforeRemove",
+      true,
+      {
+        action: Readonly<{
+          type: string;
+          payload?: object | undefined;
+          source?: string | undefined;
+          target?: string | undefined;
+        }>;
+      }
+    >
+  ) => {
+    if (e.data.action.type === "POP_TO_TOP") return;
+
+    e.preventDefault();
+  };
   useEffect(() => {
-    const beforeRemove = (
-      e: EventArg<
-        "beforeRemove",
-        true,
-        {
-          action: Readonly<{
-            type: string;
-            payload?: object | undefined;
-            source?: string | undefined;
-            target?: string | undefined;
-          }>;
-        }
-      >
-    ) => {
-      e.preventDefault();
-    };
+    console.log("effect");
 
     addListener("beforeRemove", beforeRemove);
     return () => {

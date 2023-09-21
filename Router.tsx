@@ -225,7 +225,6 @@ const Router = () => {
             title: "Rezervasyon",
             presentation: "modal",
             gestureEnabled: false,
-            headerBackButtonMenuEnabled: false,
           }}
           component={Reserve}
         />

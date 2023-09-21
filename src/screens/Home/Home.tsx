@@ -53,7 +53,16 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
     error,
     data: cars,
   } = useQuery("getCars", () =>
-    gql<ListCarsResult>({ query: queries.listCars })
+    gql<ListCarsResult>({
+      query: queries.listCars,
+      variables: {
+        filter: {
+          inUse: {
+            eq: false,
+          },
+        },
+      },
+    })
       .then((res) => {
         return res.data?.listCars.items;
       })
