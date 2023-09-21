@@ -1,4 +1,4 @@
-import { Dimensions, Text, View } from "react-native";
+import { Alert, Dimensions, Text, View } from "react-native";
 import React, { FC, useContext, useEffect, useRef, useState } from "react";
 import BiBipIconButton from "../../components/buttons/BiBipIconButton/BiBipIconButton";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -9,12 +9,13 @@ import { useQuery } from "react-query";
 import gql from "../../utils/gql/gql";
 import { ListCarsResult } from "./Home.type";
 import * as queries from "../../graphql/queries";
+import * as mutations from "../../graphql/mutations";
 import CarMap from "../../components/views/Map/CarMap/CarMap";
 import { LatLng } from "react-native-maps";
 import UserContext from "../../utils/context/UserContext";
 import { fetchDocumentStatuses } from "../Menu/Profile/Profile.action";
 import { warn } from "../../utils/api/alert";
-import Landing from "../Landing/Landing";
+// import Landing from "../Landing/Landing";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -23,6 +24,9 @@ import Animated, {
 import BottomSheet from "@gorhom/bottom-sheet";
 import { Car } from "../../models";
 import BiBipCarInformationBox from "../../components/views/InformationBox/BiBipCarInformationBox/BiBipCarInformationBox";
+import { checkDocuments } from "./Home.action";
+import { awsGet, awsPost } from "../../utils/aws/api";
+import { TRIP_API } from "@env";
 
 const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
   route,
@@ -30,7 +34,9 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
 }) => {
   const [location, setLocation] = useState<LatLng>();
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedCar, setSelectedCar] = useState<Car | null | undefined>(null);
+  const [selectedCar, setSelectedCar] = useState<
+    (Car & { _version: number }) | null | undefined
+  >(null);
 
   const [documents, setDocuments] = useState({
     id: "",
@@ -49,8 +55,6 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
   } = useQuery("getCars", () =>
     gql<ListCarsResult>({ query: queries.listCars })
       .then((res) => {
-        console.log(res);
-
         return res.data?.listCars.items;
       })
       .catch((e) => {
@@ -83,6 +87,70 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
     enabled: !!userContext.user,
   });
 
+  const { refetch: refetchReservationStatus, data: reservedCarData } = useQuery(
+    {
+      queryKey: "didReserveCar",
+      queryFn: async () => {
+        const result = await awsGet(
+          `${TRIP_API}/reservation-status/${userContext.user?.getUsername()}`,
+          userContext.token!
+        );
+        const data = result.data as {
+          carId: string | null;
+          reservedCar: boolean;
+          tripStarted: number | undefined;
+        };
+        return data;
+      },
+      enabled: !!userContext.token,
+    }
+  );
+
+  const { refetch: startReservation, data: isReservationStarted } = useQuery({
+    queryKey: "startReservation",
+    queryFn: async () => {
+      console.log("start reservation");
+
+      const res = await awsPost(
+        `${TRIP_API}/startReservation`,
+        {
+          username: userContext.user?.getUsername()!,
+          carId: selectedCar?.id!,
+        },
+        userContext.token!
+      );
+      setSelectedCar(null);
+      console.log(res.data);
+
+      return res.data as string;
+    },
+    onError: (err) => {
+      console.log(JSON.stringify(err));
+    },
+    enabled: false,
+  });
+
+  useEffect(() => {
+    console.log(reservedCarData);
+
+    if (!reservedCarData) return;
+
+    if (reservedCarData.reservedCar === true) {
+      console.log("reserved car");
+
+      const timeout = setTimeout(() => {
+        navigation.navigate("Reserve", {
+          carId: reservedCarData.carId!,
+          tripStarted: reservedCarData.tripStarted!,
+        });
+      }, 500);
+
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [reservedCarData]);
+
   useEffect(() => {
     const timeOutId = setTimeout(
       () => bottomSheetRef.current?.snapToIndex(1),
@@ -93,6 +161,26 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
       clearTimeout(timeOutId);
     };
   }, []);
+
+  useEffect(() => {
+    const reservationStatus = async () => {
+      if (isReservationStarted === "Reserved!") {
+        const res = await refetchReservationStatus();
+        console.log(res.data);
+
+        if (res.data?.reservedCar === true) {
+          console.log(res.data);
+
+          navigation.navigate("Reserve", {
+            carId: res.data.carId!,
+            tripStarted: res.data.tripStarted!,
+          });
+        }
+      }
+    };
+
+    reservationStatus();
+  }, [isReservationStarted]);
 
   const modalPosition = useSharedValue(0);
   const carInfoBoxShown = useSharedValue(false);
@@ -146,22 +234,30 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
       (modalLowerBound - modalUpperBound);
 
     return {
-      transform: [
-        {
-          translateX: (1 - value) * 200,
-        },
-      ],
+      // transform: [
+      //   {
+      //     translateX: (1 - value) * 200,
+      //   },
+      // ],
       zIndex: -1,
     };
   }, [modalPosition]);
 
   const isSpinnerVisible = isLoading || isCarsLoading;
 
+  const onScanQr = () => {
+    const documentsValid = checkDocuments(documents, refetchDocuments);
+    if (!documentsValid) return;
+    navigation.navigate("QRModal", {
+      location: location!,
+    });
+  };
+
   return (
     <SafeAreaProvider>
       <View className="items-center justify-center h-full w-full flex-1">
         <Spinner visible={isSpinnerVisible} />
-        <Landing
+        {/* <Landing
           navigate={navigation.navigate}
           hideInfoBox={() => {
             setSelectedCar(null);
@@ -169,7 +265,7 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
           }}
           modalPosition={modalPosition}
           bottomSheetRef={bottomSheetRef}
-        />
+        /> */}
         {cars ? (
           <CarMap
             onMapPress={() => {
@@ -180,7 +276,7 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
             }}
             setLocation={setLocation}
             cars={cars}
-            onCarSelect={(car: Car) => {
+            onCarSelect={(car: Car & { _version: number }) => {
               setSelectedCar(car);
               carInfoBoxShown.value = true;
               bottomSheetRef.current?.snapToIndex(0);
@@ -194,7 +290,31 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
             className={"absolute top-14 w-full px-4"}
             style={informationBoxAnimation}
           >
-            <BiBipCarInformationBox selectedCar={selectedCar} />
+            <BiBipCarInformationBox
+              selectedCar={selectedCar}
+              onScanQr={onScanQr}
+              onReserve={async () => {
+                Alert.alert(
+                  "Rezervasyon",
+                  `Rezervasyon yapmak istediğinize emin misiniz?\n\nFiyat: 0.99₺/dk`,
+                  [
+                    {
+                      text: "İptal",
+                      style: "destructive",
+                      onPress: () => console.log("Cancel Pressed"),
+                    },
+                    {
+                      text: "Evet",
+                      style: "default",
+                      onPress: async () => {
+                        startReservation();
+                        // refetchReservationStatus();
+                      },
+                    },
+                  ]
+                );
+              }}
+            />
           </Animated.View>
         )}
         <Animated.View
@@ -229,38 +349,7 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
             buttonSize="large"
             intent="primary"
             disabled={location === undefined}
-            onPress={async () => {
-              if (
-                documents.id === "" ||
-                documents.license === "" ||
-                documents.photo === ""
-              ) {
-                warn(
-                  "Hay aksi!",
-                  "Bir şeyler yanlış gitti! Lütfen tekrar dene!",
-                  () => {},
-                  "Tamam"
-                );
-                refetchDocuments();
-                return;
-              }
-              if (
-                documents.id !== "true" ||
-                documents.license !== "true" ||
-                documents.photo !== "true"
-              ) {
-                warn(
-                  "Eksik belgeler!",
-                  "Eksik veya onaylanmamış belgen var. Eğer hepsini yüklediysen daha sonra tekrar dene!",
-                  () => {},
-                  "Tamam"
-                );
-                return;
-              }
-              navigation.navigate("QRModal", {
-                location: location!,
-              });
-            }}
+            onPress={onScanQr}
           >
             <Ionicons name="qr-code-outline" color="white" size={48} />
           </BiBipIconButton>

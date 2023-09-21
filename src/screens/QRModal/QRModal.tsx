@@ -34,6 +34,11 @@ const QRModal: FunctionComponent<QRModalProps> = ({ route, navigation }) => {
         onBarCodeScanned={async (val) => {
           const car = JSON.parse(val.data) as CarQR;
 
+          if (!!route.params.carId && route.params.carId !== car.carId) {
+            alert("Rezerve ettiğin araçla sürüş başlatabilirsin!");
+            return;
+          }
+
           await promiseWithLoader(
             setIsLoading,
             startTrip(
@@ -43,7 +48,7 @@ const QRModal: FunctionComponent<QRModalProps> = ({ route, navigation }) => {
               userContext.token!
             ).then((res) => {
               if (res.status === 200) {
-                navigation.goBack();
+                navigation.popToTop();
                 getTripStatus(userContext.user!, userContext.token!).then(
                   (val) => {
                     userContext.setIsInTrip(val.inTrip);

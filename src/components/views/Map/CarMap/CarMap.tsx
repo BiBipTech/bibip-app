@@ -17,8 +17,8 @@ import CarMarkerIcon from "../../../../../assets/marker-icon.svg";
 interface CarMapProps {
   onMapPress: () => void;
   setLocation: Dispatch<React.SetStateAction<LatLng | undefined>>;
-  cars: Car[] | undefined;
-  onCarSelect: (car: Car) => void;
+  cars: (Car & { _version: number })[] | undefined;
+  onCarSelect: (car: Car & { _version: number }) => void;
 }
 
 const CarMap: FunctionComponent<CarMapProps> = ({

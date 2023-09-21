@@ -9,6 +9,12 @@ import { Car } from "../../models";
 import gql from "../../utils/gql/gql";
 import { ListCarsResult } from "./Home.type";
 import axios from "axios";
+import { warn } from "../../utils/api/alert";
+import {
+  QueryObserverResult,
+  RefetchOptions,
+  RefetchQueryFilters,
+} from "react-query";
 
 export const getCurrentLocation = (
   e: UserLocationChangeEvent,
@@ -86,4 +92,44 @@ export const findCarFromLocation = (
       car.location?.lng === location.longitude
     );
   });
+};
+
+export const checkDocuments = async (
+  documents: {
+    id: string;
+    photo: string;
+    license: string;
+  },
+  refetchDocuments: (
+    options?: (RefetchOptions & RefetchQueryFilters<unknown>) | undefined
+  ) => Promise<QueryObserverResult<void, unknown>>
+) => {
+  if (
+    documents.id === "" ||
+    documents.license === "" ||
+    documents.photo === ""
+  ) {
+    warn(
+      "Hay aksi!",
+      "Bir şeyler yanlış gitti! Lütfen tekrar dene!",
+      () => {},
+      "Tamam"
+    );
+    refetchDocuments();
+    return false;
+  }
+  if (
+    documents.id !== "true" ||
+    documents.license !== "true" ||
+    documents.photo !== "true"
+  ) {
+    warn(
+      "Eksik belgeler!",
+      "Eksik veya onaylanmamış belgen var. Eğer hepsini yüklediysen daha sonra tekrar dene!",
+      () => {},
+      "Tamam"
+    );
+    return false;
+  }
+  return true;
 };

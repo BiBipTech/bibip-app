@@ -1,7 +1,6 @@
 import { FunctionComponent, useEffect, useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { Car } from "../../../../models";
-import NavigationButton from "../../../buttons/NavigationButton/NavigationButton";
 import IconWithLabel from "../../../buttons/IconWithLabel";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import InformationBoxButton from "../../../buttons/InformationBoxButton/InformationBoxButton";
@@ -13,6 +12,8 @@ import { useTailwindColor } from "../../../../utils/hooks/useTailwindColor";
 
 interface BiBipCarInformationBoxProps {
   selectedCar: Car;
+  onScanQr: () => void;
+  onReserve: () => void;
 }
 
 const BiBipCarInformationBox: FunctionComponent<
@@ -28,6 +29,8 @@ const BiBipCarInformationBox: FunctionComponent<
     location,
     updatedAt,
   },
+  onScanQr,
+  onReserve,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -61,18 +64,14 @@ const BiBipCarInformationBox: FunctionComponent<
     refetchDirections();
   }, [id]);
 
+  const iconColor = useTailwindColor("bg-gray-400");
+
   return (
     <View className="w-full bg-gray-900 rounded-2xl shadow-md h-48 pb-4 pt-2 px-4 flex flex-col justify-end">
       <Spinner visible={isLoading} />
       <View className="flex flex-col justify-around flex-1 divide-x-4 divide-transparent mb-4">
         <IconWithLabel
-          icon={
-            <Ionicons
-              size={24}
-              name="location-sharp"
-              color={useTailwindColor("bg-gray-400")}
-            />
-          }
+          icon={<Ionicons size={24} name="location-sharp" color={iconColor} />}
           label={
             directionsFetching ? (
               <ActivityIndicator />
@@ -86,7 +85,7 @@ const BiBipCarInformationBox: FunctionComponent<
             <MaterialCommunityIcons
               size={24}
               name="battery"
-              color={useTailwindColor("bg-gray-400")}
+              color={iconColor}
             />
           }
           label={`%${battery?.toFixed(0)}`}
@@ -104,9 +103,9 @@ const BiBipCarInformationBox: FunctionComponent<
       </View>
 
       <View className="flex flex-row w-full justify-between">
-        <InformationBoxButton invert text="Rezerve" />
+        <InformationBoxButton invert text="Rezerve" onPress={onReserve} />
         <View className="w-2" />
-        <InformationBoxButton text="QR Tara" />
+        <InformationBoxButton text="QR Tara" onPress={onScanQr} />
       </View>
     </View>
   );

@@ -120,7 +120,6 @@ const Profile: FunctionComponent<ProfileProps> = ({ navigation }) => {
       }}
     >
       <Spinner visible={attributesLoading || documentsLoading || isLoading} />
-
       <View className="w-full flex flex-col justify-start items-center">
         {fullName === "" ? (
           <View className="h-24 w-24 rounded-full items-center justify-center flex flex-col bg-gray-100">
@@ -175,7 +174,7 @@ const Profile: FunctionComponent<ProfileProps> = ({ navigation }) => {
           }}
         />
       </View>
-      <View className="flex flex-row justify-between w-full px-4 mt-2">
+      <View className="flex flex-row justify-between w-full px-4 mt-4">
         <View className="flex flex-col w-[30%] items-center ">
           {documents?.id === "false" ? (
             <TouchableOpacity
@@ -207,7 +206,7 @@ const Profile: FunctionComponent<ProfileProps> = ({ navigation }) => {
               <AntDesign name="idcard" size={32} color={iconColor} />
             </View>
           )}
-          <Text className="mt-2 text-xl">Kimlik</Text>
+          <Text className="mt-2 text-lg">Kimlik</Text>
         </View>
         <View className="flex flex-col w-[30%] items-center ">
           {documents?.license === "false" ? (
@@ -250,7 +249,7 @@ const Profile: FunctionComponent<ProfileProps> = ({ navigation }) => {
               />
             </View>
           )}
-          <Text className="mt-2 text-xl">Sürücü Belgesi</Text>
+          <Text className="mt-2 text-lg">Sürücü Belgesi</Text>
         </View>
         <View className="flex flex-col w-[30%] items-center ">
           {documents?.photo === "false" ? (
@@ -285,7 +284,7 @@ const Profile: FunctionComponent<ProfileProps> = ({ navigation }) => {
               <FontAwesome5 name="portrait" size={32} color={iconColor} />
             </View>
           )}
-          <Text className="mt-2 text-xl">Selfie</Text>
+          <Text className="mt-2 text-lg">Selfie</Text>
         </View>
       </View>
       <View className="w-full flex-1 flex flex-col justify-end pb-8">
@@ -327,7 +326,7 @@ const Profile: FunctionComponent<ProfileProps> = ({ navigation }) => {
             );
           }}
         >
-          <Text className="text-3xl text-gray-100">Kaydet</Text>
+          <Text className="text-2xl text-gray-100">Kaydet</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -372,7 +371,7 @@ const ProfileTextInput = forwardRef<TextInput, ProfileTextInputProps>(
           Keyboard.dismiss();
         }}
         style={[borderAnimation]}
-        className="rounded-2xl px-4 w-full mt-6 flex flex-row justify-between items-end"
+        className="rounded-2xl px-4 mt-2 w-full flex flex-row justify-between items-end"
       >
         <TextInput
           className="py-4 text-xl"

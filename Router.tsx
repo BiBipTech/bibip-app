@@ -43,6 +43,7 @@ import ChargeStationComment from "./src/screens/ChargingStation/Comment/ChargeSt
 import ChargeStationCommentList from "./src/screens/ChargingStation/CommentList/ChargeStationCommentList";
 import ChargeStationReport from "./src/screens/ChargingStation/Report/ChargeStationReport";
 import Test from "./src/screens/Test";
+import Reserve from "./src/screens/Reserve/Reserve";
 
 export type AppSignedOutStackParamList = {
   Login: undefined;
@@ -82,6 +83,11 @@ export type BiBipHomeStackParamList = {
   BiBipHome: undefined;
   QRModal: {
     location: LatLng;
+    carId?: string;
+  };
+  Reserve: {
+    carId: string;
+    tripStarted: number;
   };
 };
 
@@ -211,6 +217,17 @@ const Router = () => {
             headerShown: false,
           }}
           component={QRModal}
+        />
+        <BiBipHomeStackNavigator.Screen
+          name="Reserve"
+          options={{
+            headerShown: false,
+            title: "Rezervasyon",
+            presentation: "modal",
+            gestureEnabled: false,
+            headerBackButtonMenuEnabled: false,
+          }}
+          component={Reserve}
         />
       </BiBipHomeStackNavigator.Navigator>
     );
