@@ -1,19 +1,13 @@
-import { FunctionComponent, useContext, useEffect, useState } from "react";
+import { FunctionComponent, useContext, useState } from "react";
 import { Dimensions, Text, View } from "react-native";
-import CameraView from "../../components/inputs/CameraView/CameraView";
 import Spinner from "react-native-loading-spinner-overlay";
 import UserContext from "../../utils/context/UserContext";
 import BarcodeScanner from "../../components/inputs/BarcodeScanner/BarcodeScanner";
 import { startTrip } from "./QRModal.action";
 import { StackScreenProps } from "@react-navigation/stack";
-import {
-  AppSignedInStackParamList,
-  BiBipHomeStackParamList,
-} from "../../../Router";
-import { Auth } from "aws-amplify";
+import { BiBipHomeStackParamList } from "../../../Router";
 import { getTripStatus, promiseWithLoader } from "../../utils/aws/api";
-import { Circle, Defs, Mask, Path, Rect, Svg } from "react-native-svg";
-import { useQuery } from "react-query";
+import { Path, Svg } from "react-native-svg";
 import gql from "../../utils/gql/gql";
 import { GetCarResult } from "../Trip/TripEnd/TripEnd.type";
 import * as queries from "../../graphql/queries";
@@ -30,11 +24,6 @@ const QRModal: FunctionComponent<QRModalProps> = ({ route, navigation }) => {
   const userContext = useContext(UserContext);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [carId, setCarId] = useState("");
-
-  const isCarReservedByUser = () => {
-    return route.params.carId === carId;
-  };
 
   return (
     <View className="align-center justify-center h-full">
@@ -42,25 +31,31 @@ const QRModal: FunctionComponent<QRModalProps> = ({ route, navigation }) => {
       <BarcodeScanner
         onBarCodeScanned={async (val) => {
           const car = JSON.parse(val.data) as CarQR;
-          setCarId(car.carId);
 
           setIsLoading(true);
           const res = await gql<GetCarResult>({
             query: queries.getCar,
             variables: {
-              id: carId,
+              id: car.carId,
             },
           });
 
-          if (res.data?.getCar.inUse === true && !isCarReservedByUser()) {
+          if (!res.data) {
+            alert("Bir hata oluştu!");
+            setIsLoading(false);
+            return;
+          }
+
+          const isCarReservedByUser = route.params.carId === car.carId;
+
+          if (res.data.getCar.inUse === true && !isCarReservedByUser) {
             setIsLoading(false);
             return alert("Bu araç uygun değil!");
           }
 
           if (!!route.params.carId && route.params.carId !== car.carId) {
             setIsLoading(false);
-            alert("Rezerve ettiğin araçla sürüş başlatabilirsin!");
-            return;
+            return alert("Rezerve ettiğin araçla sürüş başlatabilirsin!");
           }
 
           await promiseWithLoader(
