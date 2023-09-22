@@ -32,6 +32,10 @@ const QRModal: FunctionComponent<QRModalProps> = ({ route, navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [carId, setCarId] = useState("");
 
+  const isCarReservedByUser = () => {
+    return route.params.carId === carId;
+  };
+
   return (
     <View className="align-center justify-center h-full">
       <Spinner visible={isLoading} />
@@ -48,10 +52,12 @@ const QRModal: FunctionComponent<QRModalProps> = ({ route, navigation }) => {
             },
           });
 
-          if (res.data?.getCar.inUse === true)
-            return alert("Bu araç uygun değil!");
+          if (res.data?.getCar.inUse === true && !isCarReservedByUser())
+            setIsLoading(false);
+          return alert("Bu araç uygun değil!");
 
           if (!!route.params.carId && route.params.carId !== car.carId) {
+            setIsLoading(false);
             alert("Rezerve ettiğin araçla sürüş başlatabilirsin!");
             return;
           }
