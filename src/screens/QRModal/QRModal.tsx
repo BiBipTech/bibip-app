@@ -56,6 +56,7 @@ const QRModal: FunctionComponent<QRModalProps> = ({ route, navigation }) => {
             setIsLoading(false);
             return alert("Bu araç uygun değil!");
           }
+
           if (!!route.params.carId && route.params.carId !== car.carId) {
             setIsLoading(false);
             alert("Rezerve ettiğin araçla sürüş başlatabilirsin!");
