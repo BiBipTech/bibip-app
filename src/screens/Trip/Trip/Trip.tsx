@@ -137,6 +137,21 @@ const Trip: FunctionComponent<TripProps> = memo(({ navigation }) => {
     require("../../../../assets/all-info.png"),
   ];
 
+  const imageViews = images.map((image, index) => {
+    return (
+      <Animated.View
+        key={index}
+        className="rounded-full border border-bibip-green-500 h-2 aspect-square"
+        style={useAnimatedStyle(() => {
+          const isActive = currentImage === index;
+
+          return {
+            backgroundColor: withTiming(isActive ? "#23a65e" : "white"),
+          };
+        }, [isActiveDot, currentImage])}
+      />
+    );
+  });
   return (
     <View className="w-full h-full flex-col flex justify-between">
       <Spinner visible={isLoading} />
@@ -183,23 +198,7 @@ const Trip: FunctionComponent<TripProps> = memo(({ navigation }) => {
                   columnGap: 2,
                 }}
               >
-                {images.map((image, index) => {
-                  return (
-                    <Animated.View
-                      key={index}
-                      className="rounded-full border border-bibip-green-500 h-2 aspect-square"
-                      style={useAnimatedStyle(() => {
-                        const isActive = currentImage === index;
-
-                        return {
-                          backgroundColor: withTiming(
-                            isActive ? "#23a65e" : "white"
-                          ),
-                        };
-                      }, [isActiveDot, currentImage])}
-                    />
-                  );
-                })}
+                {imageViews}
               </View>
               {currentImage === images.length - 1 ? (
                 <TouchableOpacity
