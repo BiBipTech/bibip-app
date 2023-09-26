@@ -12,13 +12,13 @@
     "name": "bibip",
     "owner": "bibiptech",
     "slug": "bibip-app",
-    "version": "0.1.12",
+    "version": "0.1.13",
     "orientation": "portrait",
     "icon": "./assets/logo.png",
     "userInterfaceStyle": "automatic",
     "scheme": "bibipapp",
     "splash": {
-      "image": "./assets/logo.png",
+      "image": "./assets/splash.png",
       "backgroundColor": "#ffffff"
     },
     "updates": {

@@ -454,7 +454,7 @@ const Router = () => {
 
   return (
     <NavigationContainer>
-      {userContext.isLoading || userContext.isInTripLoading ? (
+      {!userContext.isLoading || userContext.isInTripLoading ? (
         <Loading />
       ) : userContext.user ? (
         !userContext.isInTrip ? (

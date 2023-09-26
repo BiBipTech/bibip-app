@@ -4,13 +4,13 @@ import {
   memo,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BiBipTripStackParamList } from "../../../../Router";
-import CarMap from "../../../components/views/Map/CarMap/CarMap";
 import TripInfo from "../../../components/views/TripInfo/TripInfo";
 import TripNotification from "../../../components/views/TripNotification/TripNotification";
 import * as Location from "expo-location";
@@ -18,10 +18,15 @@ import { useQuery } from "react-query";
 import { getCarId } from "./Trip.action";
 import UserContext from "../../../utils/context/UserContext";
 import Spinner from "react-native-loading-spinner-overlay/lib";
-import MarkerIcon from "../../../../assets/marker-icon.svg";
 import { Camera, MapView, UserLocation } from "@rnmapbox/maps";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useTailwindColor } from "../../../utils/hooks/useTailwindColor";
+import { BlurView } from "expo-blur";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 
 type NavigatorProps = StackScreenProps<BiBipTripStackParamList, "Trip">;
 
@@ -32,6 +37,8 @@ const Trip: FunctionComponent<TripProps> = memo(({ navigation }) => {
     []
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [currentImage, setCurrentImage] = useState(0);
+  const [helpModalShown, setHelpModalShown] = useState(true);
 
   const userContext = useContext(UserContext);
 
@@ -39,6 +46,8 @@ const Trip: FunctionComponent<TripProps> = memo(({ navigation }) => {
 
   const camera = useRef<Camera>(null);
   const userLocation = useRef<UserLocation>(null);
+
+  const isActiveDot = useSharedValue([1, 0, 0, 0]);
 
   const {
     data,
@@ -108,9 +117,121 @@ const Trip: FunctionComponent<TripProps> = memo(({ navigation }) => {
     };
   }, []);
 
+  useEffect(() => {
+    console.log("currentImagechanged", currentImage);
+
+    isActiveDot.value.forEach((_, index) => {
+      if (index === currentImage) {
+        isActiveDot.value[index] = 1;
+      } else {
+        isActiveDot.value[index] = 0;
+      }
+    });
+    console.log(isActiveDot.value);
+  }, [currentImage]);
+
+  const images = [
+    require("../../../../assets/handbrake-info.png"),
+    require("../../../../assets/brake-info.png"),
+    require("../../../../assets/gas-info.png"),
+    require("../../../../assets/all-info.png"),
+  ];
+
   return (
     <View className="w-full h-full flex-col flex justify-between">
       <Spinner visible={isLoading} />
+      {helpModalShown && (
+        <BlurView
+          className="w-screen bottom-4 h-screen absolute px-4 bg-white/10 justify-center flex flex-col"
+          style={{
+            zIndex: 10,
+          }}
+        >
+          <View className="w-full bg-white py-4 flex flex-col justify-center px-4 rounded-3xl">
+            <Image
+              source={images[currentImage]}
+              width={100}
+              height={100}
+              style={{
+                resizeMode: "contain",
+                alignSelf: "center",
+                width: "100%",
+                height: 450,
+                margin: 0,
+              }}
+            />
+            <View className="w-full flex flex-row justify-between">
+              {currentImage !== 0 ? (
+                <TouchableOpacity
+                  className="aspect-square rounded-full flex flex-col items-center justify-center h-12 bg-bibip-green-500"
+                  onPress={() => {
+                    setCurrentImage((prev) => prev - 1);
+                  }}
+                >
+                  <MaterialCommunityIcons
+                    name="arrow-left"
+                    color={"white"}
+                    size={36}
+                  />
+                </TouchableOpacity>
+              ) : (
+                <View className="h-12 bg-transparent aspect-square" />
+              )}
+              <View
+                className="flex flex-row items-center justify-center flex-1"
+                style={{
+                  columnGap: 2,
+                }}
+              >
+                {images.map((image, index) => {
+                  return (
+                    <Animated.View
+                      key={index}
+                      className="rounded-full border border-bibip-green-500 h-2 aspect-square"
+                      style={useAnimatedStyle(() => {
+                        const isActive = currentImage === index;
+
+                        return {
+                          backgroundColor: withTiming(
+                            isActive ? "#23a65e" : "white"
+                          ),
+                        };
+                      }, [isActiveDot, currentImage])}
+                    />
+                  );
+                })}
+              </View>
+              {currentImage === images.length - 1 ? (
+                <TouchableOpacity
+                  className="aspect-square rounded-full flex flex-col items-center justify-center h-12 bg-bibip-green-500"
+                  onPress={() => {
+                    setHelpModalShown(false);
+                  }}
+                >
+                  <MaterialCommunityIcons
+                    name="check"
+                    color={"white"}
+                    size={36}
+                  />
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  className="aspect-square rounded-full flex flex-col items-center justify-center h-12 bg-bibip-green-500"
+                  onPress={() => {
+                    setCurrentImage((prev) => prev + 1);
+                  }}
+                >
+                  <MaterialCommunityIcons
+                    name="arrow-right"
+                    color={"white"}
+                    size={36}
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+        </BlurView>
+      )}
       <View
         className="absolute"
         style={{
