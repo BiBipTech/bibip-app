@@ -1,7 +1,6 @@
 import { FunctionComponent } from "react";
-import { View, Text, Image, ActivityIndicator, Dimensions } from "react-native";
+import { View } from "react-native";
 import * as Progress from "react-native-progress";
-import useCustomTailwind from "../../utils/hooks/useCustomTailwind";
 import Logo from "../../../assets/logosvg.svg";
 
 interface LoadingProps {}

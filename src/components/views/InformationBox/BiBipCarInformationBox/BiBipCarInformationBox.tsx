@@ -9,11 +9,13 @@ import { getWalkingDirections } from "../../../../utils/api/mapbox";
 import * as Location from "expo-location";
 import Spinner from "react-native-loading-spinner-overlay";
 import { useTailwindColor } from "../../../../utils/hooks/useTailwindColor";
+import { LatLng } from "react-native-maps";
 
 interface BiBipCarInformationBoxProps {
   selectedCar: Car;
   onScanQr: () => void;
   onReserve: () => void;
+  currentLocation?: LatLng;
 }
 
 const BiBipCarInformationBox: FunctionComponent<
@@ -31,6 +33,7 @@ const BiBipCarInformationBox: FunctionComponent<
   },
   onScanQr,
   onReserve,
+  currentLocation,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -43,14 +46,13 @@ const BiBipCarInformationBox: FunctionComponent<
     queryFn: async () => {
       setIsLoading(true);
 
-      const currentLocation = await Location.getCurrentPositionAsync();
-
       const directions = await getWalkingDirections(
-        `${currentLocation.coords.longitude}%2C${currentLocation.coords.latitude}`,
+        `${currentLocation?.longitude}%2C${currentLocation?.latitude}`,
         `${location?.lng}%2C${location?.lat}`
       );
       return directions;
     },
+    enabled: !!currentLocation,
     onSuccess: (data) => {
       setIsLoading(false);
     },
@@ -58,6 +60,7 @@ const BiBipCarInformationBox: FunctionComponent<
       console.error(JSON.stringify(e));
       setIsLoading(false);
     },
+    retry: false,
   });
 
   useEffect(() => {
@@ -98,7 +101,7 @@ const BiBipCarInformationBox: FunctionComponent<
               color={useTailwindColor("bg-gray-400")}
             />
           }
-          label={`₺4.99 + ₺4.99/dk`}
+          label={`₺4.99 + ₺4.99 /dk`}
         />
       </View>
 

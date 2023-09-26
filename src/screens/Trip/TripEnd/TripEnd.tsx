@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   FlatList,
   View,
+  ActivityIndicator,
 } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -23,6 +24,9 @@ import { promiseWithLoader } from "../../../utils/aws/api";
 import BiBipIconButton from "../../../components/buttons/BiBipIconButton/BiBipIconButton";
 import { cloneWithNewReference } from "../../../utils/util/array";
 import BiBipButton from "../../../components/buttons/BiBipButton/BiBipButton";
+import * as Progress from "react-native-progress";
+import * as BlurView from "expo-blur";
+import { useTailwindColor } from "../../../utils/hooks/useTailwindColor";
 
 type NavigatorProps = StackScreenProps<BiBipTripStackParamList, "TripEnd">;
 
@@ -35,6 +39,9 @@ interface TripEndProps extends NavigatorProps {}
 const TripEnd: FunctionComponent<TripEndProps> = ({ navigation, route }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [additionalComment, setAdditionalComment] = useState("");
+
+  const [photosUploading, setPhotosUploading] = useState(false);
+  const [photosUploaded, setPhotosUploaded] = useState(0);
 
   const userContext = useContext(UserContext);
 
@@ -57,18 +64,22 @@ const TripEnd: FunctionComponent<TripEndProps> = ({ navigation, route }) => {
     },
   ]);
 
+  const showUploadAlert = (show: boolean) => {
+    setPhotosUploading(show);
+  };
+
   const onEnd = async () => {
     console.log(route.params);
 
-    await promiseWithLoader(
-      setIsLoading,
-      onEndTrip(
-        data,
-        userContext,
-        route.params.carId!,
-        route.params.waypoints!,
-        navigation
-      )
+    await onEndTrip(
+      data,
+      userContext,
+      route.params.carId!,
+      route.params.waypoints!,
+      navigation,
+      showUploadAlert,
+      setPhotosUploaded,
+      setIsLoading
     );
   };
 
@@ -81,8 +92,10 @@ const TripEnd: FunctionComponent<TripEndProps> = ({ navigation, route }) => {
     });
   };
 
+  const cyanColor = useTailwindColor("bg-cyan-500");
+
   return (
-    <SafeAreaView className="mt-4">
+    <View className="mt-4 h-full justify-start items-center">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         style={{
@@ -92,7 +105,29 @@ const TripEnd: FunctionComponent<TripEndProps> = ({ navigation, route }) => {
           Keyboard.dismiss();
         }}
       >
-        <View className="h-full justify-start items-center">
+        {photosUploading && (
+          <BlurView.BlurView
+            className="w-screen bottom-4 h-screen absolute px-4 bg-white/10 justify-center flex flex-col"
+            style={{
+              zIndex: 10,
+            }}
+          >
+            <View className="w-3/4 left-[12.5%] bg-white py-4 flex flex-col justify-center px-4">
+              <Text className="text-center mb-2 font-semibold text-xl">
+                Fotoğraflar yükleniyor
+              </Text>
+              <Progress.Bar
+                progress={photosUploaded / data.length}
+                width={null}
+                color={cyanColor}
+              />
+              <Text className="text-center mt-2">
+                {photosUploaded}/{data.length}
+              </Text>
+            </View>
+          </BlurView.BlurView>
+        )}
+        <SafeAreaView className="h-full justify-start items-center ">
           <Spinner visible={isLoading} />
           <Text className="px-4">
             Sürüşü sonlandırmak için aracın ön, arka, sağ ve sol taraflarının ve
@@ -178,9 +213,9 @@ const TripEnd: FunctionComponent<TripEndProps> = ({ navigation, route }) => {
               fontWeight="light"
             />
           </View>
-        </View>
+        </SafeAreaView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 };
 

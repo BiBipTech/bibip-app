@@ -27,6 +27,7 @@ export const getWalkingDirections = async (
   destination: string
 ) => {
   const requestUrl = `${directionsApi}/mapbox/walking/${origin}%3B${destination}?alternatives=false&geometries=geojson&overview=simplified&steps=false&access_token=${accessToken}`;
+  console.log(requestUrl);
 
   return (await axios.get(requestUrl)).data as unknown as {
     routes: {

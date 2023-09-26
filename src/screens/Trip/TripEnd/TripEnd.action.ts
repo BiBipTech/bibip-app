@@ -14,6 +14,7 @@ import * as mutations from "../../../graphql/mutations";
 import * as queries from "../../../graphql/queries";
 
 import gql from "../../../utils/gql/gql";
+import { Dispatch, SetStateAction } from "react";
 
 export const lockCar = async (token: string, topic: string) => {
   return await axios({
@@ -64,7 +65,14 @@ export const onEndTrip = async (
   userContext: UserContextType,
   carId: string,
   waypoints: { lat: number; lng: number }[],
-  navigation: StackNavigationProp<BiBipTripStackParamList, "TripEnd", undefined>
+  navigation: StackNavigationProp<
+    BiBipTripStackParamList,
+    "TripEnd",
+    undefined
+  >,
+  showUploadAlert: (show: boolean) => void,
+  setPhotosUploaded: Dispatch<SetStateAction<number>>,
+  setIsLoading: Dispatch<SetStateAction<boolean>>
 ) => {
   let isValid = true;
 
@@ -82,6 +90,8 @@ export const onEndTrip = async (
   }
   if (!isValid) return;
   const date = new Date();
+
+  showUploadAlert(true);
   for (let i = 0; i < data.length; i++) {
     const element = data[i];
     try {
@@ -91,22 +101,39 @@ export const onEndTrip = async (
         date.toISOString()
       ).then((val) => {
         console.log(val);
+        setPhotosUploaded(i + 1);
       });
     } catch (e) {
-      return alert(JSON.stringify(e));
+      showUploadAlert(false);
+      setIsLoading(false);
+      setPhotosUploaded(0);
+      Alert.alert("Tekrar dene!", "Lütfen tekrar dene!", [
+        {
+          text: "Tamam",
+        },
+      ]);
+      return;
     }
   }
+  showUploadAlert(false);
+  setIsLoading(true);
+  setPhotosUploaded(0);
 
   try {
     await lockCar(userContext.token!, `car-info/${carId}`);
     await new Promise((resolve) => setTimeout(resolve, 500));
     await lockCar(userContext.token!, `car-info/${carId}`);
   } catch (err) {
-    return alert(JSON.stringify(err));
+    return;
   }
 
   try {
-    const lastLocation = await Location.getCurrentPositionAsync();
+    var lastLocation = await Location.getLastKnownPositionAsync();
+
+    if (!lastLocation) {
+      lastLocation = await Location.getCurrentPositionAsync();
+    }
+
     await updateCarLocation(carId, lastLocation);
     const res = await endTrip(
       userContext.user?.getUsername()!,
@@ -127,9 +154,10 @@ export const onEndTrip = async (
       ]);
     }
   } catch (err) {
-    return alert(JSON.stringify(err));
+    return;
   }
 
+  setIsLoading(false);
   return;
 };
 

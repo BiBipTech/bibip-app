@@ -323,6 +323,7 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
                   ]
                 );
               }}
+              currentLocation={location}
             />
           </Animated.View>
         )}

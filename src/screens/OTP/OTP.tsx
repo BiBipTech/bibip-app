@@ -33,6 +33,7 @@ const OTP = ({ navigation, route }: OTPProps) => {
   const pressableHandler = () => {
     Keyboard.dismiss();
   };
+  console.log(phoneNumber);
 
   return (
     <KeyboardAvoidingView

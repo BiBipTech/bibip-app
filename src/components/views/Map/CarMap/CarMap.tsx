@@ -7,12 +7,13 @@ import {
   useRef,
   useState,
 } from "react";
-import { Image, View } from "react-native";
+import { Image, TouchableOpacity, View } from "react-native";
 import { CameraRef } from "@rnmapbox/maps/lib/typescript/components/Camera";
 import { LatLng } from "react-native-maps";
 import { Car } from "../../../../models";
 import { useForegroundPermissions } from "expo-location";
 import CarMarkerIcon from "../../../../../assets/marker-icon.svg";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface CarMapProps {
   onMapPress: () => void;
@@ -122,6 +123,22 @@ const CarMap: FunctionComponent<CarMapProps> = ({
           <Mapbox.Camera ref={camera} />
         </Mapbox.MapView>
       )}
+      <TouchableOpacity
+        onPress={() => {
+          cameraRef?.setCamera({
+            centerCoordinate: [loc[0], loc[1]],
+            zoomLevel: 16,
+            animationDuration: 500,
+          });
+        }}
+        className="absolute flex items-center justify-center bottom-28 left-10 w-12 aspect-square bg-cyan-500 rounded-full"
+      >
+        <MaterialCommunityIcons
+          name="navigation-variant-outline"
+          size={32}
+          color={"white"}
+        />
+      </TouchableOpacity>
     </View>
   );
 };

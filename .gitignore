@@ -13,6 +13,10 @@ web-build/
 # macOS
 .DS_Store
 
+# local build
+bibip.app
+build-*
+
 #amplify-do-not-edit-begin
 amplify/\#current-cloud-backend
 amplify/.config/local-*

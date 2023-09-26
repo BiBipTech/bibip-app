@@ -19,6 +19,7 @@ moment.locale("tr");
 Mapbox.setAccessToken(
   "pk.eyJ1IjoiZXl1YjIwMDEiLCJhIjoiY2xpeDYydThxMDR3YzNzcW10cjNoeXI2dSJ9.S8sjCUJxSfbzIbOj-7vWNA"
 );
+
 export default function App() {
   const user = useUser();
 

@@ -13,6 +13,7 @@ import {
   Pressable,
   TextInput,
   View,
+  ScrollView,
 } from "react-native";
 import * as Linking from "expo-linking";
 
