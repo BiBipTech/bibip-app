@@ -133,7 +133,14 @@ const Profile: FunctionComponent<ProfileProps> = ({ navigation }) => {
             }}
           />
         )}
-        <Text className="text-3xl mt-4 font-semibold">{fullName}</Text>
+        <Text
+          style={{
+            fontFamily: "Inter-Regular",
+          }}
+          className="text-3xl mt-4 font-semibold"
+        >
+          {fullName}
+        </Text>
         <ProfileTextInput
           value={fullNameInput}
           setValue={setFullNameInput}
@@ -206,7 +213,14 @@ const Profile: FunctionComponent<ProfileProps> = ({ navigation }) => {
               <AntDesign name="idcard" size={32} color={iconColor} />
             </View>
           )}
-          <Text className="mt-2 text-lg">Kimlik</Text>
+          <Text
+            style={{
+              fontFamily: "Inter-Regular",
+            }}
+            className="mt-2 text-lg"
+          >
+            Kimlik
+          </Text>
         </View>
         <View className="flex flex-col w-[30%] items-center ">
           {documents?.license === "false" ? (
@@ -249,7 +263,14 @@ const Profile: FunctionComponent<ProfileProps> = ({ navigation }) => {
               />
             </View>
           )}
-          <Text className="mt-2 text-lg">Sürücü Belgesi</Text>
+          <Text
+            style={{
+              fontFamily: "Inter-Regular",
+            }}
+            className="mt-2 text-lg"
+          >
+            Sürücü Belgesi
+          </Text>
         </View>
         <View className="flex flex-col w-[30%] items-center ">
           {documents?.photo === "false" ? (
@@ -284,7 +305,14 @@ const Profile: FunctionComponent<ProfileProps> = ({ navigation }) => {
               <FontAwesome5 name="portrait" size={32} color={iconColor} />
             </View>
           )}
-          <Text className="mt-2 text-lg">Selfie</Text>
+          <Text
+            style={{
+              fontFamily: "Inter-Regular",
+            }}
+            className="mt-2 text-lg"
+          >
+            Selfie
+          </Text>
         </View>
       </View>
       <View className="w-full flex-1 flex flex-col justify-end pb-8">
@@ -326,7 +354,14 @@ const Profile: FunctionComponent<ProfileProps> = ({ navigation }) => {
             );
           }}
         >
-          <Text className="text-2xl text-gray-100">Kaydet</Text>
+          <Text
+            style={{
+              fontFamily: "Inter-Regular",
+            }}
+            className="text-2xl text-gray-100"
+          >
+            Kaydet
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -382,6 +417,9 @@ const ProfileTextInput = forwardRef<TextInput, ProfileTextInputProps>(
           onBlur={() => {
             setIsEditing(false);
             editing.value = false;
+          }}
+          style={{
+            fontFamily: "Inter-Regular",
           }}
         />
         <TouchableOpacity

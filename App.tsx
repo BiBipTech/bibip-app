@@ -11,6 +11,7 @@ import "react-native-gesture-handler";
 import moment from "moment";
 import "moment/locale/tr";
 import Mapbox from "@rnmapbox/maps";
+import { useFonts } from "expo-font";
 
 Amplify.configure(awsconfig);
 
@@ -21,6 +22,14 @@ Mapbox.setAccessToken(
 );
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    "Inter-Black": require("./assets/fonts/Inter-Black.otf"),
+    "Inter-Medium": require("./assets/fonts/Inter-Medium.otf"),
+    "Inter-ExtraLight": require("./assets/fonts/Inter-ExtraLight.otf"),
+    "Inter-Regular": require("./assets/fonts/Inter-Regular.otf"),
+    "Inter-SemiBold": require("./assets/fonts/Inter-SemiBold.otf"),
+  });
+
   const user = useUser();
 
   useEffect(() => {

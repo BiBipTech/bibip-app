@@ -39,6 +39,7 @@ const Trip: FunctionComponent<TripProps> = memo(({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [currentImage, setCurrentImage] = useState(0);
   const [helpModalShown, setHelpModalShown] = useState(true);
+  const [followUser, setFollowUser] = useState(false);
 
   const userContext = useContext(UserContext);
 
@@ -246,25 +247,45 @@ const Trip: FunctionComponent<TripProps> = memo(({ navigation }) => {
           }}
         >
           <Camera ref={camera} />
-          <UserLocation visible ref={userLocation} />
+          <UserLocation
+            visible
+            ref={userLocation}
+            onUpdate={(e) => {
+              if (followUser) {
+                camera.current?.setCamera({
+                  centerCoordinate: [e.coords.longitude, e.coords.latitude],
+                  zoomLevel: 16,
+                  animationDuration: 500,
+                });
+              }
+            }}
+          />
         </MapView>
       </View>
       <SafeAreaView className="mx-8">
         <TripNotification />
       </SafeAreaView>
       <View className="h-1/4 mb-12">
-        <View className="w-full h-12 flex flex-row justify-between items-center px-4">
+        <View
+          className={`w-full h-12 
+        flex flex-row justify-between
+        items-center px-4`}
+        >
           <TouchableOpacity
             onPress={() => {
-              camera.current?.setCamera({
-                centerCoordinate: userLocation.current?.state.coordinates ?? [
-                  0, 0,
-                ],
-                zoomLevel: 16,
-                animationDuration: 500,
-              });
+              setFollowUser((prev) => !prev);
+
+              // camera.current?.setCamera({
+              //   centerCoordinate: userLocation.current?.state.coordinates ?? [
+              //     0, 0,
+              //   ],
+              //   zoomLevel: 16,
+              //   animationDuration: 500,
+              // });
             }}
-            className="mb-4 flex flex-col items-center justify-center w-12 h-12 bg-white rounded-md"
+            className={`mb-4 flex flex-col items-center justify-center 
+            w-12 h-12 bg-white rounded-md
+            ${followUser ? "shadow-md" : ""}`}
           >
             <MaterialCommunityIcons
               name="navigation-variant-outline"

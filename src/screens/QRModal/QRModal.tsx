@@ -66,7 +66,16 @@ const QRModal: FunctionComponent<QRModalProps> = ({ route, navigation }) => {
               route.params.location,
               userContext.token!
             ).then((res) => {
-              if (res.status === 200) {
+              const { output } = res.data;
+
+              const outputObj = JSON.parse(output) as {
+                statusCode: number;
+                body: {
+                  message: string;
+                };
+              };
+
+              if (outputObj.statusCode === 200) {
                 navigation.popToTop();
                 getTripStatus(userContext.user!, userContext.token!).then(
                   (val) => {

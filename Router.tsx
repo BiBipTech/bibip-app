@@ -451,6 +451,7 @@ const Router = () => {
       </NavigationContainer>
     );
   }
+  console.log(userContext);
 
   return (
     <NavigationContainer>

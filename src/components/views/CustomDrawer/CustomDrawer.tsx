@@ -44,6 +44,7 @@ const CustomDrawer: FunctionComponent<CustomDrawerProps> = ({ ...props }) => {
       getFunds(userContext.user?.getUsername()!, userContext.token!)
         .then((val) => {
           const { balance } = val.data;
+          console.log(val.data);
 
           setBalance(balance);
         })
@@ -57,7 +58,10 @@ const CustomDrawer: FunctionComponent<CustomDrawerProps> = ({ ...props }) => {
       <View className="bg-cyan-500 pt-10 rounded-b-2xl">
         <View className="p-6 justify-start items-start rounded-md">
           {!nameLoading ? (
-            <Text className="text-xl text-white">
+            <Text
+              style={{ fontFamily: "Inter-Medium" }}
+              className="text-xl text-white"
+            >
               Merhaba, {name.split(" ")[0]}
             </Text>
           ) : (
@@ -65,7 +69,12 @@ const CustomDrawer: FunctionComponent<CustomDrawerProps> = ({ ...props }) => {
           )}
           <View className="flex flex-row mt-2 items-baseline">
             {!balanceLoading ? (
-              <Text className="text-gray-100 mr-2">{balance.toFixed(2)}₺</Text>
+              <Text
+                style={{ fontFamily: "Inter-Medium" }}
+                className="text-gray-100 mr-2"
+              >
+                {balance.toFixed(2)}₺
+              </Text>
             ) : (
               <ActivityIndicator className="mr-2" size={30} color="#FFFFFF" />
             )}
@@ -90,7 +99,12 @@ const CustomDrawer: FunctionComponent<CustomDrawerProps> = ({ ...props }) => {
             onPress={() => {
               props.navigation.navigate("Profile");
             }}
-            labelStyle={useCustomTailwind("text-gray-500 -ml-6")}
+            labelStyle={[
+              useCustomTailwind("text-gray-500 -ml-6"),
+              {
+                fontFamily: "Inter-Regular",
+              },
+            ]}
             icon={() => (
               <FontAwesome5 name="user-circle" size={20} color="#6b7280" />
             )}
@@ -100,7 +114,12 @@ const CustomDrawer: FunctionComponent<CustomDrawerProps> = ({ ...props }) => {
             onPress={() => {
               props.navigation.navigate("RideHistory");
             }}
-            labelStyle={useCustomTailwind("text-gray-500 -ml-6")}
+            labelStyle={[
+              useCustomTailwind("text-gray-500 -ml-6"),
+              {
+                fontFamily: "Inter-Regular",
+              },
+            ]}
             icon={() => (
               <MaterialCommunityIcons
                 name="history"
@@ -114,7 +133,12 @@ const CustomDrawer: FunctionComponent<CustomDrawerProps> = ({ ...props }) => {
             onPress={() => {
               props.navigation.navigate("PaymentMethods");
             }}
-            labelStyle={useCustomTailwind("text-gray-500 -ml-6")}
+            labelStyle={[
+              useCustomTailwind("text-gray-500 -ml-6"),
+              {
+                fontFamily: "Inter-Regular",
+              },
+            ]}
             icon={() => (
               <AntDesign name="creditcard" size={20} color="#6b7280" />
             )}
@@ -124,7 +148,12 @@ const CustomDrawer: FunctionComponent<CustomDrawerProps> = ({ ...props }) => {
             onPress={() => {
               // props.navigation.navigate("RideHistory");
             }}
-            labelStyle={useCustomTailwind("text-gray-500 -ml-6")}
+            labelStyle={[
+              useCustomTailwind("text-gray-500 -ml-6"),
+              {
+                fontFamily: "Inter-Regular",
+              },
+            ]}
             icon={() => (
               <AntDesign name="questioncircleo" size={20} color="#6b7280" />
             )}
@@ -134,7 +163,12 @@ const CustomDrawer: FunctionComponent<CustomDrawerProps> = ({ ...props }) => {
             onPress={() => {
               // props.navigation.navigate("RideHistory");
             }}
-            labelStyle={useCustomTailwind("text-gray-500 -ml-6")}
+            labelStyle={[
+              useCustomTailwind("text-gray-500 -ml-6"),
+              {
+                fontFamily: "Inter-Regular",
+              },
+            ]}
             icon={() => (
               <Ionicons name="settings-sharp" size={20} color="#6b7280" />
             )}
@@ -145,7 +179,12 @@ const CustomDrawer: FunctionComponent<CustomDrawerProps> = ({ ...props }) => {
               userContext.user?.signOut();
               userContext.setUser(undefined);
             }}
-            labelStyle={useCustomTailwind("text-gray-500 -ml-6")}
+            labelStyle={[
+              useCustomTailwind("text-gray-500 -ml-6"),
+              {
+                fontFamily: "Inter-Regular",
+              },
+            ]}
             icon={() => (
               <Ionicons name="log-out-outline" size={20} color="#6b7280" />
             )}
