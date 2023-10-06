@@ -63,10 +63,10 @@ const QRModal: FunctionComponent<QRModalProps> = ({ route, navigation }) => {
             startTrip(
               userContext.user?.getUsername()!,
               car.carId,
-              route.params.location,
               userContext.token!
             ).then((res) => {
               const { output } = res.data;
+              console.log(res.data);
 
               const outputObj = JSON.parse(output) as {
                 statusCode: number;

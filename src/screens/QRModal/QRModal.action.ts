@@ -6,18 +6,18 @@ import { unlockCar } from "../Home/Home.action";
 export const startTrip = async (
   username: string,
   carId: string,
-  location: LatLng,
   token: string
 ) => {
-  await mqttStart(carId, token);
+  // await mqttStart(carId, token);
   return awsPost(
     `${TRIP_API}/startTripForUser`,
     {
-      username: username,
-      carId: carId,
-      location: {
-        lat: location.latitude,
-        lng: location.longitude,
+      data: {
+        user: {
+          username: username,
+          carId: carId,
+          timestamp: (+new Date()).toFixed(0),
+        },
       },
     },
     token

@@ -1,5 +1,5 @@
 import { FunctionComponent, useContext, useEffect, useState } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import BiBipButton from "../../buttons/BiBipButton/BiBipButton";
 import UserContext from "../../../utils/context/UserContext";
@@ -9,12 +9,14 @@ import { LatLng } from "react-native-maps";
 
 interface TripInfoProps {
   onEndTrip: () => void;
-  onPauseTrip: () => void;
+  onLockCar: () => void;
+  onUnlockCar: () => void;
 }
 
 const TripInfo: FunctionComponent<TripInfoProps> = ({
   onEndTrip,
-  onPauseTrip,
+  onLockCar,
+  onUnlockCar,
 }) => {
   const userContext = useContext(UserContext);
 
@@ -27,6 +29,8 @@ const TripInfo: FunctionComponent<TripInfoProps> = ({
       getStartTime(userContext.user?.getUsername()!, userContext.token!).then(
         (val) => val.data.startTime
       ),
+    onError: (err) => console.log(JSON.stringify(err)),
+    onSuccess: (val) => console.log(val),
     enabled: !!userContext.token,
   });
 
@@ -89,36 +93,32 @@ const TripInfo: FunctionComponent<TripInfoProps> = ({
       </View>
       <View className="w-full border-b border-b-gray-300" />
       <View className="flex flex-1 mb-4">
-        <View className="flex flex-row justify-evenly items-center px-4 mb-6 py-4 h-full">
-          <BiBipButton
-            title="DURDUR"
-            fontWeight={"bold"}
-            fontSize="medium"
-            fullHeight
-            buttonCount={2}
-            rounding="large"
-            alignment="center"
-            intent="secondary"
-            onPress={onPauseTrip}
+        <View
+          className="flex flex-row flex-1 mx-6 my-2"
+          style={{ columnGap: 8 }}
+        >
+          <TouchableOpacity
+            className="border aspect-square h-full flex items-center justify-center rounded-xl border-bibip-green-500"
+            onPress={onLockCar}
           >
             <View className="">
-              <Ionicons name="pause" color={"#23a65e"} size={24} />
+              <Ionicons name="lock-closed" color={"#23a65e"} size={24} />
             </View>
-          </BiBipButton>
-          <BiBipButton
-            title="SONLANDIR"
-            fontWeight={"bold"}
-            fullHeight
-            fontSize="medium"
-            buttonCount={2}
-            rounding="large"
-            alignment="center"
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="border h-full flex items-center justify-center bg-bibip-green-500 flex-grow rounded-xl border-bibip-green-500"
             onPress={onEndTrip}
           >
-            <View className="mr-2">
-              <Ionicons name="lock-closed" color={"white"} size={24} />
+            <Text className="text-white font-regular text-2xl">SONLANDIR</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="border aspect-square h-full flex items-center justify-center rounded-xl border-bibip-green-500"
+            onPress={onUnlockCar}
+          >
+            <View className="">
+              <Ionicons name="lock-open" color={"#23a65e"} size={24} />
             </View>
-          </BiBipButton>
+          </TouchableOpacity>
         </View>
       </View>
     </View>

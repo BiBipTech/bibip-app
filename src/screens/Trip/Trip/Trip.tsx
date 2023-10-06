@@ -27,6 +27,9 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { unlockCar } from "../../Home/Home.action";
+import { mqttStart } from "../../QRModal/QRModal.action";
+import { lockCar } from "../TripEnd/TripEnd.action";
 
 type NavigatorProps = StackScreenProps<BiBipTripStackParamList, "Trip">;
 
@@ -53,6 +56,7 @@ const Trip: FunctionComponent<TripProps> = memo(({ navigation }) => {
   const {
     data,
     isLoading: isCarLoading,
+    isFetched: isCarFetched,
     refetch: refetchCarId,
   } = useQuery({
     queryKey: "carId",
@@ -69,6 +73,14 @@ const Trip: FunctionComponent<TripProps> = memo(({ navigation }) => {
     enabled: !!userContext.token,
   });
 
+  const {} = useQuery({
+    queryKey: "unlockCar",
+    queryFn: async () => await mqttStart(data.carId!, userContext.token!),
+    onError: (err) => console.log(JSON.stringify(err)),
+    onSuccess: (val) => console.log(val),
+    enabled: !!userContext.token && isCarFetched,
+  });
+
   const onEndTrip = async () => {
     if (!data.carId) {
       userContext.updateToken();
@@ -80,8 +92,6 @@ const Trip: FunctionComponent<TripProps> = memo(({ navigation }) => {
       waypoints: waypoints,
     });
   };
-
-  const onPauseTrip = () => {};
 
   useEffect(() => {
     if (status) {
@@ -265,7 +275,7 @@ const Trip: FunctionComponent<TripProps> = memo(({ navigation }) => {
       <SafeAreaView className="mx-8">
         <TripNotification />
       </SafeAreaView>
-      <View className="h-1/4 mb-12">
+      <View className="h-1/5 mb-12">
         <View
           className={`w-full h-12 
         flex flex-row justify-between
@@ -275,13 +285,13 @@ const Trip: FunctionComponent<TripProps> = memo(({ navigation }) => {
             onPress={() => {
               setFollowUser((prev) => !prev);
 
-              // camera.current?.setCamera({
-              //   centerCoordinate: userLocation.current?.state.coordinates ?? [
-              //     0, 0,
-              //   ],
-              //   zoomLevel: 16,
-              //   animationDuration: 500,
-              // });
+              camera.current?.setCamera({
+                centerCoordinate: userLocation.current?.state.coordinates ?? [
+                  0, 0,
+                ],
+                zoomLevel: 16,
+                animationDuration: 500,
+              });
             }}
             className={`mb-4 flex flex-col items-center justify-center 
             w-12 h-12 bg-white rounded-md
@@ -294,7 +304,29 @@ const Trip: FunctionComponent<TripProps> = memo(({ navigation }) => {
             />
           </TouchableOpacity>
         </View>
-        <TripInfo onEndTrip={onEndTrip} onPauseTrip={onPauseTrip} />
+        <TripInfo
+          onEndTrip={onEndTrip}
+          onLockCar={async () => {
+            if (!data.carId) {
+              userContext.updateToken();
+              refetchCarId();
+              return alert("Tekrar deneyin!");
+            }
+
+            lockCar(userContext.token!, `car-info/${data.carId!}`);
+            await new Promise((resolve) => setTimeout(resolve, 100));
+            lockCar(userContext.token!, `car-info/${data.carId!}`);
+          }}
+          onUnlockCar={async () => {
+            if (!data.carId) {
+              userContext.updateToken();
+              refetchCarId();
+              return alert("Tekrar deneyin!");
+            }
+
+            mqttStart(data.carId!, userContext.token!);
+          }}
+        />
       </View>
     </View>
   );

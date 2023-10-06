@@ -66,9 +66,7 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
       .then((res) => {
         return res.data?.listCars.items;
       })
-      .catch((e) => {
-        console.log(JSON.stringify(e));
-      })
+      .catch((e) => {})
   );
 
   const { refetch: refetchDocuments } = useQuery({
@@ -118,8 +116,6 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
   const { refetch: startReservation, data: isReservationStarted } = useQuery({
     queryKey: "startReservation",
     queryFn: async () => {
-      console.log("start reservation");
-
       const res = await awsPost(
         `${TRIP_API}/startReservation`,
         {
@@ -129,24 +125,17 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
         userContext.token!
       );
       setSelectedCar(null);
-      console.log(res.data);
 
       return res.data as string;
     },
-    onError: (err) => {
-      console.log(JSON.stringify(err));
-    },
+    onError: (err) => {},
     enabled: false,
   });
 
   useEffect(() => {
-    console.log(reservedCarData);
-
     if (!reservedCarData) return;
 
     if (reservedCarData.reservedCar === true) {
-      console.log("reserved car");
-
       const timeout = setTimeout(() => {
         navigation.navigate("Reserve", {
           carId: reservedCarData.carId!,
@@ -175,11 +164,8 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
     const reservationStatus = async () => {
       if (isReservationStarted === "Reserved!") {
         const res = await refetchReservationStatus();
-        console.log(res.data);
 
         if (res.data?.reservedCar === true) {
-          console.log(res.data);
-
           navigation.navigate("Reserve", {
             carId: res.data.carId!,
             tripStarted: res.data.tripStarted!,

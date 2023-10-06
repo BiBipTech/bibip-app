@@ -451,8 +451,6 @@ const Router = () => {
       </NavigationContainer>
     );
   }
-  console.log(userContext);
-
   return (
     <NavigationContainer>
       {userContext.isLoading || userContext.isInTripLoading ? (
