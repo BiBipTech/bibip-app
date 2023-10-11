@@ -64,9 +64,13 @@ const Home: FC<AppDrawerBiBipHomeStackCompositeProps<"BiBipHome">> = ({
       },
     })
       .then((res) => {
+        console.log(res.data);
+
         return res.data?.listCars.items;
       })
-      .catch((e) => {})
+      .catch((e) => {
+        console.log(JSON.stringify(e));
+      })
   );
 
   const { refetch: refetchDocuments } = useQuery({

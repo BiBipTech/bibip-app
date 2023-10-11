@@ -14,11 +14,7 @@ export const endTrip = (
     {
       username: username,
       carId: carId,
-      endLocation: {
-        lat: lastLocation.coords.latitude,
-        lng: lastLocation.coords.longitude,
-      },
-      waypoints: waypoints,
+      timestamp: (+new Date()).toFixed(0),
     },
     token
   );
