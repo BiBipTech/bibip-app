@@ -16,22 +16,6 @@ import * as queries from "../../../graphql/queries";
 import gql from "../../../utils/gql/gql";
 import { Dispatch, SetStateAction } from "react";
 
-export const lockCar = async (token: string, topic: string) => {
-  return await axios({
-    method: "post",
-    url: "https://yrck9a42ef.execute-api.eu-central-1.amazonaws.com/dev/publish",
-    data: {
-      topic: topic,
-      message: {
-        lock: "true",
-      },
-    },
-    headers: {
-      "x-aws-cognito-token": token,
-    },
-  });
-};
-
 export const uploadPhoto = async (
   photo: {
     type: PhotoType;
@@ -72,7 +56,8 @@ export const onEndTrip = async (
   >,
   showUploadAlert: (show: boolean) => void,
   setPhotosUploaded: Dispatch<SetStateAction<number>>,
-  setIsLoading: Dispatch<SetStateAction<boolean>>
+  setIsLoading: Dispatch<SetStateAction<boolean>>,
+  lockCar: (carId: string) => void
 ) => {
   let isValid = true;
 
@@ -120,9 +105,9 @@ export const onEndTrip = async (
   setPhotosUploaded(0);
 
   try {
-    await lockCar(userContext.token!, `car-info/${carId}`);
+    lockCar(carId);
     await new Promise((resolve) => setTimeout(resolve, 500));
-    await lockCar(userContext.token!, `car-info/${carId}`);
+    lockCar(carId);
   } catch (err) {
     return;
   }

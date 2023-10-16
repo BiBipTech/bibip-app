@@ -27,9 +27,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { unlockCar } from "../../Home/Home.action";
-import { mqttStart } from "../../QRModal/QRModal.action";
-import { lockCar } from "../TripEnd/TripEnd.action";
+import useMqtt from "../../../utils/hooks/useMqtt";
 
 type NavigatorProps = StackScreenProps<BiBipTripStackParamList, "Trip">;
 
@@ -53,6 +51,7 @@ const Trip: FunctionComponent<TripProps> = memo(({ navigation }) => {
 
   const isActiveDot = useSharedValue([1, 0, 0, 0]);
 
+  const { lockCar, unlockCar } = useMqtt();
   const {
     data,
     isLoading: isCarLoading,
@@ -75,7 +74,7 @@ const Trip: FunctionComponent<TripProps> = memo(({ navigation }) => {
 
   const {} = useQuery({
     queryKey: "unlockCar",
-    queryFn: async () => await mqttStart(data.carId!, userContext.token!),
+    queryFn: async () => await unlockCar(data.carId!),
     onError: (err) => console.log(JSON.stringify(err)),
     onSuccess: (val) => console.log(val),
     enabled: !!userContext.token && isCarFetched,
@@ -313,9 +312,9 @@ const Trip: FunctionComponent<TripProps> = memo(({ navigation }) => {
               return alert("Tekrar deneyin!");
             }
 
-            lockCar(userContext.token!, `car-info/${data.carId!}`);
+            lockCar(data.carId!);
             await new Promise((resolve) => setTimeout(resolve, 100));
-            lockCar(userContext.token!, `car-info/${data.carId!}`);
+            lockCar(data.carId!);
           }}
           onUnlockCar={async () => {
             if (!data.carId) {
@@ -324,7 +323,7 @@ const Trip: FunctionComponent<TripProps> = memo(({ navigation }) => {
               return alert("Tekrar deneyin!");
             }
 
-            mqttStart(data.carId!, userContext.token!);
+            unlockCar(data.carId!);
           }}
         />
       </View>

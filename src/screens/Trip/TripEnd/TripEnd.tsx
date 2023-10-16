@@ -27,6 +27,7 @@ import BiBipButton from "../../../components/buttons/BiBipButton/BiBipButton";
 import * as Progress from "react-native-progress";
 import * as BlurView from "expo-blur";
 import { useTailwindColor } from "../../../utils/hooks/useTailwindColor";
+import useMqtt from "../../../utils/hooks/useMqtt";
 
 type NavigatorProps = StackScreenProps<BiBipTripStackParamList, "TripEnd">;
 
@@ -44,6 +45,8 @@ const TripEnd: FunctionComponent<TripEndProps> = ({ navigation, route }) => {
   const [photosUploaded, setPhotosUploaded] = useState(0);
 
   const userContext = useContext(UserContext);
+
+  const { lockCar, unlockCar } = useMqtt();
 
   const [data, setData] = useState<{ type: PhotoType; value: string }[]>([
     {
@@ -79,7 +82,8 @@ const TripEnd: FunctionComponent<TripEndProps> = ({ navigation, route }) => {
       navigation,
       showUploadAlert,
       setPhotosUploaded,
-      setIsLoading
+      setIsLoading,
+      lockCar
     );
   };
 
